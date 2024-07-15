@@ -17,7 +17,7 @@ except ImportError:
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from .model import RWKV
-from .lora import LinearWithLoRA
+# from .lora import LinearWithLoRA
 
 
 class SLAM_ASR(nn.Module):
