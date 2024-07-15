@@ -290,7 +290,7 @@ if __name__ == "__main__":
     ########################################################################################################
 
     from src.trainer import train_callback, generate_init_weight
-    from src.dataset import MyDataset
+    from src.dataset2 import MyDataset
 
     # train_data = MyDataset(args)
     # args.vocab_size = train_data.vocab_size
