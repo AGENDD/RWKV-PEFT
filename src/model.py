@@ -1189,14 +1189,26 @@ class RWKV(pl.LightningModule):
             
             return total_loss
     else:
-        def forward(self, idx):
-            args = self.args
-            B, T = idx.size()
-            assert T <= args.ctx_len, "Cannot forward, model ctx_len is exhausted."
+        
+        def embed(self, inputs):
+            return self.embed(inputs)
+        
+        def forward(self, idx=None, inputs_embeds = None):
+            
+            if(idx != None):
+                args = self.args
+                B, T = idx.size()
+                assert T <= args.ctx_len, "Cannot forward, model ctx_len is exhausted."
 
-            x = self.emb(idx)
-            x_emb = x
-
+                x = self.emb(idx)
+                x_emb = x
+            elif(inputs_embeds != None):
+                args = self.args
+                B, T,_ = idx.size()
+                assert T <= args.ctx_len, "Cannot forward, model ctx_len is exhausted."
+                x_emb = inputs_embeds
+                x = x_emb
+                
             if args.dropout > 0:
                 x = self.drop0(x)
             if args.tiny_att_dim > 0:

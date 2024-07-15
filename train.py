@@ -292,8 +292,8 @@ if __name__ == "__main__":
     from src.trainer import train_callback, generate_init_weight
     from src.dataset import MyDataset
 
-    train_data = MyDataset(args)
-    args.vocab_size = train_data.vocab_size
+    # train_data = MyDataset(args)
+    # args.vocab_size = train_data.vocab_size
     from src.rwkvLinear import LORA_CONFIG, LoraLinear
     from src.model import RWKV
     if args.lora:
@@ -458,9 +458,28 @@ if __name__ == "__main__":
         trainer.strategy.config["zero_optimization"]["reduce_bucket_size"] = args.ds_bucket_mb * 1000 * 1000
 
     # must set shuffle=False, persistent_workers=False (because worker is in another thread)
-    data_loader = DataLoader(train_data, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=1, persistent_workers=False, drop_last=True)
+    # data_loader = DataLoader(train_data, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=1, persistent_workers=False, drop_last=True)
 
-    trainer.fit(model, data_loader)
+    from datasets import load_from_disk
+    
+    dataset = load_from_disk("temp_datasests/en-final")
+    dataset = MyDataset(args, dataset)
+    data_loader = DataLoader(dataset, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=1, persistent_workers=False, drop_last=True)
+    
+    # trainer.fit(model, data_loader)
+    
+    from src.asr import SLAM_ASR
+    
+    Total_model = SLAM_ASR(
+        args,
+        "facebook/hubert-large-ls960-ft",
+        model,
+    )
+    
+    exit(0)
+    # for e in range(500):
+    #     for batch in data_loader:
+    
     # if args.LISA:
     #     args.load_model=f'rwkv-0.pth'
     #     model = RWKV(args)
@@ -531,5 +550,4 @@ if __name__ == "__main__":
     #     # must set shuffle=False, persistent_workers=False (because worker is in another thread)
     #     data_loader = DataLoader(train_data, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=1, persistent_workers=False, drop_last=True)
 
-    #     trainer.fit(model, data_loader)
-
+    #     trainer.fit(model, data_loader)   
