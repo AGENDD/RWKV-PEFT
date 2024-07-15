@@ -1,6 +1,6 @@
-load_model='/home/rwkv/JL/model/RWKV-x060-World-1B6-v2.1-20240328-ctx4096.pth'
-proj_dir='/home/rwkv/JL/out_model/roleplay'
-data_file='/home/rwkv/JL/data/roleplay'
+load_model='temp_models/RWKV-x060-World-1B6-v2.1-20240328-ctx4096.pth'
+proj_dir='output'
+data_file='temp_datasets'
 
 
 n_layer=24
