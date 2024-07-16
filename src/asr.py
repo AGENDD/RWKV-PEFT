@@ -18,9 +18,27 @@ except ImportError:
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from .model import RWKV
 # from .lora import LinearWithLoRA
+import pytorch_lightning as pl
+from torch.nn import functional as F
 
 
-class SLAM_ASR(nn.Module):
+class L2Wrap(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, loss, y):
+        ctx.save_for_backward(y)
+        return loss
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        y = ctx.saved_tensors[0]
+        # to encourage the logits to be close to 0
+        factor = 1e-4 / (y.shape[0] * y.shape[1])
+        maxx, ids = torch.max(y, -1, keepdim=True)
+        gy = torch.zeros_like(y)
+        gy.scatter_(-1, ids, maxx * factor)
+        return (grad_output, gy)
+
+class SLAM_ASR(pl.LightningModule):
     def __init__(
         self,
         args,
@@ -348,8 +366,134 @@ class SLAM_ASR(nn.Module):
         # print(f"outputs:{outputs['loss']}")
         print(f"logits:\t{outputs.shape}")
         
-        return outputs, true_labels
+        return outputs, true_labels, prompt_mask
+
+    def training_step(self, batch, batch_idx):
+            args = self.args
+            if args.loss_mask:
+                idx, targets, mask = batch
+                mask = mask.view(-1)
+                sum_mask = torch.sum(mask).item()
+                logits = self(idx)
+                loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), reduction='none')
+                loss = torch.sum(loss * mask) / sum_mask
+            # elif args.my_qa_mask != 1:
+            #     idx, targets = batch
+            #     logits = self(idx)
+            #     loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1))
+                # if '0' in os.environ["RWKV_MY_TESTING"]:
+                #     print('logits', logits)
+                #     torch.set_printoptions(threshold=10000)
+                #     print('idx', idx)
+                #     exit(0)
+            else:
+                
+                ##改动
+                idx, transcription = batch
+                logits, targets, mask = self(idx, transcription)
+                mask = mask.view(-1)
+                sum_mask = torch.sum(mask).item()
+                ######
+                
+                # idx, targets, mask = batch
+                # mask = mask.view(-1)
+                # sum_mask = torch.sum(mask).item()
+                # # if sum_mask == 0:
+                # #     return torch.tensor([0.0], requires_grad=True)
+
+                # logits = self(idx)
+                if sum_mask == mask.shape[0]:
+                    loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1))
+                    # print('rank', self.global_rank, 'loss', loss.item())
+                else:
+                    loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), reduction='none')
+                    # loss_raw = loss
+                    loss = torch.sum(loss * mask) / sum_mask
+
+                    # torch.set_printoptions(threshold=10000)
+                    # if True: #self.global_rank == 1:
+                    #     tmp = ''
+                    #     sss = 0
+                    #     ccc = 0
+                    #     for i in range(mask.shape[0]):
+                    #         if mask[i] > 0:
+                    #             tmp += str(idx.view(-1)[i].item()) + ','
+                    #             sss += loss_raw.view(-1)[i].float().item()
+                    #             ccc += 1
+                    #     print('rank', self.global_rank, 'loss', loss.item(), 'lavg', sss / ccc)#, 'tmp', tmp, 'input', idx)
+
+            return L2Wrap.apply(loss, logits)
     
+    def configure_optimizers(self):
+        args = self.args
+        
+        lr_decay = set()
+        lr_1x = set()
+        lr_2x = set()
+        lr_3x = set()
+        for n, p in self.named_parameters():
+            if not p.requires_grad:
+                continue
+            if (("_w1" in n) or ("_w2" in n)) and (args.layerwise_lr > 0):
+                lr_1x.add(n)
+            elif (("time_mix" in n) or ("time_maa" in n)) and (args.layerwise_lr > 0):
+                if args.my_pile_stage == 2:
+                    lr_2x.add(n)
+                else:
+                    lr_1x.add(n)
+            elif (("time_decay" in n) or ("time_daaaa" in n)) and (args.layerwise_lr > 0):
+                if args.my_pile_stage == 2:
+                    lr_3x.add(n)
+                else:
+                    lr_2x.add(n)
+            elif ("time_faaaa" in n) and (args.layerwise_lr > 0):
+                if args.my_pile_stage == 2:
+                    lr_2x.add(n)
+                else:
+                    lr_1x.add(n)
+            elif ("time_first" in n) and (args.layerwise_lr > 0):
+                lr_3x.add(n)
+            elif (len(p.squeeze().shape) >= 2) and (args.weight_decay > 0):
+                lr_decay.add(n)
+            else:
+                lr_1x.add(n)
+
+        lr_decay = sorted(list(lr_decay))
+        lr_1x = sorted(list(lr_1x))
+        lr_2x = sorted(list(lr_2x))
+        lr_3x = sorted(list(lr_3x))
+        # print('decay', lr_decay)
+        # print('1x', lr_1x)
+        # print('2x', lr_2x)
+        # print('3x', lr_3x)
+        param_dict = {n: p for n, p in self.named_parameters()}
+        
+        if args.layerwise_lr > 0:
+            if args.my_pile_stage == 2:
+                optim_groups = [
+                    {"params": [param_dict[n] for n in lr_1x], "weight_decay": 0.0, "my_lr_scale": 1.0},
+                    {"params": [param_dict[n] for n in lr_2x], "weight_decay": 0.0, "my_lr_scale": 5.0},# test: 2e-3 / args.lr_init},
+                    {"params": [param_dict[n] for n in lr_3x], "weight_decay": 0.0, "my_lr_scale": 5.0},# test: 3e-3 / args.lr_init},
+                ]
+            else:
+                optim_groups = [
+                    {"params": [param_dict[n] for n in lr_1x], "weight_decay": 0.0, "my_lr_scale": 1.0},
+                    {"params": [param_dict[n] for n in lr_2x], "weight_decay": 0.0, "my_lr_scale": 2.0},
+                    {"params": [param_dict[n] for n in lr_3x], "weight_decay": 0.0, "my_lr_scale": 3.0},
+                ]
+        else:
+            optim_groups = [{"params": [param_dict[n] for n in lr_1x], "weight_decay": 0.0, "my_lr_scale": 1.0}]
+
+        if args.weight_decay > 0:
+            optim_groups += [{"params": [param_dict[n] for n in lr_decay], "weight_decay": args.weight_decay, "my_lr_scale": 1.0}]
+            if self.deepspeed_offload:
+                return DeepSpeedCPUAdam(optim_groups, lr=self.args.lr_init, betas=self.args.betas, eps=self.args.adam_eps, bias_correction=True, adamw_mode=True, amsgrad=False)
+            return FusedAdam(optim_groups, lr=self.args.lr_init, betas=self.args.betas, eps=self.args.adam_eps, bias_correction=True, adam_w_mode=True, amsgrad=False)
+        else:
+            if self.deepspeed_offload:
+                return DeepSpeedCPUAdam(optim_groups, lr=self.args.lr_init, betas=self.args.betas, eps=self.args.adam_eps, bias_correction=True, adamw_mode=False, weight_decay=0, amsgrad=False)
+            return FusedAdam(optim_groups, lr=self.args.lr_init, betas=self.args.betas, eps=self.args.adam_eps, bias_correction=True, adam_w_mode=False, weight_decay=0, amsgrad=False)
+        # return ZeroOneAdam(optim_groups, lr=self.args.lr_init, betas=self.args.betas, eps=self.args.adam_eps, bias_correction=True, weight_decay=0, amsgrad=False, cuda_aware=False)
 
     def generate(self, audios: List[float], stopping_criteria=None):
         """

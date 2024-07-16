@@ -476,23 +476,9 @@ if __name__ == "__main__":
     dataset = load_from_disk("temp_datasets/en-final")
     dataset = MyDataset(args, dataset)
     data_loader = DataLoader(dataset, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=1, persistent_workers=False, drop_last=True)
-    
-    
-    tokenizer = Total_model.return_tokenizer()
-    
-    for epoch in range(500):
-        for batch in data_loader:
-            audios, transcriptions = batch
-            outputs, true_labels = Total_model(audios, transcriptions)
-            outputs_decode = tokenizer.decode(outputs)
-            print(outputs_decode)
-            print(true_labels)
-            exit(0)
-    
-    
+
     exit(0)
-    # for e in range(500):
-    #     for batch in data_loader:
+
     
     # if args.LISA:
     #     args.load_model=f'rwkv-0.pth'
