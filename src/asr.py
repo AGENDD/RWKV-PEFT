@@ -51,7 +51,7 @@ class SLAM_ASR(pl.LightningModule):
         token = "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",
     ):
         assert train_mode in ["adapter", "full"]
-        super(SLAM_ASR, self).__init__()
+        super().__init__()
         self.device = device
         """
                        |------|
@@ -513,3 +513,7 @@ class SLAM_ASR(pl.LightningModule):
     @property
     def config(self):
         return self.language_model.config
+    
+    @property
+    def device(self):
+        return self.device
