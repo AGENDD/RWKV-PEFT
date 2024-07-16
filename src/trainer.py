@@ -131,7 +131,8 @@ class train_callback(pl.Callback):
             if pl.__version__[0]=='2':
                 trainer.my_loss = outputs["loss"]
             else:
-                trainer.my_loss = trainer.my_loss_all.float().mean().item()
+                # trainer.my_loss = trainer.my_loss_all.float().mean().item()
+                trainer.my_loss = trainer.my_loss_sum.float().mean().item()#修改
             trainer.my_loss_sum += trainer.my_loss
             trainer.my_loss_count += 1
             trainer.my_epoch_loss = trainer.my_loss_sum / trainer.my_loss_count
