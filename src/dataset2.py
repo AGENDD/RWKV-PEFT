@@ -25,6 +25,6 @@ class MyDataset(Dataset):
         audio = sample['speech']
         answer = sample['text']
         
-        print(f"speech input{idx}:{len(audio)}")
+        # print(f"speech input{idx}:{len(audio)}")
         return audio, answer
         
