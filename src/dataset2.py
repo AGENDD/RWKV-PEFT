@@ -22,7 +22,7 @@ class MyDataset(Dataset):
 
     def __getitem__(self, idx):
         sample = self.hf_dataset[idx]
-        audio = torch.tensor(sample['speech']).half()
+        audio = sample['speech']
         answer = sample['text']
         
         # print(f"speech input{idx}:{len(audio)}")
