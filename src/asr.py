@@ -21,6 +21,7 @@ from .model import RWKV
 import pytorch_lightning as pl
 from torch.nn import functional as F
 from pytorch_lightning.strategies import DeepSpeedStrategy
+import os, math, gc, importlib
 if importlib.util.find_spec('deepspeed'):
     import deepspeed
     from deepspeed.ops.adam import DeepSpeedCPUAdam, FusedAdam
