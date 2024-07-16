@@ -376,6 +376,7 @@ class SLAM_ASR(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
             args = self.args
+            print(batch)
             if args.loss_mask:
                 idx, targets, mask = batch
                 mask = mask.view(-1)
