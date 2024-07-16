@@ -459,8 +459,6 @@ if __name__ == "__main__":
 
     # must set shuffle=False, persistent_workers=False (because worker is in another thread)
     # data_loader = DataLoader(train_data, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=1, persistent_workers=False, drop_last=True)
-
-    model = model.float()
     
     from src.asr import SLAM_ASR
     Total_model = SLAM_ASR(

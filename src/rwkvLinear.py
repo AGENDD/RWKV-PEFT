@@ -114,7 +114,7 @@ class QuantLinear(nn.Module):
     def forward(self, x):
 
         if self.is_quant:
-            return F.linear(x, rwkv_dequantize(self.quant_type, self.weight.data, self.qstate))#修改
+            return F.linear(x, rwkv_dequantize(self.quant_type, self.weight.data, self.qstate).to(torch.bfloat16))
         else:
             return F.linear(x, self.weight)
         
