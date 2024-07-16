@@ -223,8 +223,8 @@ class SLAM_ASR(pl.LightningModule):
         """
         First, run audios through speech_encoder to get the embeddings and mask
         """
-        
-        speech_output, mask = self.speech_encoder(audios.cpu())
+        audios = [audio.cpu() for audio in audios]
+        speech_output, mask = self.speech_encoder(audios)
         # print(f"audio after hubert and adapter:\t{speech_output.shape}")
         # print(f"audio mask:\t{mask.shape}")
         
