@@ -52,7 +52,7 @@ class SLAM_ASR(pl.LightningModule):
     ):
         assert train_mode in ["adapter", "full"]
         super().__init__()
-        self.device = device
+        self._device = device
         """
                        |------|
                        |hubert|
@@ -100,7 +100,7 @@ class SLAM_ASR(pl.LightningModule):
             hidden_dim=hidden_dim,
             train_mode=train_mode,
             device=device,
-        ).to(self.device)
+        ).to(self._device)
       
         
         # print("show language params")
@@ -516,9 +516,9 @@ class SLAM_ASR(pl.LightningModule):
     
     @property
     def device(self):
-        return self.device
+        return self._device
     
     @device.setter
     def device(self, value):
-        # 这里可以添加你想要的处理逻辑，比如类型检查
-        self.device = value
+        
+        self._device = value
