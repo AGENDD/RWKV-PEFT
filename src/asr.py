@@ -376,7 +376,6 @@ class SLAM_ASR(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
             args = self.args
-            print(batch)
             if args.loss_mask:
                 idx, targets, mask = batch
                 mask = mask.view(-1)
@@ -396,7 +395,10 @@ class SLAM_ASR(pl.LightningModule):
             else:
                 
                 ##改动
-                idx, transcription = batch
+                # idx, transcription = batch
+                idx = [item[0] for item in batch]
+                transcription = [item[1] for item in batch]
+                
                 logits, targets, mask = self(idx, transcription)
                 mask = mask.view(-1)
                 sum_mask = torch.sum(mask).item()
