@@ -1204,7 +1204,7 @@ class RWKV(pl.LightningModule):
                 x_emb = x
             elif(inputs_embeds != None):
                 args = self.args
-                B, T,_ = idx.size()
+                B, T,_ = inputs_embeds.size()
                 assert T <= args.ctx_len, "Cannot forward, model ctx_len is exhausted."
                 x_emb = inputs_embeds
                 x = x_emb
