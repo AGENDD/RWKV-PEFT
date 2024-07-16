@@ -83,7 +83,7 @@ class SpeechEncoder(nn.Module):
     def forward(self, x):
         input_dict = self.processor(
             x, return_tensors="pt", padding=True, sampling_rate=16000
-        ).to(self.device)
+        ).to(self.device,dtype=torch.bfloat16)
         mask = self.calculate_mask(input_dict)
         x = self.model(**input_dict).last_hidden_state
         # reshape the output from [batch_size, num_frames, hidden_size] to [batch_size, num_frames//downsample_K, hidden_size*downsample_K]
