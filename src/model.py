@@ -1191,7 +1191,7 @@ class RWKV(pl.LightningModule):
     else:
         
         def embed(self, inputs):
-            return self.embed(inputs)
+            return self.emb(inputs)
         
         def forward(self, idx=None, inputs_embeds = None):
             
