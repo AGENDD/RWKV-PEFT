@@ -517,3 +517,8 @@ class SLAM_ASR(pl.LightningModule):
     @property
     def device(self):
         return self.device
+    
+    @device.setter
+    def device(self, value):
+        # 这里可以添加你想要的处理逻辑，比如类型检查
+        self.device = value
