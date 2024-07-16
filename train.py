@@ -473,7 +473,7 @@ if __name__ == "__main__":
     dataset = MyDataset(args, dataset[0])
     data_loader = DataLoader(dataset, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=1, persistent_workers=False, drop_last=True)
 
-    trainer.fit(model, data_loader)
+    trainer.fit(Total_model, data_loader)
 
     exit(0)
 
