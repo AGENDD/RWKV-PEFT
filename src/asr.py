@@ -20,7 +20,7 @@ from .model import RWKV
 # from .lora import LinearWithLoRA
 import pytorch_lightning as pl
 from torch.nn import functional as F
-
+from pytorch_lightning.strategies import DeepSpeedStrategy
 
 class L2Wrap(torch.autograd.Function):
     @staticmethod
@@ -523,3 +523,13 @@ class SLAM_ASR(pl.LightningModule):
     def device(self, value):
         
         self._device = value
+
+
+    
+    @property
+    def deepspeed_offload(self) -> bool:
+        strategy = self.trainer.strategy
+        if isinstance(strategy, DeepSpeedStrategy):
+            cfg = strategy.config["zero_optimization"]
+            return cfg.get("offload_optimizer") or cfg.get("offload_param")
+        return False
