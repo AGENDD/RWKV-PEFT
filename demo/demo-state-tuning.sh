@@ -23,4 +23,4 @@ python train.py --load_model $load_model \
 --precision bf16 \
 --my_testing "x060" \
 --train_type "state"  --dataload pad --quant $QUANT \
-# --grad_cp 1 \
+--grad_cp 1 \
