@@ -6,7 +6,7 @@ data_file='temp_datasets'
 n_layer=24
 n_embd=2048
 
-micro_bsz=4
+micro_bsz=1
 epoch_save=1
 epoch_steps=800
 ctx_len=1024
