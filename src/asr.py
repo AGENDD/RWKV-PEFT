@@ -48,7 +48,7 @@ class SLAM_ASR(nn.Module):
 
         """
 
-        # self.language_tokenizer = AutoTokenizer.from_pretrained(language_model_id,trust_remote_code=True)
+        self.language_tokenizer = AutoTokenizer.from_pretrained("RWKV/rwkv-6-world-1b6",trust_remote_code=True)
         # self.language_model = AutoModelForCausalLM.from_pretrained(
         #     language_model_id,
         #     trust_remote_code=True,
@@ -332,9 +332,9 @@ class SLAM_ASR(nn.Module):
         # run the prompt through the language model
 
         # print()
-        # print(f"prompt_embed:{prompt_embed.shape}")
-        # print(f"attention_mask:{prompt_mask.shape}")
-        # print(f"true_labels:{true_labels.shape}")
+        print(f"prompt_embed:\t{prompt_embed.shape}")
+        print(f"attention_mask:\t{prompt_mask.shape}")
+        print(f"true_labels:\t{true_labels.shape}")
         
         # outputs = self.language_model(
         #     inputs_embeds=prompt_embed,
@@ -346,7 +346,7 @@ class SLAM_ASR(nn.Module):
         
         
         # print(f"outputs:{outputs['loss']}")
-        # print(f"logits:\t{outputs['logits'].shape}")
+        print(f"logits:\t{outputs.shape}")
         
         return outputs, true_labels
     
@@ -363,6 +363,9 @@ class SLAM_ASR(nn.Module):
         )
         return outputs
 
+    def return_tokenizer(self):
+        return self.language_tokenizer
+    
     @property
     def config(self):
         return self.language_model.config
