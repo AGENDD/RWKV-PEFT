@@ -6,9 +6,9 @@ data_file='temp_datasets'
 n_layer=24
 n_embd=2048
 
-micro_bsz=16
+micro_bsz=10
 epoch_save=1
-epoch_steps=625
+epoch_steps=10
 ctx_len=1024
 
 QUANT='nf4' 

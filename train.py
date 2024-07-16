@@ -469,7 +469,7 @@ if __name__ == "__main__":
     
     from datasets import load_from_disk
     dataset = load_from_disk("temp_datasets/en-final")
-    dataset = MyDataset(args, dataset.select(range(10000)))
+    dataset = MyDataset(args, dataset.select(range(100)))
     data_loader = DataLoader(dataset, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=0, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
 
     trainer.fit(Total_model, data_loader)
