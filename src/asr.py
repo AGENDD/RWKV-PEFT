@@ -52,6 +52,7 @@ class SLAM_ASR(pl.LightningModule):
     ):
         assert train_mode in ["adapter", "full"]
         super().__init__()
+        self.args = args
         self._device = device
         """
                        |------|
