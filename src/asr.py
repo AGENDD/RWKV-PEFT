@@ -387,6 +387,9 @@ class SLAM_ASR(pl.LightningModule):
         self.language_model.to(self._device, dtype=torch.bfloat16)
         outputs = self.language_model(inputs_embeds=prompt_embed)
         
+        print(f"output:{outputs.shape}")
+        print(f"prompt:{prompt_mask.shape}")
+        
         return outputs
 
     def training_step(self, batch, batch_idx):

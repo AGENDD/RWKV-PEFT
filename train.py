@@ -500,6 +500,7 @@ if __name__ == "__main__":
             print(f"output:{output}")
             print(f"answer:{data['text'].lower()}")
             print()
+            exit(0)
         
     exit(0)
 
