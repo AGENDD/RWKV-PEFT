@@ -374,6 +374,18 @@ class SLAM_ASR(pl.LightningModule):
         
         return outputs, true_labels, prompt_mask
 
+    def generate(self, audios: List[float], stopping_criteria=None):
+        """
+        Generate the transcription
+        """
+        prompt_embed, prompt_mask, _ = self._prepare_input_embeds(audios)
+        
+        outputs = self.language_model(
+            inputs_embeds=prompt_embed,
+            attention_mask=prompt_mask.bool()
+        )
+        return outputs
+
     def training_step(self, batch, batch_idx):
             args = self.args
             if args.loss_mask:
@@ -503,18 +515,6 @@ class SLAM_ASR(pl.LightningModule):
                 return DeepSpeedCPUAdam(optim_groups, lr=self.args.lr_init, betas=self.args.betas, eps=self.args.adam_eps, bias_correction=True, adamw_mode=False, weight_decay=0, amsgrad=False)
             return FusedAdam(optim_groups, lr=self.args.lr_init, betas=self.args.betas, eps=self.args.adam_eps, bias_correction=True, adam_w_mode=False, weight_decay=0, amsgrad=False)
         # return ZeroOneAdam(optim_groups, lr=self.args.lr_init, betas=self.args.betas, eps=self.args.adam_eps, bias_correction=True, weight_decay=0, amsgrad=False, cuda_aware=False)
-
-    def generate(self, audios: List[float], stopping_criteria=None):
-        """
-        Generate the transcription
-        """
-        prompt_embed, prompt_mask, _ = self._prepare_input_embeds(audios)
-        
-        outputs = self.language_model(
-            inputs_embeds=prompt_embed,
-            attention_mask=prompt_mask.bool()
-        )
-        return outputs
 
     def return_tokenizer(self):
         return self.language_tokenizer

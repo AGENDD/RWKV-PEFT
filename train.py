@@ -472,13 +472,28 @@ if __name__ == "__main__":
         Total_model = torch.load(file_path)
         print("load success")
     
-    from datasets import load_from_disk
-    dataset = load_from_disk("temp_datasets/en-final")
-    dataset = MyDataset(args, dataset.select(range(100)))
-    data_loader = DataLoader(dataset, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=0, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
+    OP = 1
+    
+    if(OP == 1):
+        from datasets import load_from_disk
+        dataset = load_from_disk("temp_datasets/en-final")
+        dataset = MyDataset(args, dataset.select(range(100)))
+        data_loader = DataLoader(dataset, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=0, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
 
-    trainer.fit(Total_model, data_loader)
-
+        trainer.fit(Total_model, data_loader)
+    elif(OP == 2):
+        from datasets import load_from_disk
+        dataset = load_from_disk("temp_datasets/en-final").select(range(100))
+        tokenizer = Total_model.return_tokenizer()
+        
+        for data in dataset:
+            output = Total_model(data['speech'], data['text'].lower())
+            print(output.shape)
+            output = tokenizer.decode(output)
+            print(output)
+            print(data['text'].lower())
+            exit(0)
+        
     exit(0)
 
     
