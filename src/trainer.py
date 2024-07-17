@@ -219,10 +219,11 @@ class train_callback(pl.Callback):
                             to_save_dict[name] = state
                 
                 if args.state_tune or args.train_type=='state':
-                    lora_dict = {}
-                    for name, state in to_save_dict.items():
-                        if 'state' in name:
-                            lora_dict[name] = state
+                    # lora_dict = {}
+                    # for name, state in to_save_dict.items():
+                    #     if 'state' in name:
+                    #         lora_dict[name] = state
+                    lora_dict = to_save_dict
                     to_save_dict = lora_dict
 
 
