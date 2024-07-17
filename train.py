@@ -467,7 +467,7 @@ if __name__ == "__main__":
         model,
     )
     
-    file_path = 'output/rwkv-2.pth'
+    file_path = 'output/rwkv-29.pth'
     if(os.path.exists(file_path)):
         Total_model = torch.load(file_path)
         print("load success")
