@@ -495,7 +495,7 @@ if __name__ == "__main__":
             output = tokenizer.decode(output_ids)
             print(f"output:{output}")
             print(f"answer:{data['text'].lower()}")
-            exit(0)
+            print()
         
     exit(0)
 
