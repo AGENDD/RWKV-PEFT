@@ -466,17 +466,11 @@ if __name__ == "__main__":
         "facebook/hubert-large-ls960-ft",
         model,
     )
+    
     file_path = 'output/rwkv-2.pth'
-    
-    try:
-        print("torch.load")
+    if(os.path.exists(file_path)):
         Total_model = torch.load(file_path)
-    except:
-        print('load state dict')
-        Total_model.load_state_dict(torch.load(file_path))
-    
-    print("load success")
-    exit(0)
+        print("load success")
     
     from datasets import load_from_disk
     dataset = load_from_disk("temp_datasets/en-final")
