@@ -489,7 +489,9 @@ if __name__ == "__main__":
         for data in dataset:
             output = Total_model.generate(data['speech'])
             print(output.shape)
-            output = tokenizer.decode(output[0])
+            output_ids = torch.argmax(output, dim=-1)
+            output_ids = output_ids.flatten().tolist()
+            output = tokenizer.decode(output)
             print(output)
             print(data['text'].lower())
             exit(0)
