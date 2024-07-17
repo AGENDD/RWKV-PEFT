@@ -244,6 +244,11 @@ class train_callback(pl.Callback):
                     to_save_dict = lora_dict
 
                 try:
+                    import glob
+                    files = glob.glob(os.path.join(args.proj_dir, '*.pth'))
+                    for file in files:
+                        os.remove(file)
+                        
                     my_save(
                         args, trainer,
                         to_save_dict,
