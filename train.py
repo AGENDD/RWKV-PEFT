@@ -489,7 +489,7 @@ if __name__ == "__main__":
         for data in dataset:
             output = Total_model.generate(data['speech'])
             print(output.shape)
-            output = tokenizer.decode(output)
+            output = tokenizer.decode(output[0])
             print(output)
             print(data['text'].lower())
             exit(0)
