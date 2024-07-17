@@ -48,7 +48,7 @@ class SpeechEncoder(nn.Module):
             nn.Linear(self.model_output_dim * self.downsample_K, self.hidden_dim),
             nn.ReLU(),
             nn.Linear(self.hidden_dim, self.project_dim),
-        ).to(self.device)
+        ).to(self.device,dtype=torch.bfloat16)
         self.set_gradient(train_mode)
 
     def set_gradient(self, train_mode):
