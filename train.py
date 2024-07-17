@@ -488,8 +488,11 @@ if __name__ == "__main__":
         from datasets import load_from_disk
         dataset = load_from_disk("temp_datasets/en-final").select(range(100))
         tokenizer = Total_model.return_tokenizer()
+        Total_model.to("cuda")
         
         for data in dataset:
+            
+            
             output,_,_ = Total_model(data['speech'], data['text'].lower())
             # print(output.shape)
             output_ids = torch.argmax(output, dim=-1)
