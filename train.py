@@ -492,8 +492,8 @@ if __name__ == "__main__":
             output_ids = torch.argmax(output, dim=-1)
             output_ids = output_ids.flatten().tolist()
             output = tokenizer.decode(output)
-            print(output)
-            print(data['text'].lower())
+            print(f"output:{output}")
+            print(f"answer:{data['text'].lower()}")
             exit(0)
         
     exit(0)
