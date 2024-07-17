@@ -471,6 +471,8 @@ if __name__ == "__main__":
     if(os.path.exists(file_path)):
         Total_model = torch.load(file_path)
         print("load success")
+    else:
+        print("load origin")
     
     OP = 2
     
@@ -488,11 +490,12 @@ if __name__ == "__main__":
         
         for data in dataset:
             output = Total_model.generate(data['speech'])
-            print(output.shape)
+            # print(output.shape)
             output_ids = torch.argmax(output, dim=-1)
             output_ids = output_ids.flatten().tolist()
-            
             output = tokenizer.decode(output_ids)
+            
+            
             print(f"output:{output}")
             print(f"answer:{data['text'].lower()}")
             print()
