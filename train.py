@@ -472,7 +472,7 @@ if __name__ == "__main__":
         Total_model = torch.load(file_path)
         print("load success")
     
-    OP = 1
+    OP = 2
     
     if(OP == 1):
         from datasets import load_from_disk
@@ -487,7 +487,7 @@ if __name__ == "__main__":
         tokenizer = Total_model.return_tokenizer()
         
         for data in dataset:
-            output = Total_model(data['speech'], data['text'].lower())
+            output = Total_model.generate(data['speech'])
             print(output.shape)
             output = tokenizer.decode(output)
             print(output)

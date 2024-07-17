@@ -380,10 +380,12 @@ class SLAM_ASR(pl.LightningModule):
         """
         prompt_embed, prompt_mask, _ = self._prepare_input_embeds(audios)
         
-        outputs = self.language_model(
-            inputs_embeds=prompt_embed,
-            attention_mask=prompt_mask.bool()
-        )
+        # outputs = self.language_model(
+        #     inputs_embeds=prompt_embed,
+        #     attention_mask=prompt_mask.bool()
+        # )
+        outputs = self.language_model(inputs_embeds=prompt_embed)
+        
         return outputs
 
     def training_step(self, batch, batch_idx):
