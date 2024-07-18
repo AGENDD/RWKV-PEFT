@@ -500,7 +500,7 @@ if __name__ == "__main__":
             output_ids = output_ids.flatten().tolist()
             output = tokenizer.decode(output_ids)
             
-            
+            output = output.replace("\n","")
             print(f"output:{output}")
             print(f"answer:{data['text'].lower()}")
             print()
