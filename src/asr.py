@@ -250,7 +250,7 @@ class SLAM_ASR(pl.LightningModule):
                 audio_no_padding_eoa.append(t)
             
             #audio mask 左边添加1
-            ones = torch.ones(mask.size(0), 1)
+            ones = torch.ones(mask.size(0), 1).to(self._device)
             mask =torch.cat((ones, mask), dim=1)
             
             
