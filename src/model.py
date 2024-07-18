@@ -1253,11 +1253,26 @@ class RWKV(pl.LightningModule):
 
         def generate(self, idx=None, inputs_embeds=None):
             MAX_LENGTH = 200
-            print(inputs_embeds.shape)
             
+            print(f"input seq:{inputs_embeds.shape}")
             output_seq = self(idx,inputs_embeds)
-            
-            print(output_seq.shape)
+            print(f"output seq:{output_seq.shape}")
+            for i in MAX_LENGTH:
+                
+                last_logit = output_seq[:][-1][:]
+                print(f"last logit:{last_logit.shape}")
+                probabilities = F.softmax(last_logit, dim=-1)
+                print(f"probability:{probabilities.shape}")
+                _, top_idx = probabilities.topk(1, dim=-1)
+                print(f"top_idx:{top_idx.shape}")
+                next_input = self.embed(top_idx.squeeze(-1))
+                print(f"last logits embedded:{next_input.shape}")
+                inputs_embeds = torch.cat((inputs_embeds,next_input.unsqueeze(1)), dim = 1)
+                print(f"new input:{inputs_embeds.shape}")
+                output_seq = self(idx,inputs_embeds)
+                print(f"output seq:{output_seq.shape}")
+                exit(0)
+            return output_seq
             exit(0)
             # init_input = output_seq[0][-1][:]
             
