@@ -334,7 +334,7 @@ class SLAM_ASR(pl.LightningModule):
             #########处理true_labels ###################################################
             # print()
             transcriptions_eos = []
-            for strr in transcriptions:
+            for starr in transcriptions:
                 starr = starr + "<s>"
                 transcriptions_eos.append(starr)
             _labels = self.language_tokenizer(
