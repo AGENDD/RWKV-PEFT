@@ -1251,7 +1251,7 @@ class RWKV(pl.LightningModule):
 
             return x
 
-        def generate(self, idx, inputs_embeds):
+        def generate(self, idx=None, inputs_embeds=None):
             MAX_LENGTH = 200
             print(inputs_embeds.shape)
             
