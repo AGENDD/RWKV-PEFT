@@ -385,7 +385,7 @@ class SLAM_ASR(pl.LightningModule):
         #     attention_mask=prompt_mask.bool()
         # )
         self.language_model.to(self._device, dtype=torch.bfloat16)
-        outputs = self.language_model(inputs_embeds=prompt_embed)
+        outputs = self.language_model.generate(inputs_embeds=prompt_embed)
         
         return outputs
 

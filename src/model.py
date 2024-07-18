@@ -1251,6 +1251,20 @@ class RWKV(pl.LightningModule):
 
             return x
 
+        def generate(self, idx, inputs_embeds):
+            MAX_LENGTH = 200
+            print(inputs_embeds.shape)
+            
+            output_seq = self(idx,inputs_embeds)
+            
+            print(output_seq.shape)
+            exit(0)
+            # init_input = output_seq[0][-1][:]
+            
+            # for i in range(MAX_LENGTH):
+                
+            
+
         def training_step(self, batch, batch_idx):
             args = self.args
             if args.loss_mask:
