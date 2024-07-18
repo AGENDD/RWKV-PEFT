@@ -475,7 +475,7 @@ if __name__ == "__main__":
     else:
         print("load origin")
     
-    OP = 2
+    OP = 3
     
     if(OP == 1):
         from datasets import load_from_disk
@@ -500,7 +500,23 @@ if __name__ == "__main__":
             output_ids = output_ids.flatten().tolist()
             output = tokenizer.decode(output_ids)
             
-            output = output.replace("\n","")
+            print(f"output:{output}")
+            print(f"answer:{data['text'].lower()}")
+            print()
+            exit(0)
+    elif(OP == 3):
+        from datasets import load_from_disk
+        dataset = load_from_disk("temp_datasets/en-final").select(range(100))
+        tokenizer = Total_model.return_tokenizer()
+        Total_model.to("cuda", dtype=torch.bfloat16)
+        for data in dataset:
+            
+            output,_,_ = Total_model(data['speech'], data['text'].lower())
+            # print(output.shape)
+            output_ids = torch.argmax(output, dim=-1)
+            output_ids = output_ids.flatten().tolist()
+            output = tokenizer.decode(output_ids)
+            
             print(f"output:{output}")
             print(f"answer:{data['text'].lower()}")
             print()
