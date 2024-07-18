@@ -1257,7 +1257,7 @@ class RWKV(pl.LightningModule):
             print(f"input seq:{inputs_embeds.shape}")
             output_seq = self(idx,inputs_embeds)
             print(f"output seq:{output_seq.shape}")
-            for i in MAX_LENGTH:
+            for i in range(MAX_LENGTH):
                 
                 last_logit = output_seq[:][-1][:]
                 print(f"last logit:{last_logit.shape}")
