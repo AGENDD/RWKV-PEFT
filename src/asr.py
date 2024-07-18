@@ -336,10 +336,16 @@ class SLAM_ASR(pl.LightningModule):
             true_labels = _labels.input_ids
             # print(f"labels:\t{true_labels.shape}")
             
+            end_of_sentence = self.language_tokenizer(
+                "<s>",
+                return_tensors="pt",
+            ).to(self.device)
+            with torch.no_grad():
+                end_of_sentence = self.language_model.embed(end_of_sentence.input_ids)
+            print(end_of_sentence.shape)
+            
+            exit(0)
                 #在ture label左侧填充audio 长度的-100， 同时在右侧填充-100使batch对齐
-                
-                
-
             padded_labels = []
             for i,t in enumerate(true_labels):
                 back_padding = max_mask - t.shape[0] - audio_no_padding[i].shape[0]
