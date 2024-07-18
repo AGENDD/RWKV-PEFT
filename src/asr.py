@@ -396,11 +396,10 @@ class SLAM_ASR(pl.LightningModule):
         )
         # run the prompt through the language model
 
-        # print()
-        print(f"prompt_embed:\t{prompt_embed.shape}")
-        print(f"attention_mask:\t{prompt_mask.shape}")
-        print(f"true_labels:\t{true_labels.shape}")
-        exit(0)
+        # print(f"prompt_embed:\t{prompt_embed.shape}")
+        # print(f"attention_mask:\t{prompt_mask.shape}")
+        # print(f"true_labels:\t{true_labels.shape}")
+        # exit(0)
         # outputs = self.language_model(
         #     inputs_embeds=prompt_embed,
         #     attention_mask=prompt_mask.bool(),
