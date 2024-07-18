@@ -232,10 +232,20 @@ class SLAM_ASR(pl.LightningModule):
         if transcriptions is not None:
             
             ###########处理prompt_embed ###############################################################################
-                #去除speech padding
+            #去除speech padding
             audio_no_padding = self.remove_padding(speech_output,mask)
             # print(f"audio with no padding:\t{len(audio_no_padding)}-{[len(x) for x in audio_no_padding]}")
             
+            end_of_audio = self.language_tokenizer(
+                "#",
+                return_tensors="pt",
+            ).to(self.device)
+            
+            end_of_audio = self.language_model.embed(end_of_audio.input_ids)
+            print(f"audio with no padding:\t{len(audio_no_padding)}-{[len(x) for x in audio_no_padding]}")
+            print(f"end of audio:\t{end_of_audio.shape}")
+            
+            exit(0)
             _labels = self.language_tokenizer(
                 transcriptions,
                 return_tensors="pt",
@@ -247,6 +257,8 @@ class SLAM_ASR(pl.LightningModule):
                 # labels_embeds = self.language_model.rwkv.get_input_embeddings()(_labels.input_ids)
                 labels_embeds = self.language_model.embed(_labels.input_ids)
             att3 = _labels.attention_mask
+            
+            
             # print(f"embed transcription:\t{labels_embeds.shape}")
             # print(f"transcription mask:\t{att3.shape}")
             
