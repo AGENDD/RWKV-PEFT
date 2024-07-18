@@ -503,7 +503,7 @@ if __name__ == "__main__":
             print(f"output:{output}")
             print(f"answer:{data['text'].lower()}")
             print()
-            exit(0)
+
     elif(OP == 3):
         from datasets import load_from_disk
         dataset = load_from_disk("temp_datasets/en-final").select(range(100))
