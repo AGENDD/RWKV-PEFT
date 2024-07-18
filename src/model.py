@@ -1259,7 +1259,7 @@ class RWKV(pl.LightningModule):
             print(f"output seq:{output_seq.shape}")
             for i in range(MAX_LENGTH):
                 
-                last_logit = output_seq[:][-1][:]
+                last_logit = output_seq[:,-1,:]
                 print(f"last logit:{last_logit.shape}")
                 probabilities = F.softmax(last_logit, dim=-1)
                 print(f"probability:{probabilities.shape}")
