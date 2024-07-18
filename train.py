@@ -475,7 +475,7 @@ if __name__ == "__main__":
     else:
         print("load origin")
     
-    OP = 2
+    OP = 3
     
     if(OP == 1):
         from datasets import load_from_disk
@@ -510,8 +510,8 @@ if __name__ == "__main__":
         tokenizer = Total_model.return_tokenizer()
         Total_model.to("cuda", dtype=torch.bfloat16)
         for data in dataset:
-            
-            output,_,_ = Total_model(data['speech'], data['text'].lower())
+            text = data['text'].lower().replace("salary", "apple")
+            output,_,_ = Total_model(data['speech'], text)
             # print(output.shape)
             output_ids = torch.argmax(output, dim=-1)
             output_ids = output_ids.flatten().tolist()
