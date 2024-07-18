@@ -467,7 +467,7 @@ if __name__ == "__main__":
         model,
     )
     
-    file_path = 'output/rwkv-17.pth'
+    file_path = 'output/rwkv-29.pth'
     if(os.path.exists(file_path)):
         # Total_model = torch.load(file_path)
         Total_model.load_state_dict(torch.load(file_path))
@@ -475,7 +475,7 @@ if __name__ == "__main__":
     else:
         print("load origin")
     
-    OP = 1
+    OP = 2
     
     if(OP == 1):
         from datasets import load_from_disk
@@ -503,6 +503,7 @@ if __name__ == "__main__":
             print(f"output:{output}")
             print(f"answer:{data['text'].lower()}")
             print()
+            exit(0)
 
     elif(OP == 3):
         from datasets import load_from_disk
