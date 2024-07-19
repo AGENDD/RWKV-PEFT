@@ -232,18 +232,17 @@ class SLAM_ASR(pl.LightningModule):
         if transcriptions is not None:
             
             ###########处理prompt_embed ###############################################################################
+            
             #去除speech padding
-            audio_no_padding = self.remove_padding(speech_output,mask)            
+            audio_no_padding = self.remove_padding(speech_output,mask)  
+            
+            #在speech结尾添加end of audio：#
             end_of_audio = self.language_tokenizer(
                 "#",
                 return_tensors="pt",
             ).to(self.device)
             with torch.no_grad():
                 end_of_audio = self.language_model.embed(end_of_audio.input_ids)
-            
-            # print(f"audio with no padding:\t{len(audio_no_padding)}-{[len(x) for x in audio_no_padding]}")
-            # print(f"end of audio:\t{end_of_audio.shape}")
-            
             audio_no_padding_eoa = []
             for t in audio_no_padding:
                 t = torch.cat((t, end_of_audio.squeeze(0)))
@@ -253,7 +252,7 @@ class SLAM_ASR(pl.LightningModule):
             ones = torch.ones(mask.size(0), 1).to(self._device)
             mask =torch.cat((ones, mask), dim=1)
             
-            
+            #处理transcription，得到embeded label
             _labels = self.language_tokenizer(
                 transcriptions,
                 return_tensors="pt",
@@ -266,15 +265,11 @@ class SLAM_ASR(pl.LightningModule):
                 labels_embeds = self.language_model.embed(_labels.input_ids)
             att3 = _labels.attention_mask
             
-            
-            # print(f"embed transcription:\t{labels_embeds.shape}")
-            # print(f"transcription mask:\t{att3.shape}")
-            
-                #拼接speech和label
+            #拼接speech和label
             audio_label = self.concatenate_audio_transcription(audio_no_padding_eoa , labels_embeds)
             # print(f"concatenated inputs:\t{len(audio_label)}-{[len(x) for x in audio_label]}")
         
-                #对拼接后的内容进行padding
+            #对拼接后的内容进行padding
             max_seq = max([len(x) for x in audio_label])
             for i, x in enumerate(audio_label):
                 times = max_seq - len(x)
@@ -296,26 +291,21 @@ class SLAM_ASR(pl.LightningModule):
             for mask_i in mask:
                 mask_i_no_zero = mask_i[mask_i != 0]
                 mask_no_zero.append(mask_i_no_zero)
-            # print(f"audio mask with no 0:\t{len(mask_no_zero)}-{[len(x) for x in mask_no_zero]}")
             
-                # 将audio mask和transcription mask 拼接
+            # 将audio mask和transcription mask 拼接
             mask_concatenate = self.concatenate_audio_transcription(mask_no_zero, att3)
-            # print(f"audio mask + transcription mask:\t{len(mask_concatenate)}-{[len(x) for x in mask_concatenate]}")
             
-                #向mask 填充0
+            #向mask 填充0
             max_mask = max([len(x) for x in mask_concatenate])
             for i, x in enumerate(mask_concatenate):
                 times = max_mask - len(x)
                 for _ in range(times):
                     x = torch.cat((x,torch.tensor([0]).to(self.device)))
                 mask_concatenate[i] = x
-            # print(f"padded inputs:\t{len(mask_concatenate)}-{[len(x) for x in mask_concatenate]}")
-            
-                #转换成tensor
+
+            #转换成tensor
             mask_concatenate = torch.stack(mask_concatenate)
-            # print(f"padded attention mask tensor:\t{mask_concatenate.shape}")
             prompt_mask = mask_concatenate
-            # print()
             
             # #########处理loss mask #####################################################
             # import torch.nn.functional as F
@@ -333,6 +323,8 @@ class SLAM_ASR(pl.LightningModule):
             
             #########处理true_labels ###################################################
             # print()
+            
+            # 为transcription 结尾添加 end of sentence：<s>
             transcriptions_eos = []
             for starr in transcriptions:
                 starr = starr + "<s>"
@@ -345,14 +337,9 @@ class SLAM_ASR(pl.LightningModule):
                 add_special_tokens=False,
             ).to(self.device)
             true_labels = _labels.input_ids
-            # print(f"labels:\t{true_labels.shape}")
-        
-                #在ture label左侧填充audio 长度的-100， 同时在右侧填充-100使batch对齐
+
+            #在ture label左侧填充audio 长度的-100， 同时在右侧填充-100使batch对齐
             padded_labels = []
-            # print(f"transcriptions:{transcriptions.shape}")
-            # print(f"true label:{true_labels.shape}")
-            # print(f"audio_no_padding:{len(audio_no_padding)}")
-            # exit(0)
             for i,t in enumerate(true_labels):
                 back_padding = max_mask - t.shape[0] - audio_no_padding[i].shape[0]
                 t = torch.cat(
@@ -375,7 +362,6 @@ class SLAM_ASR(pl.LightningModule):
                 padded_labels.append(t)
             
             padded_labels = torch.stack(padded_labels)
-            # print(f"true_labels:\t{padded_labels.shape}")
             true_labels = padded_labels
         else:           
             end_of_audio = self.language_tokenizer(
