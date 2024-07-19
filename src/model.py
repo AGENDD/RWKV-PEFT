@@ -1268,8 +1268,12 @@ class RWKV(pl.LightningModule):
                 output_seq = self(idx,inputs_embeds)
 
             # print(f"output_seq:{output_seq.shape}")
+            last_logit = output_seq[:,-1,:]
+            true_output.append(last_logit)
+            
+            
             true_output=torch.stack(true_output)
-            return true_output,temp
+            return true_output,output_seq
             # init_input = output_seq[0][-1][:]
             
             # for i in range(MAX_LENGTH):
