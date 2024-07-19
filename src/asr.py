@@ -96,7 +96,7 @@ class SLAM_ASR(pl.LightningModule):
         #########################################
                 
         # language_project_dim = self.language_model.args.hidden_size
-        language_project_dim = 2048
+        language_project_dim = 2560
         
         self.speech_encoder = SpeechEncoder(
             speech_encoder_model_id,

@@ -1,10 +1,10 @@
-load_model='temp_models/RWKV-x060-World-1B6-v2.1-20240328-ctx4096.pth'
+load_model='temp_models/RWKV-x060-World-3B-v2.1-20240417-ctx4096.pth'
 proj_dir='output'
 data_file='temp_datasets'
 
 
-n_layer=24
-n_embd=2048
+n_layer=32
+n_embd=2560
 
 micro_bsz=10
 epoch_save=1
