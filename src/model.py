@@ -1266,6 +1266,8 @@ class RWKV(pl.LightningModule):
                 inputs_embeds = torch.cat((inputs_embeds,next_input.unsqueeze(1)), dim = 1)
                 output_seq = self(idx,inputs_embeds)
 
+            print(f"output_seq:{output_seq.shape}")
+            
             return output_seq
             # init_input = output_seq[0][-1][:]
             

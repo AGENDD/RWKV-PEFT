@@ -475,7 +475,7 @@ if __name__ == "__main__":
     else:
         print("load origin")
     
-    OP = 3
+    OP = 2
     
     if(OP == 1):
         from datasets import load_from_disk
@@ -485,7 +485,7 @@ if __name__ == "__main__":
 
         trainer.fit(Total_model, data_loader)
         
-    elif(OP == 2):
+    elif(OP == 2):#自回归
         from datasets import load_from_disk
         dataset = load_from_disk("temp_datasets/en-final").select(range(100))
         tokenizer = Total_model.return_tokenizer()
