@@ -349,7 +349,7 @@ class SLAM_ASR(pl.LightningModule):
         
                 #在ture label左侧填充audio 长度的-100， 同时在右侧填充-100使batch对齐
             padded_labels = []
-            
+            print(f"transcriptions:{transcriptions.shape}")
             print(f"true label:{true_labels.shape}")
             print(f"audio_no_padding:{len(audio_no_padding)}")
             exit(0)
