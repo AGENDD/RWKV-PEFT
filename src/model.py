@@ -1254,7 +1254,7 @@ class RWKV(pl.LightningModule):
         def generate(self, idx=None, inputs_embeds=None):
             MAX_LENGTH = 100
             output_seq = self(idx,inputs_embeds)#调用模型
-
+            temp = output_seq.clone()
             true_output = []
             
             for i in range(MAX_LENGTH):
@@ -1269,7 +1269,7 @@ class RWKV(pl.LightningModule):
 
             # print(f"output_seq:{output_seq.shape}")
             true_output=torch.stack(true_output)
-            return true_output
+            return true_output,temp
             # init_input = output_seq[0][-1][:]
             
             # for i in range(MAX_LENGTH):
