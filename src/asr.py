@@ -373,8 +373,7 @@ class SLAM_ASR(pl.LightningModule):
             padded_labels = torch.stack(padded_labels)
             # print(f"true_labels:\t{padded_labels.shape}")
             true_labels = padded_labels
-        else:
-            audio_no_padding = self.remove_padding(speech_output,mask)            
+        else:           
             end_of_audio = self.language_tokenizer(
                 "#",
                 return_tensors="pt",
@@ -382,10 +381,10 @@ class SLAM_ASR(pl.LightningModule):
             with torch.no_grad():
                 end_of_audio = self.language_model.embed(end_of_audio.input_ids)
             
-            print(f"speech output:{speech_output.shape}")
-            print(f"end_of_audio:{end_of_audio.shape}")
-            exit(0)
-            speech_output = torch.cat((speech_output, end_of_audio.unsqueeze(1)), dim= 1)
+            # print(f"speech output:{speech_output.shape}")
+            # print(f"end_of_audio:{end_of_audio.shape}")
+            # exit(0)
+            speech_output = torch.cat((speech_output, end_of_audio), dim= 1)
             
             prompt_embed = speech_output
             prompt_mask = mask
