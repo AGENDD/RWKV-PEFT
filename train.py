@@ -513,7 +513,7 @@ if __name__ == "__main__":
         Total_model.to("cuda", dtype=torch.bfloat16)
         for data in dataset:
             text = data['text'].lower().replace("salary", "apple")
-            output,_,_ = Total_model(data['speech'], text)
+            output,_,_ = Total_model([data['speech']], [text])
             # print(output.shape)
             output_ids = torch.argmax(output, dim=-1)
             output_ids = output_ids.flatten().tolist()

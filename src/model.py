@@ -1255,6 +1255,8 @@ class RWKV(pl.LightningModule):
             MAX_LENGTH = 100
             output_seq = self(idx,inputs_embeds)#调用模型
 
+            
+            
             for i in range(MAX_LENGTH):
                 
                 last_logit = output_seq[:,-1,:]
