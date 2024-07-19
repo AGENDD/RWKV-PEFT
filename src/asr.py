@@ -351,7 +351,7 @@ class SLAM_ASR(pl.LightningModule):
             padded_labels = []
             
             print(f"true label:{true_labels.shape}")
-            print(f"audio_no_padding:{audio_no_padding.shape}")
+            print(f"audio_no_padding:{len(audio_no_padding)}")
             exit(0)
             for i,t in enumerate(true_labels):
                 back_padding = max_mask - t.shape[0] - audio_no_padding[i].shape[0]
