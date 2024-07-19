@@ -475,7 +475,7 @@ if __name__ == "__main__":
     else:
         print("load origin")
     
-    OP = 2
+    OP = 3
     
     if(OP == 1):
         from datasets import load_from_disk
