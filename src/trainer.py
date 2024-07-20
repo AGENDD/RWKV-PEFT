@@ -26,7 +26,8 @@ class train_callback(pl.Callback):
     def __init__(self, args):
         super().__init__()
         self.args = args
-
+        self.step = 0
+        
     def on_train_batch_start(self, trainer, pl_module, batch, batch_idx):
         args = self.args
         # if args.cuda_cleanup > 0:
@@ -114,6 +115,25 @@ class train_callback(pl.Callback):
                     trainer.my_wandb = wandb
 
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
+        self.step += 1
+        if(self.step % 100 == 0):
+            print("saving...")
+            to_save_dict = pl_module.state_dict()
+            try:
+                import glob
+                files = glob.glob(os.path.join(args.proj_dir, '*.pth'))
+                for file in files:
+                    os.remove(file)
+                    
+                my_save(
+                    args, trainer,
+                    to_save_dict,
+                    f"{args.proj_dir}/rwkv-{self.step}.pth",
+                )
+            except Exception as e:
+                print('Error\n\n', e, '\n\n')
+        
+        
         args = self.args
         token_per_step = args.ctx_len * args.real_bsz
         real_step = trainer.global_step + args.epoch_begin * args.epoch_steps
@@ -243,19 +263,19 @@ class train_callback(pl.Callback):
                             lora_dict[name] = state
                     to_save_dict = lora_dict
 
-                try:
-                    import glob
-                    files = glob.glob(os.path.join(args.proj_dir, '*.pth'))
-                    for file in files:
-                        os.remove(file)
+                # try:
+                #     import glob
+                #     files = glob.glob(os.path.join(args.proj_dir, '*.pth'))
+                #     for file in files:
+                #         os.remove(file)
                         
-                    my_save(
-                        args, trainer,
-                        to_save_dict,
-                        f"{args.proj_dir}/rwkv-{args.epoch_begin + trainer.current_epoch}.pth",
-                    )
-                except Exception as e:
-                    print('Error\n\n', e, '\n\n')
+                #     my_save(
+                #         args, trainer,
+                #         to_save_dict,
+                #         f"{args.proj_dir}/rwkv-{args.epoch_begin + trainer.current_epoch}.pth",
+                #     )
+                # except Exception as e:
+                #     print('Error\n\n', e, '\n\n')
 
         if trainer.is_global_zero:  # logging
             trainer.my_log.write(f"{args.epoch_begin + trainer.current_epoch} {trainer.my_epoch_loss:.6f} {math.exp(trainer.my_epoch_loss):.4f} {trainer.my_lr:.8f} {datetime.datetime.now()} {trainer.current_epoch}\n")
