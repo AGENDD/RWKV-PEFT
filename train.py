@@ -467,13 +467,17 @@ if __name__ == "__main__":
         model,
     )
     
-    file_path = 'output/rwkv-19.pth'
-    if(os.path.exists(file_path)):
-        # Total_model = torch.load(file_path)
-        Total_model.load_state_dict(torch.load(file_path))
-        print("load success")
+    import glob
+    file_paths = glob.glob('output/rwkv*.pth')
+
+    # 检查是否找到了文件
+    if file_paths:
+        for file_path in file_paths:
+            # 加载模型
+            Total_model.load_state_dict(torch.load(file_path))
+            print(f"Loaded model from {file_path}")
     else:
-        print("load origin")
+        print("No files found. Loading origin model.")
     
     OP = 1
     
