@@ -506,9 +506,7 @@ if __name__ == "__main__":
             
             total_ids = torch.argmax(total, dim=-1)
             total_ids = total_ids.flatten().tolist()
-            total = tokenizer.decode(total_ids)
             
-            print(f"total:\n{total}")
             print(f"output:\n{output}")
             print(f"answer:\n{data['text'].lower()}")
             print("\n\n")
