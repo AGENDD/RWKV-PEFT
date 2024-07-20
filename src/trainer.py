@@ -115,6 +115,8 @@ class train_callback(pl.Callback):
                     trainer.my_wandb = wandb
 
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
+        args = self.args
+        
         self.step += 1
         if(self.step % 100 == 0):
             print("saving...")
@@ -134,7 +136,7 @@ class train_callback(pl.Callback):
                 print('Error\n\n', e, '\n\n')
         
         
-        args = self.args
+        
         token_per_step = args.ctx_len * args.real_bsz
         real_step = trainer.global_step + args.epoch_begin * args.epoch_steps
         if trainer.is_global_zero:  # logging
