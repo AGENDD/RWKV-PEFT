@@ -1251,7 +1251,7 @@ class RWKV(pl.LightningModule):
 
             return x
 
-        def generate(self, idx=None, inputs_embeds=None):
+        def generate(self, tokenizer, idx=None, inputs_embeds=None,):
             MAX_LENGTH = 100
             output_seq = self(idx,inputs_embeds)#调用模型
             temp = output_seq.clone()
@@ -1263,13 +1263,16 @@ class RWKV(pl.LightningModule):
                 true_output.append(last_logit)
                 probabilities = F.softmax(last_logit, dim=-1)
                 _, top_idx = probabilities.topk(1, dim=-1)
+                
+                decoded_token = tokenizer.decode(top_idx.squeeze(-1))
+                if decoded_token == '<s>':
+                    break
+                
                 next_input = self.embed(top_idx.squeeze(-1))
                 inputs_embeds = torch.cat((inputs_embeds,next_input.unsqueeze(1)), dim = 1)
                 output_seq = self(idx,inputs_embeds)
 
-            # print(f"output_seq:{output_seq.shape}")
-            last_logit = output_seq[:,-1,:]
-            true_output.append(last_logit)
+            
             
             
             true_output=torch.stack(true_output)
