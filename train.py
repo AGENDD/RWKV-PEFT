@@ -532,8 +532,8 @@ if __name__ == "__main__":
             exit(0)
     elif(OP == 4):
         from datasets import load_dataset
-        ds1 = load_dataset("librispeech_asr","clean",split="validation")
-        ds2 = load_dataset("librispeech_asr","other",split="validation")
+        ds1 = load_dataset("librispeech_asr","clean",split="test")
+        ds2 = load_dataset("librispeech_asr","other",split="test")
         dss = [ds1,ds2]
         tokenizer = Total_model.return_tokenizer()
         Total_model.to("cuda", dtype=torch.bfloat16)
@@ -558,7 +558,7 @@ if __name__ == "__main__":
                 
                 output = Total_model.generate(x) 
                 output = ''.join(output)
-                predictions.append(x)
+                predictions.append(output)
                 references.append(z)
             
             average_wer = calculate_wer(predictions, references)
