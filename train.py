@@ -499,14 +499,15 @@ if __name__ == "__main__":
         for data in dataset:
             # output,_,_ = Total_model(data['speech'], data['text'].lower())
             
-            output, total = Total_model.generate(data['speech'])
+            output= Total_model.generate(data['speech'])
             # print(output.shape)
-            output_ids = torch.argmax(output, dim=-1)
-            output_ids = output_ids.flatten().tolist()
-            output = tokenizer.decode(output_ids)
-            
-            total_ids = torch.argmax(total, dim=-1)
-            total_ids = total_ids.flatten().tolist()
+            # output_ids = torch.argmax(output, dim=-1)
+            # output_ids = output_ids.flatten().tolist()
+            # output = tokenizer.decode(output_ids)
+            # output = output.replace("<s>","")
+            output = ''.join(output)
+            # total_ids = torch.argmax(total, dim=-1)
+            # total_ids = total_ids.flatten().tolist()
             
             print(f"output:\n{output}")
             print(f"answer:\n{data['text'].lower()}")
@@ -529,7 +530,39 @@ if __name__ == "__main__":
             print(f"answer:{data['text'].lower()}")
             print()
             exit(0)
+    elif(OP == 4):
+        from datasets import load_dataset
+        ds1 = load_dataset("librispeech_asr","clean",split="validation")
+        ds2 = load_dataset("librispeech_asr","other",split="validation")
+        dss = [ds1,ds2]
+        tokenizer = Total_model.return_tokenizer()
+        Total_model.to("cuda", dtype=torch.bfloat16)
         
+        from jiwer import wer
+        def calculate_wer(predictions, references):
+            total_wer = 0.0
+            for pred, ref in zip(predictions, references):
+                total_wer += wer(ref, pred)
+            average_wer = total_wer / len(predictions)
+            return average_wer
+        
+        from tqdm import tqdm
+        for ds in dss:
+            predictions = []
+            references = []
+            for i in tqdm(range(len(ds))):
+                x = ds[i]["audio"]["array"]
+                z = ds[i]["text"].lower()
+                # asr(x)
+                # print(f"Audio length:{len(x)/16000} s")
+                
+                output = Total_model.generate(x) 
+                output = ''.join(output)
+                predictions.append(x)
+                references.append(z)
+            
+            average_wer = calculate_wer(predictions, references)
+            print(f"Average WER: {average_wer}")
     exit(0)
 
     
