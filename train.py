@@ -478,7 +478,7 @@ if __name__ == "__main__":
     else:
         print("No files found. Loading origin model.")
     
-    OP = 1
+    OP = 2
     
     if(OP == 1):
         from datasets import load_from_disk
@@ -489,13 +489,14 @@ if __name__ == "__main__":
         trainer.fit(Total_model, data_loader)
         
     elif(OP == 2):#自回归
+        
         from datasets import load_from_disk
-        dataset = load_from_disk("temp_datasets/en-final").select(range(100))
+        dataset = load_from_disk("temp_datasets/en-final")
+        dataset = dataset.select(range(len(dataset) - 100, len(dataset)))
         tokenizer = Total_model.return_tokenizer()
         Total_model.to("cuda", dtype=torch.bfloat16)
         
         for data in dataset:
-            
             # output,_,_ = Total_model(data['speech'], data['text'].lower())
             
             output, total = Total_model.generate(data['speech'])
