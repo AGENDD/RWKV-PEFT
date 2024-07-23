@@ -468,8 +468,8 @@ if __name__ == "__main__":
     )
     
     import glob
-    file_paths = glob.glob('output/rwkv-adapter*.pth')
-
+    # file_paths = glob.glob('output/rwkv-adapter*.pth')
+    file_paths = glob.glob('output/rwkv*.pth')
     # 检查是否找到了文件
     if file_paths:
         file_path = file_paths[0]
