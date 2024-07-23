@@ -468,21 +468,22 @@ if __name__ == "__main__":
     )
     
     import glob
-    file_paths = glob.glob('output/rwkv*.pth')
+    file_paths = glob.glob('output/rwkv-adapter*.pth')
 
     # 检查是否找到了文件
     if file_paths:
         file_path = file_paths[0]
-        Total_model.load_state_dict(torch.load(file_path))
+        Total_model.load_state_dict(torch.load(file_path), strict=False)
         print(f"Loaded model from {file_path}")
     else:
         print("No files found. Loading origin model.")
     
-    OP = 2
+    OP = 1 
     
     if(OP == 1):
         from datasets import load_from_disk
         dataset = load_from_disk("temp_datasets/en-final")
+        dataset = dataset.select(range(0, len(dataset) - 100))
         dataset = MyDataset(args, dataset)
         data_loader = DataLoader(dataset, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=0, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
 
@@ -492,6 +493,7 @@ if __name__ == "__main__":
         
         from datasets import load_from_disk
         dataset = load_from_disk("temp_datasets/en-final")
+        print(len(dataset))
         dataset = dataset.select(range(len(dataset) - 100, len(dataset)))
         tokenizer = Total_model.return_tokenizer()
         Total_model.to("cuda", dtype=torch.bfloat16)

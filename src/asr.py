@@ -278,7 +278,7 @@ class SLAM_ASR(pl.LightningModule):
                 audio_label[i] = x
             # print(f"padded inputs:\t{len(audio_label)}-{[len(x) for x in audio_label]}")
             
-                #转换成tensor
+            #转换成tensor
             audio_label = torch.stack(audio_label)
             # print(f"padded inputs tensor:\t{audio_label.shape}")
             prompt_embed = audio_label
