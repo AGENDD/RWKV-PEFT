@@ -122,13 +122,13 @@ class train_callback(pl.Callback):
             print("saving...")
             # to_save_dict = pl_module.state_dict()
             filtered_state_dict = {}
-            for key in pl_module.state_dict.keys():
+            for key in pl_module.keys():
                 # Check if the key matches any of the commented weights
                 if key.startswith('language_model.blocks.') and "att.time_state" in key:
                     # Add the key and value to the filtered state dict
-                    filtered_state_dict[key] = pl_module.state_dict[key]
+                    filtered_state_dict[key] = pl_module[key]
                 elif key.startswith('speech_encoder.adapter.'):
-                    filtered_state_dict[key] = pl_module.state_dict[key]
+                    filtered_state_dict[key] = pl_module[key]
             
             try:
                 import glob
