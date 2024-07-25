@@ -118,7 +118,7 @@ if __name__ == "__main__":
         parser.add_argument("--devices", default=1, type=int)
         parser.add_argument("--num_nodes", default=1, type=int)
         parser.add_argument("--precision", default="fp16", type=str)
-        parser.add_argument("--accumulate_grad_batches", default=1, type=int)
+        parser.add_argument("--accumulate_grad_batches", default=4, type=int)
     else:
         parser = Trainer.add_argparse_args(parser)
     args = parser.parse_args()
@@ -146,7 +146,8 @@ if __name__ == "__main__":
     args.enable_checkpointing = False
     args.replace_sampler_ddp = False
     args.logger = False
-    args.gradient_clip_val = 1.0
+    args.gradient_clip_val = 10.0
+    args.gradient_accumulation_steps = 4
     args.num_sanity_val_steps = 0
     args.check_val_every_n_epoch = int(1e20)
     args.log_every_n_steps = int(1e20)
@@ -444,7 +445,7 @@ if __name__ == "__main__":
             callbacks=[train_callback(args)],
         )
 
-    if trainer.global_rank == 0:
+    if trainer.global_rank == 100:
         for n in model.state_dict():
             shape = model.state_dict()[n].shape
             shape = [i for i in shape if i != 1]
@@ -463,13 +464,17 @@ if __name__ == "__main__":
     from src.asr import SLAM_ASR
     Total_model = SLAM_ASR(
         args,
-        "facebook/hubert-large-ls960-ft",
+        # "facebook/hubert-large-ls960-ft", # SHOULD NOT BE USED, THIS IS A FINETUNED VERSION.
+        # "microsoft/wavlm-base-plus",
+        "microsoft/wavlm-large",
         model,
+        # downsample_K = 10,
     )
+    print(Total_model.speech_encoder.downsample_K)
     
     import glob
-    # file_paths = glob.glob('output/rwkv-adapter*.pth')
-    file_paths = glob.glob('output/rwkv*.pth')
+    file_paths = glob.glob('output/rwkv-adapter*.pth')
+    # file_paths = glob.glob('output/rwkv*.pth')
     # 检查是否找到了文件
     if file_paths:
         file_path = file_paths[0]
@@ -478,14 +483,13 @@ if __name__ == "__main__":
     else:
         print("No files found. Loading origin model.")
     
-    OP = 1 
+    OP = 1
     
     if(OP == 1):
         from datasets import load_from_disk
         dataset = load_from_disk("temp_datasets/en-final")
-        dataset = dataset.select(range(0, len(dataset) - 100))
         dataset = MyDataset(args, dataset)
-        data_loader = DataLoader(dataset, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=0, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
+        data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=4, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
 
         trainer.fit(Total_model, data_loader)
         
@@ -499,17 +503,8 @@ if __name__ == "__main__":
         Total_model.to("cuda", dtype=torch.bfloat16)
         
         for data in dataset:
-            # output,_,_ = Total_model(data['speech'], data['text'].lower())
-            
             output= Total_model.generate(data['speech'])
-            # print(output.shape)
-            # output_ids = torch.argmax(output, dim=-1)
-            # output_ids = output_ids.flatten().tolist()
-            # output = tokenizer.decode(output_ids)
-            # output = output.replace("<s>","")
             output = ''.join(output)
-            # total_ids = torch.argmax(total, dim=-1)
-            # total_ids = total_ids.flatten().tolist()
             
             print(f"output:\n{output}")
             print(f"answer:\n{data['text'].lower()}")
@@ -534,8 +529,8 @@ if __name__ == "__main__":
             exit(0)
     elif(OP == 4):
         from datasets import load_dataset
-        ds1 = load_dataset("librispeech_asr","clean",split="test")
-        ds2 = load_dataset("librispeech_asr","other",split="test")
+        ds1 = load_dataset("librispeech_asr","clean",split="test").select(range(100))
+        ds2 = load_dataset("librispeech_asr","other",split="test").select(range(100))
         dss = [ds1,ds2]
         tokenizer = Total_model.return_tokenizer()
         Total_model.to("cuda", dtype=torch.bfloat16)
@@ -564,6 +559,7 @@ if __name__ == "__main__":
                 references.append(z)
             
             average_wer = calculate_wer(predictions, references)
+            print(ds)
             print(f"Average WER: {average_wer}")
     exit(0)
 

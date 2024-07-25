@@ -118,7 +118,7 @@ class train_callback(pl.Callback):
         args = self.args
         
         self.step += 1
-        if(self.step % 100 == 0):
+        if(self.step % 100 == 0 and trainer.is_global_zero):
             print("saving...")
             to_save_dict = pl_module.state_dict()
             try:
@@ -145,8 +145,8 @@ class train_callback(pl.Callback):
             try:
                 t_cost = (t_now - trainer.my_time_ns) / 1e9
                 kt_s = token_per_step / t_cost / 1000
-                self.log("REAL it/s", 1.0 / t_cost, prog_bar=True, on_step=True)
-                self.log("Kt/s", kt_s, prog_bar=True, on_step=True)
+                # self.log("REAL it/s", 1.0 / t_cost, prog_bar=True, on_step=True)
+                # self.log("Kt/s", kt_s, prog_bar=True, on_step=True)
             except:
                 pass
             trainer.my_time_ns = t_now
@@ -161,6 +161,7 @@ class train_callback(pl.Callback):
             trainer.my_epoch_loss = trainer.my_loss_sum / trainer.my_loss_count
             self.log("lr", trainer.my_lr, prog_bar=True, on_step=True)
             self.log("loss", trainer.my_epoch_loss, prog_bar=True, on_step=True)
+            self.log("step", trainer.my_loss, prog_bar=True, on_step=True)
             # self.log("s", real_step, prog_bar=True, on_step=True)
 
             if len(args.wandb) > 0:
