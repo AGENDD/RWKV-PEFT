@@ -120,7 +120,16 @@ class train_callback(pl.Callback):
         self.step += 1
         if(self.step % 100 == 0 and trainer.is_global_zero):
             print("saving...")
-            to_save_dict = pl_module.state_dict()
+            # to_save_dict = pl_module.state_dict()
+            filtered_state_dict = {}
+            for key in pl_module.state_dict.keys():
+                # Check if the key matches any of the commented weights
+                if key.startswith('language_model.blocks.') and "att.time_state" in key:
+                    # Add the key and value to the filtered state dict
+                    filtered_state_dict[key] = pl_module.state_dict[key]
+                elif key.startswith('speech_encoder.adapter.'):
+                    filtered_state_dict[key] = pl_module.state_dict[key]
+            
             try:
                 import glob
                 files = glob.glob(os.path.join(args.proj_dir, '*.pth'))
@@ -129,8 +138,8 @@ class train_callback(pl.Callback):
                     
                 my_save(
                     args, trainer,
-                    to_save_dict,
-                    f"{args.proj_dir}/rwkv-{self.step}.pth",
+                    filtered_state_dict,
+                    f"{args.proj_dir}/rwkv-adapter-{self.step}.pth",
                 )
             except Exception as e:
                 print('Error\n\n', e, '\n\n')

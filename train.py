@@ -466,11 +466,10 @@ if __name__ == "__main__":
         args,
         # "facebook/hubert-large-ls960-ft", # SHOULD NOT BE USED, THIS IS A FINETUNED VERSION.
         # "microsoft/wavlm-base-plus",
-        "microsoft/wavlm-large",
+        # "microsoft/wavlm-large",
+        "facebook/hubert-large-ll60k",
         model,
-        # downsample_K = 10,
     )
-    print(Total_model.speech_encoder.downsample_K)
     
     import glob
     file_paths = glob.glob('output/rwkv-adapter*.pth')
