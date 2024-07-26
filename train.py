@@ -482,7 +482,7 @@ if __name__ == "__main__":
     else:
         print("No files found. Loading origin model.")
     
-    OP = 1
+    OP = 4
     
     if(OP == 1):
         from datasets import load_from_disk
@@ -528,8 +528,8 @@ if __name__ == "__main__":
             exit(0)
     elif(OP == 4):
         from datasets import load_dataset
-        ds1 = load_dataset("librispeech_asr","clean",split="test").select(range(100))
-        ds2 = load_dataset("librispeech_asr","other",split="test").select(range(100))
+        ds1 = load_dataset("librispeech_asr","clean",split="test")
+        ds2 = load_dataset("librispeech_asr","other",split="test")
         dss = [ds1,ds2]
         tokenizer = Total_model.return_tokenizer()
         Total_model.to("cuda", dtype=torch.bfloat16)
@@ -558,7 +558,7 @@ if __name__ == "__main__":
                 references.append(z)
             
             average_wer = calculate_wer(predictions, references)
-            print(ds)
+            # print(ds)
             print(f"Average WER: {average_wer}")
     exit(0)
 

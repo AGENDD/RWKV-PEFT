@@ -22,11 +22,28 @@ def my_save(args, trainer, dd, ff):
     else:
         torch.save(dd, ff)
 
+from collections import deque
+
+class Queue:
+    def __init__(self, max_len=10):
+        self.queue = deque(maxlen=max_len)
+        self.sum = 0
+
+    def enqueue(self, val):
+        if len(self.queue) == self.queue.maxlen:
+            self.sum -= self.queue[0]
+        self.queue.append(val)
+        self.sum += val
+
+    def average(self):
+        return self.sum / len(self.queue) if self.queue else None        
+
 class train_callback(pl.Callback):
     def __init__(self, args):
         super().__init__()
         self.args = args
         self.step = 0
+        self.loss_queue = Queue(10)
         
     def on_train_batch_start(self, trainer, pl_module, batch, batch_idx):
         args = self.args
@@ -168,8 +185,11 @@ class train_callback(pl.Callback):
             trainer.my_loss_sum += trainer.my_loss
             trainer.my_loss_count += 1
             trainer.my_epoch_loss = trainer.my_loss_sum / trainer.my_loss_count
+            
+            self.loss_queue.enqueue(trainer.my_loss)
             self.log("lr", trainer.my_lr, prog_bar=True, on_step=True)
-            self.log("loss", trainer.my_epoch_loss, prog_bar=True, on_step=True)
+            # self.log("loss", trainer.my_epoch_loss, prog_bar=True, on_step=True)
+            self.log("loss", self.loss_queue.average(), prog_bar=True, on_step=True)
             self.log("step", trainer.my_loss, prog_bar=True, on_step=True)
             # self.log("s", real_step, prog_bar=True, on_step=True)
 
