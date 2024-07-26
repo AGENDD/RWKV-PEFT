@@ -43,7 +43,7 @@ class train_callback(pl.Callback):
         super().__init__()
         self.args = args
         self.step = 0
-        self.loss_queue = Queue(10)
+        self.loss_queue = Queue(50)
         
     def on_train_batch_start(self, trainer, pl_module, batch, batch_idx):
         args = self.args
