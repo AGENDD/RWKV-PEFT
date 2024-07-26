@@ -499,7 +499,7 @@ if __name__ == "__main__":
         
         
         # dataset = load_from_disk("temp_datasets/en-final") #libri 960
-        dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="validation",token = token).selecy(100)
+        dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="validation",token = token).select(range(100))
         
         print(len(dataset))
         # dataset = dataset.select(range(len(dataset) - 100, len(dataset)))
