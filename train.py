@@ -482,7 +482,7 @@ if __name__ == "__main__":
     else:
         print("No files found. Loading origin model.")
     
-    OP = 1
+    OP = 2
     token = "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"
     from datasets import load_from_disk,load_dataset
     
@@ -498,19 +498,23 @@ if __name__ == "__main__":
     elif(OP == 2):#自回归
         
         
-        dataset = load_from_disk("temp_datasets/en-final") #libri 960
+        # dataset = load_from_disk("temp_datasets/en-final") #libri 960
+        dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="validation",token = token).selecy(100)
         
         print(len(dataset))
-        dataset = dataset.select(range(len(dataset) - 100, len(dataset)))
+        # dataset = dataset.select(range(len(dataset) - 100, len(dataset)))
         tokenizer = Total_model.return_tokenizer()
         Total_model.to("cuda", dtype=torch.bfloat16)
         
         for data in dataset:
-            output= Total_model.generate(data['speech'])
+            import librosa
+            
+            output= Total_model.generate(librosa.resample(data['audio']['array'],orig_sr= 48000,target_sr= 16000))
             output = ''.join(output)
             
             print(f"output:\n{output}")
-            print(f"answer:\n{data['text'].lower()}")
+            # print(f"answer:\n{data['text'].lower()}")
+            print(f"answer:\n{data['sentence'].lower()}")
             print("\n\n")
 
     elif(OP == 3):
