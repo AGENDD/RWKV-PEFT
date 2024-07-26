@@ -10,6 +10,7 @@ from pytorch_lightning.utilities import rank_zero_info
 from .binidx import MMapIndexedDataset
 from .utils import MaybeIsPrime
 from rwkv.utils import PIPELINE
+import librosa
 pipeline = PIPELINE('rwkv6', "rwkv_vocab_v20230424")
 
 class MyDataset(Dataset):
@@ -22,8 +23,16 @@ class MyDataset(Dataset):
 
     def __getitem__(self, idx):
         sample = self.hf_dataset[idx]
-        audio = sample['speech']
-        answer = sample['text']
+        
+        if('sentence' in sample.keys()):
+            #common voice
+            answer = sample['sentence']
+            audio = sample['audio']['array']
+            audio = librosa.resample(audio, 48000, 16000)
+        else:
+            #librispeech
+            audio = sample['speech']
+            answer = sample['text']
         
         # print(f"speech input{idx}:{len(audio)}")
         return audio, answer.lower()

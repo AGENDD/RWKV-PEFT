@@ -25,7 +25,8 @@ import os, math, gc, importlib
 if importlib.util.find_spec('deepspeed'):
     import deepspeed
     from deepspeed.ops.adam import DeepSpeedCPUAdam, FusedAdam
-    
+import time
+
 class L2Wrap(torch.autograd.Function):
     @staticmethod
     def forward(ctx, loss, y):
@@ -107,6 +108,10 @@ class SLAM_ASR(pl.LightningModule):
             device=device,
         ).to(self._device)
       
+        self.T_init = 0
+        self.T_hubert = 0
+        self.T_vector = 0
+        self.T_rwkv = 0
         
         # print("show language params")
         # for name,param in self.language_model.named_parameters():
@@ -225,10 +230,11 @@ class SLAM_ASR(pl.LightningModule):
         """
         # audios = [audio.cpu() for audio in audios]
         # print(f"audio:{len(audios)}-{[len(au) for au in audios]}")
+        self.T_init = time.time()
         speech_output, mask = self.speech_encoder(audios)
         # print(f"audio after hubert and adapter:\t{speech_output.shape}")
         # print(f"audio mask:\t{mask.shape}")
-        
+        self.T_audio = time.time()
         if transcriptions is not None:
             
             ###########处理prompt_embed ###############################################################################
@@ -397,9 +403,9 @@ class SLAM_ASR(pl.LightningModule):
         #     attention_mask=prompt_mask.bool(),
         #     labels=true_labels,
         # )  # CausalLMOutputWithPast
-        
+        self.T_vector = time.time()
         outputs = self.language_model(inputs_embeds=prompt_embed)
-        
+        self.T_rwkv = time.time()
         
         # print(f"outputs:{outputs['loss']}")
         # print(f"logits:\t{outputs.shape}")

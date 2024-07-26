@@ -483,10 +483,11 @@ if __name__ == "__main__":
         print("No files found. Loading origin model.")
     
     OP = 4
-    
+    token = "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"
     if(OP == 1):
         from datasets import load_from_disk
         dataset = load_from_disk("temp_datasets/en-final")
+        # dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="train")
         dataset = MyDataset(args, dataset)
         data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=4, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
 
@@ -494,8 +495,9 @@ if __name__ == "__main__":
         
     elif(OP == 2):#自回归
         
-        from datasets import load_from_disk
-        dataset = load_from_disk("temp_datasets/en-final")
+        from datasets import load_from_disk,load_dataset
+        dataset = load_from_disk("temp_datasets/en-final") #libri 960
+        
         print(len(dataset))
         dataset = dataset.select(range(len(dataset) - 100, len(dataset)))
         tokenizer = Total_model.return_tokenizer()
@@ -551,8 +553,8 @@ if __name__ == "__main__":
                 z = ds[i]["text"].lower()
                 # asr(x)
                 # print(f"Audio length:{len(x)/16000} s")
-                
-                output = Total_model.generate(x) 
+                with torch.no_grad():
+                    output = Total_model.generate(x) 
                 output = ''.join(output)
                 predictions.append(output)
                 references.append(z)
