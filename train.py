@@ -486,8 +486,8 @@ if __name__ == "__main__":
     token = "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"
     if(OP == 1):
         from datasets import load_from_disk
-        dataset = load_from_disk("temp_datasets/en-final")
-        # dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="train")
+        # dataset = load_from_disk("temp_datasets/en-final")
+        dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="train",token = token)
         dataset = MyDataset(args, dataset)
         data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=4, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
 
