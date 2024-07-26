@@ -466,8 +466,8 @@ if __name__ == "__main__":
         args,
         # "facebook/hubert-large-ls960-ft", # SHOULD NOT BE USED, THIS IS A FINETUNED VERSION.
         # "microsoft/wavlm-base-plus",
-        # "microsoft/wavlm-large",
-        "facebook/hubert-large-ll60k",
+        "microsoft/wavlm-large",
+        # "facebook/hubert-large-ll60k",
         model,
     )
     
