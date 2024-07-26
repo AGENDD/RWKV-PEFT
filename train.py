@@ -484,6 +484,8 @@ if __name__ == "__main__":
     
     OP = 1
     token = "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"
+    from datasets import load_from_disk,load_dataset
+    
     if(OP == 1):
         from datasets import load_from_disk
         # dataset = load_from_disk("temp_datasets/en-final")
@@ -495,7 +497,7 @@ if __name__ == "__main__":
         
     elif(OP == 2):#自回归
         
-        from datasets import load_from_disk,load_dataset
+        
         dataset = load_from_disk("temp_datasets/en-final") #libri 960
         
         print(len(dataset))
