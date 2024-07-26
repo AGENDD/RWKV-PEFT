@@ -28,7 +28,7 @@ class MyDataset(Dataset):
             #common voice
             answer = sample['sentence']
             audio = sample['audio']['array']
-            audio = librosa.resample(audio, 48000, 16000)
+            audio = librosa.resample(audio,original_sr= 48000,target_sr= 16000)
         else:
             #librispeech
             audio = sample['speech']
