@@ -490,7 +490,7 @@ if __name__ == "__main__":
         # dataset = load_from_disk("temp_datasets/en-final")
         # dataset = load_dataset("mozilla-foundation/common_voice_13_0", "tr", split="train",token = token)
         dataset = load_dataset('covost2','zh-CN_en',data_dir = 'temp_datasets/covost-zhCN_en')
-        dataset = concatenate_datasets(dataset['train'], dataset['validation'])
+        dataset = concatenate_datasets([dataset['train'], dataset['validation']])
         
         
         dataset = MyDataset(args, dataset)
