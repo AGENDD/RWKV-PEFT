@@ -24,7 +24,13 @@ class MyDataset(Dataset):
     def __getitem__(self, idx):
         sample = self.hf_dataset[idx]
         
-        if('sentence' in sample.keys()):
+        
+        if('translation'in sample.keys()):
+            #covost2
+            answer = sample['translation']
+            audio = sample['audio']['array']
+            audio = librosa.resample(audio,orig_sr= 48000,target_sr= 16000)
+        elif('sentence' in sample.keys()):
             #common voice
             answer = sample['sentence']
             audio = sample['audio']['array']

@@ -484,12 +484,15 @@ if __name__ == "__main__":
     
     OP = 2
     token = "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"
-    from datasets import load_from_disk,load_dataset
+    from datasets import load_from_disk,load_dataset, concatenate_datasets
     
     if(OP == 1):
-        from datasets import load_from_disk
         # dataset = load_from_disk("temp_datasets/en-final")
-        dataset = load_dataset("mozilla-foundation/common_voice_13_0", "tr", split="train",token = token)
+        # dataset = load_dataset("mozilla-foundation/common_voice_13_0", "tr", split="train",token = token)
+        dataset = load_dataset('covost2','zh-CN_en',data_dir = 'temp_datasets/covost-zhCN_en')
+        dataset = concatenate_datasets(dataset['train'], dataset['validation'])
+        
+        
         dataset = MyDataset(args, dataset)
         data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=4, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
 
