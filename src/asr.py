@@ -192,8 +192,9 @@ class SLAM_ASR(pl.LightningModule):
         #                 param.requires_grad = False
         #             else:
         #                 param.requires_grad = True
-                
-            
+        for param in self.speech_encoder.parameters():
+            param.requires_grad = True        
+        
         # now list all parameters that require grad
         print("Parameters that require grad:")
 

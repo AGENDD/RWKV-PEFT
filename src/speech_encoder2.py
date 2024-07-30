@@ -85,11 +85,11 @@ class SpeechEncoder(nn.Module):
         self.adapter = Adapter(self.model_output_dim, self.project_dim).to(self.device,dtype=torch.bfloat16)
         self.set_gradient(train_mode="full")
         
-        print("Parameters in speech encoder that require grad:")
+        # print("Parameters in speech encoder that require grad:")
 
-        for name, param in self.named_parameters():
-            if param.requires_grad:
-                print(f"    {name}: {param.shape}")
+        # for name, param in self.named_parameters():
+        #     if param.requires_grad:
+        #         print(f"    {name}: {param.shape}")
         
 
     def set_gradient(self, train_mode):
