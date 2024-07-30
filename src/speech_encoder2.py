@@ -71,7 +71,10 @@ class SpeechEncoder(nn.Module):
             return_attention_mask=False,
         )
         self.device = device
-        self.processor = AutoProcessor.from_pretrained(model_id)
+        try:
+            self.processor = AutoProcessor.from_pretrained(model_id)
+        except:
+            self.processor = AutoProcessor.from_pretrained("facebook/hubert-large-ls960-ft")
         self.time_reduction_factor = int(
             self.processor.feature_extractor.sampling_rate / 50
         )
