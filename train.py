@@ -482,15 +482,17 @@ if __name__ == "__main__":
     else:
         print("No files found. Loading origin model.")
     
-    OP = 1
+    OP = 2
     token = "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"
     from datasets import load_from_disk,load_dataset, concatenate_datasets
+    # dataset = load_from_disk("temp_datasets/en-final")
+    # dataset = load_dataset("mozilla-foundation/common_voice_13_0", "tr", split="train",token = token)
+    # dataset = load_dataset('covost2','zh-CN_en',data_dir = 'temp_datasets/covost-zhCN_en')
+    dataset = load_dataset('covost2','en_zh-CN',data_dir = 'temp_datasets/covost-en_zhCN')#train:289430 val/test: 15531
+    
     
     if(OP == 1):
-        # dataset = load_from_disk("temp_datasets/en-final")
-        # dataset = load_dataset("mozilla-foundation/common_voice_13_0", "tr", split="train",token = token)
-        # dataset = load_dataset('covost2','zh-CN_en',data_dir = 'temp_datasets/covost-zhCN_en')
-        dataset = load_dataset('covost2','en_zh-CN',data_dir = 'temp_datasets/covost-en_zhCN')#train:289430 val/test: 15531
+        
         dataset = dataset['train']
         # dataset = concatenate_datasets([dataset['train'], dataset['validation']])
         
@@ -502,12 +504,10 @@ if __name__ == "__main__":
         
     elif(OP == 2):#自回归
         
-        
+        dataset = dataset['train'].select(range(100))
         # dataset = load_from_disk("temp_datasets/en-final") #libri 960
-        dataset = load_dataset("mozilla-foundation/common_voice_13_0", "tr", split="validation",token = token).select(range(100))
-        
-        print(len(dataset))
         # dataset = dataset.select(range(len(dataset) - 100, len(dataset)))
+        
         tokenizer = Total_model.return_tokenizer()
         Total_model.to("cuda", dtype=torch.bfloat16)
         
