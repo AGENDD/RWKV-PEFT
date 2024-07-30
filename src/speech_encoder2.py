@@ -118,7 +118,8 @@ class SpeechEncoder(nn.Module):
         # calculate the mask length
         mask_length = length_in_samples // self.time_reduction_factor
         # create the mask
-        mask = attention_mask[:, :: (self.time_reduction_factor * self.downsample_K)]
+        # mask = attention_mask[:, :: (self.time_reduction_factor * self.downsample_K)]
+        mask = attention_mask[:, :: (self.time_reduction_factor * 2)]
         return mask
 
     def forward(self, x):
