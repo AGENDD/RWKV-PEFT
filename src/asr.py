@@ -200,6 +200,8 @@ class SLAM_ASR(pl.LightningModule):
         for name, param in self.named_parameters():
             if param.requires_grad:
                 print(f"    {name}: {param.shape}")
+            else:
+                print(f"no  {name}: {param.shape}")
 
     
     def remove_padding(self, x, mask):

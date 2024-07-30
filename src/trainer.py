@@ -144,7 +144,7 @@ class train_callback(pl.Callback):
                 if key.startswith('language_model.blocks.') and "att.time_state" in key:
                     # Add the key and value to the filtered state dict
                     filtered_state_dict[key] = pl_module.state_dict()[key]
-                elif key.startswith('speech_encoder.adapter.'):
+                elif key.startswith('speech_encoder.'):
                     filtered_state_dict[key] = pl_module.state_dict()[key]
                 # elif 
             
