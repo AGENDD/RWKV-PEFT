@@ -18,7 +18,7 @@ class Adapter(nn.Module):
         # 添加一个下采样操作，这里我们使用最大池化
         self.pool = nn.MaxPool1d(2)
         # Transformer层，latent dimension为3072
-        encoder_layers = TransformerEncoderLayer(d_model=model_output_dim // 2, nhead=8, dim_feedforward=3072)
+        encoder_layers = TransformerEncoderLayer(d_model=model_output_dim, nhead=8, dim_feedforward=3072)
         self.transformer = TransformerEncoder(encoder_layers, num_layers=1)
         # 前馈层，维度为4096
         self.ffn = nn.Sequential(
@@ -39,6 +39,7 @@ class Adapter(nn.Module):
         x = x.transpose(1, 2)
         # 再次交换维度，使得输出的形状为:(seq_length, batch, feature)
         x = x.transpose(0, 1)
+        print(f"x before transformer{x.shape}")
         # 将输出送入Transformer层
         x = self.transformer(x)
         # 变回:(batch, seq_length, feature)
@@ -140,7 +141,6 @@ class SpeechEncoder(nn.Module):
         # x = x.unfold(1, self.downsample_K, self.downsample_K).flatten(2)
         mm = input_dict["attention_mask"]
         print(f"x before adapter{x.shape}")
-        print(f"mask before adapter{mm.shape}")
         x = self.adapter(x)
         
         mask = mask[:, : x.shape[1]]
