@@ -29,12 +29,20 @@ class Adapter(nn.Module):
         self.linear = nn.Linear(4096, project_dim)
 
     def forward(self, x):
+        # 交换维度，使得卷积在seq length维度上进行:(batch, feature, seq_length)
+        x = x.transpose(1, 2)
         # 对输入进行一维卷积
         x = self.conv1(x)
         # 对卷积的输出进行下采样
         x = self.pool(x)
+        # 再次交换维度，使得输出的形状与原始输入的形状相同
+        x = x.transpose(1, 2)
+        # 再次交换维度，使得输出的形状为:(seq_length, batch, feature)
+        x = x.transpose(0, 1)
         # 将输出送入Transformer层
         x = self.transformer(x)
+        # 变回:(batch, seq_length, feature)
+        x = x.transpose(0, 1)
         # 将输出送入前馈层
         x = self.ffn(x)
         # 将输出送入线性层，得到最终输出
@@ -130,6 +138,12 @@ class SpeechEncoder(nn.Module):
         x = self.model(**input_dict).last_hidden_state
         # reshape the output from [batch_size, num_frames, hidden_size] to [batch_size, num_frames//downsample_K, hidden_size*downsample_K]
         # x = x.unfold(1, self.downsample_K, self.downsample_K).flatten(2)
+        print(f"x before adapter{x.shape}")
+        print(f"mask before adapter{input_dict["attention_mask"].shape}")
         x = self.adapter(x)
+        
         mask = mask[:, : x.shape[1]]
+        print(f"x after adapter{x.shape}")
+        print(f"mask before adapter{mask.shape}")
+        exit(0)
         return x, mask
