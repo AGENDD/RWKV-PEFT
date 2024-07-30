@@ -138,7 +138,7 @@ class SpeechEncoder(nn.Module):
         x = self.model(**input_dict).last_hidden_state
         # reshape the output from [batch_size, num_frames, hidden_size] to [batch_size, num_frames//downsample_K, hidden_size*downsample_K]
         # x = x.unfold(1, self.downsample_K, self.downsample_K).flatten(2)
-        mm = input_dict["attention_mask"].shape
+        mm = input_dict["attention_mask"]
         print(f"x before adapter{x.shape}")
         print(f"mask before adapter{mm.shape}")
         x = self.adapter(x)
