@@ -82,8 +82,14 @@ class SpeechEncoder(nn.Module):
         #     nn.ReLU(),
         #     nn.Linear(self.hidden_dim, self.project_dim),
         # ).to(self.device,dtype=torch.bfloat16)
-        self.adapter = Adapter(self.model_output_dim, self.project_dim)
+        self.adapter = Adapter(self.model_output_dim, self.project_dim).to(self.device,dtype=torch.bfloat16)
         self.set_gradient("full")
+        
+        print("Parameters in speech encoder:")
+
+        for name, param in self.named_parameters():
+            print(f"    {name}: {param.shape}")
+        
 
     def set_gradient(self, train_mode):
         """
