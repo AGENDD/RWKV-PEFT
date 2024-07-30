@@ -22,7 +22,13 @@ class MyDataset(Dataset):
         return len(self.hf_dataset)
 
     def __getitem__(self, idx):
-        sample = self.hf_dataset[idx]
+        
+        while(True):
+            try:
+                sample = self.hf_dataset[idx]
+                break
+            except:
+                idx = idx+1
         
         
         if('translation'in sample.keys()):
