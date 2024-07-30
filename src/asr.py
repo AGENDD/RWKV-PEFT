@@ -11,9 +11,11 @@ from transformers import LlamaForCausalLM, LlamaTokenizer
 from typing import List
 
 try:
-    from .speech_encoder import SpeechEncoder
+    # from .speech_encoder import SpeechEncoder
+    from .speech_encoder2 import SpeechEncoder
 except ImportError:
-    from speech_encoder import SpeechEncoder
+    # from speech_encoder import SpeechEncoder
+    from .speech_encoder2 import SpeechEncoder
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from .model import RWKV

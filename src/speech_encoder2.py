@@ -10,6 +10,38 @@ from transformers import Wav2Vec2Processor
 from transformers import Wav2Vec2CTCTokenizer
 
 
+class Adapter(nn.Module):
+    def __init__(self, model_output_dim, project_dim):
+        super(Adapter, self).__init__()
+        # 一维卷积层，步长为2，核大小为3
+        self.conv1 = nn.Conv1d(model_output_dim, model_output_dim, kernel_size=3, stride=2, padding=1)
+        # 添加一个下采样操作，这里我们使用最大池化
+        self.pool = nn.MaxPool1d(2)
+        # Transformer层，latent dimension为3072
+        encoder_layers = TransformerEncoderLayer(d_model=model_output_dim // 2, nhead=8, dim_feedforward=3072)
+        self.transformer = TransformerEncoder(encoder_layers, num_layers=1)
+        # 前馈层，维度为4096
+        self.ffn = nn.Sequential(
+            nn.Linear(model_output_dim, 4096),
+            nn.ReLU(),
+        )
+        # 线性层，输出和原始输出有相同的形状
+        self.linear = nn.Linear(4096, project_dim)
+
+    def forward(self, x):
+        # 对输入进行一维卷积
+        x = self.conv1(x)
+        # 对卷积的输出进行下采样
+        x = self.pool(x)
+        # 将输出送入Transformer层
+        x = self.transformer(x)
+        # 将输出送入前馈层
+        x = self.ffn(x)
+        # 将输出送入线性层，得到最终输出
+        x = self.linear(x)
+        return x
+
+
 class SpeechEncoder(nn.Module):
     def __init__(
         self,
@@ -38,19 +70,20 @@ class SpeechEncoder(nn.Module):
         self.padding_length = 320
         self.model = AutoModel.from_pretrained(model_id).to(self.device,dtype=torch.bfloat16)
         self.model_output_dim = self.model.config.hidden_size
-        self.downsample_K = downsample_K
+        # self.downsample_K = downsample_K
         self.project_dim = project_dim
         if hidden_dim is None:
             self.hidden_dim = self.project_dim * 2
         else:
             self.hidden_dim = hidden_dim
         # adapter shall be a Linear(Relu(Linear)) structure
-        self.adapter = nn.Sequential(
-            nn.Linear(self.model_output_dim * self.downsample_K, self.hidden_dim),
-            nn.ReLU(),
-            nn.Linear(self.hidden_dim, self.project_dim),
-        ).to(self.device,dtype=torch.bfloat16)
-        self.set_gradient(train_mode)
+        # self.adapter = nn.Sequential(
+        #     nn.Linear(self.model_output_dim * self.downsample_K, self.hidden_dim),
+        #     nn.ReLU(),
+        #     nn.Linear(self.hidden_dim, self.project_dim),
+        # ).to(self.device,dtype=torch.bfloat16)
+        self.adapter = Adapter(self.model_output_dim, self.project_dim)
+        self.set_gradient("full")
 
     def set_gradient(self, train_mode):
         """
@@ -88,7 +121,7 @@ class SpeechEncoder(nn.Module):
         mask = self.calculate_mask(input_dict)
         x = self.model(**input_dict).last_hidden_state
         # reshape the output from [batch_size, num_frames, hidden_size] to [batch_size, num_frames//downsample_K, hidden_size*downsample_K]
-        x = x.unfold(1, self.downsample_K, self.downsample_K).flatten(2)
+        # x = x.unfold(1, self.downsample_K, self.downsample_K).flatten(2)
         x = self.adapter(x)
         mask = mask[:, : x.shape[1]]
         return x, mask
