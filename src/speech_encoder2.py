@@ -39,7 +39,6 @@ class Adapter(nn.Module):
         x = x.transpose(1, 2)
         # 再次交换维度，使得输出的形状为:(seq_length, batch, feature)
         x = x.transpose(0, 1)
-        print(f"x before transformer{x.shape}")
         # 将输出送入Transformer层
         x = self.transformer(x)
         # 变回:(batch, seq_length, feature)
@@ -72,7 +71,7 @@ class SpeechEncoder(nn.Module):
             return_attention_mask=False,
         )
         self.device = device
-        self.processor = AutoProcessor.from_pretrained("facebook/hubert-large-ls960-ft")
+        self.processor = AutoProcessor.from_pretrained(model_id)
         self.time_reduction_factor = int(
             self.processor.feature_extractor.sampling_rate / 50
         )
@@ -140,11 +139,9 @@ class SpeechEncoder(nn.Module):
         # reshape the output from [batch_size, num_frames, hidden_size] to [batch_size, num_frames//downsample_K, hidden_size*downsample_K]
         # x = x.unfold(1, self.downsample_K, self.downsample_K).flatten(2)
         mm = input_dict["attention_mask"]
-        print(f"x before adapter{x.shape}")
+
         x = self.adapter(x)
         
         mask = mask[:, : x.shape[1]]
-        print(f"x after adapter{x.shape}")
-        print(f"mask before adapter{mask.shape}")
-        exit(0)
+
         return x, mask
