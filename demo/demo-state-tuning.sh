@@ -8,7 +8,7 @@ n_embd=2560
 
 micro_bsz=10
 epoch_save=1
-epoch_steps=18900
+epoch_steps=4000
 ctx_len=1024
 
 QUANT='nf4' 
