@@ -94,7 +94,7 @@ class SpeechEncoder(nn.Module):
         #     nn.Linear(self.hidden_dim, self.project_dim),
         # ).to(self.device,dtype=torch.bfloat16)
         self.adapter = Adapter(self.model_output_dim, self.project_dim).to(self.device,dtype=torch.bfloat16)
-        self.set_gradient(train_mode="full")
+        self.set_gradient(train_mode)
         
         # print("Parameters in speech encoder that require grad:")
 
