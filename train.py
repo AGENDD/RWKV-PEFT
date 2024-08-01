@@ -482,13 +482,13 @@ if __name__ == "__main__":
     else:
         print("No files found. Loading origin model.")
     
-    OP = 1
+    OP = 4
     token = "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"
     from datasets import load_from_disk,load_dataset, concatenate_datasets
     # dataset = load_from_disk("temp_datasets/en-final")
-    dataset = load_dataset('librispeech_asr','clean',split='train.100')
-    dataset2 = load_dataset('librispeech_asr','clean',split='train.360')
-    dataset3 = load_dataset('librispeech_asr','other',split='train.500')
+    # dataset = load_dataset('librispeech_asr','clean',split='train.100')
+    # dataset2 = load_dataset('librispeech_asr','clean',split='train.360')
+    # dataset3 = load_dataset('librispeech_asr','other',split='train.500')
     # dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="train",token = token)
     # dataset2 = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="validation",token = token)
     # dataset3 = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
