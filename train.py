@@ -485,7 +485,10 @@ if __name__ == "__main__":
     OP = 1
     token = "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"
     from datasets import load_from_disk,load_dataset, concatenate_datasets
-    dataset = load_from_disk("temp_datasets/en-final")
+    # dataset = load_from_disk("temp_datasets/en-final")
+    dataset = load_dataset('openslr/librispeech_asr','clean',split='train.100')
+    dataset2 = load_dataset('openslr/librispeech_asr','clean',split='train.360')
+    dataset3 = load_dataset('openslr/librispeech_asr','other',split='train.500')
     # dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="train",token = token)
     # dataset2 = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="validation",token = token)
     # dataset3 = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
@@ -496,9 +499,9 @@ if __name__ == "__main__":
     if(OP == 1):
         
         # dataset = dataset['train']
-        # dataset = concatenate_datasets([dataset, dataset2])
+        dataset = concatenate_datasets([dataset, dataset2, dataset3]).shuffle()
         dataset = MyDataset(args, dataset)
-        data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=4, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
+        data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=8, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
         print("train starting...")
         trainer.fit(Total_model, data_loader)
         
