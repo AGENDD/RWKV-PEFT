@@ -482,7 +482,7 @@ if __name__ == "__main__":
     else:
         print("No files found. Loading origin model.")
     
-    OP = 1
+    OP = 2
     token = "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"
     from datasets import load_from_disk,load_dataset, concatenate_datasets
     # dataset = load_from_disk("temp_datasets/en-final")
@@ -506,7 +506,7 @@ if __name__ == "__main__":
         trainer.fit(Total_model, data_loader)
         
     elif(OP == 2):#自回归
-        
+        dataset = dataset['train'].select(range(100))
         # dataset = dataset3.select(range(100))
         # dataset = load_from_disk("temp_datasets/en-final") #libri 960
         # dataset = dataset.select(range(len(dataset) - 100, len(dataset)))
@@ -522,7 +522,7 @@ if __name__ == "__main__":
             
             print(f"output:\n{output}")
             # print(f"answer:\n{data['text'].lower()}")
-            print(f"answer:\n{data['sentence'].lower()}")
+            print(f"answer:\n{data['translation'].lower()}")
             print("\n\n")
 
     elif(OP == 3):
