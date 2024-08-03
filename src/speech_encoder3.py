@@ -13,15 +13,14 @@ from transformers import Wav2Vec2CTCTokenizer
 class Adapter(nn.Module):
     def __init__(self, model_output_dim, project_dim):
         super(Adapter, self).__init__()
-        # # 一维卷积层，步长为2，核大小为3
-        # self.conv1 = nn.Conv1d(model_output_dim, model_output_dim, kernel_size=3, stride=2, padding=1)
-        # # 添加一个下采样操作，这里我们使用最大池化
-        # self.pool = nn.MaxPool1d(2)
-        self.downsample_K = 5
+        # 一维卷积层，步长为2，核大小为3
+        self.conv1 = nn.Conv1d(model_output_dim, model_output_dim, kernel_size=3, stride=2, padding=1)
+        # 添加一个下采样操作，这里我们使用最大池化
+        self.pool = nn.MaxPool1d(2)
         
         # Transformer层，latent dimension为3072
-        encoder_layers = TransformerEncoderLayer(d_model=model_output_dim*self.downsample_K, nhead=8, dim_feedforward=3072)
-        self.transformer = TransformerEncoder(encoder_layers, num_layers=1)
+        encoder_layers = TransformerEncoderLayer(d_model=model_output_dim, nhead=8, dim_feedforward=3072)
+        self.transformer = TransformerEncoder(encoder_layers, num_layers=4)
         # 前馈层，维度为4096
         self.ffn = nn.Sequential(
             nn.Linear(model_output_dim*self.downsample_K, 4096),
@@ -31,17 +30,14 @@ class Adapter(nn.Module):
         self.linear = nn.Linear(4096, project_dim)
 
     def forward(self, x):
-        # # 交换维度，使得卷积在seq length维度上进行:(batch, feature, seq_length)
-        # x = x.transpose(1, 2)
-        # # 对输入进行一维卷积
-        # x = self.conv1(x)
-        # # 对卷积的输出进行下采样
-        # x = self.pool(x)
-        # # 再次交换维度，使得输出的形状与原始输入的形状相同
-        # x = x.transpose(1, 2)
-        
-        
-        x = x.unfold(1, self.downsample_K, self.downsample_K).flatten(2)
+        # 交换维度，使得卷积在seq length维度上进行:(batch, feature, seq_length)
+        x = x.transpose(1, 2)
+        # 对输入进行一维卷积
+        x = self.conv1(x)
+        # 对卷积的输出进行下采样
+        x = self.pool(x)
+        # 再次交换维度，使得输出的形状与原始输入的形状相同
+        x = x.transpose(1, 2)
         # 再次交换维度，使得输出的形状为:(seq_length, batch, feature)
         x = x.transpose(0, 1)
         # 将输出送入Transformer层
