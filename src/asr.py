@@ -239,6 +239,7 @@ class SLAM_ASR(pl.LightningModule):
         # print(f"audio:{len(audios)}-{[len(au) for au in audios]}")
         self.T_init = time.time()
         speech_output, mask = self.speech_encoder(audios)
+        mask.to(self._device)
         # print(f"audio after hubert and adapter:\t{speech_output.shape}")
         # print(f"audio mask:\t{mask.shape}")
         self.T_audio = time.time()
