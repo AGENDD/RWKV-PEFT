@@ -11,11 +11,11 @@ from transformers import LlamaForCausalLM, LlamaTokenizer
 from typing import List
 
 try:
-    # from .speech_encoder import SpeechEncoder
-    from .speech_encoder2 import SpeechEncoder
+    from .speech_encoder import SpeechEncoder
+    # from .speech_encoder2 import SpeechEncoder
 except ImportError:
-    # from speech_encoder import SpeechEncoder
-    from .speech_encoder2 import SpeechEncoder
+    from speech_encoder import SpeechEncoder
+    # from .speech_encoder2 import SpeechEncoder
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from .model import RWKV
@@ -52,7 +52,7 @@ class SLAM_ASR(pl.LightningModule):
         speech_encoder_model_id,#facebook/hubert-base-ls960
         language_model,
         downsample_K=5,
-        hidden_dim=2048,
+        hidden_dim=4096,
         train_mode="adapter",
         device="cuda",
         token = "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",
