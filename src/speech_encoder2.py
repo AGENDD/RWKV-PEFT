@@ -145,6 +145,6 @@ class SpeechEncoder(nn.Module):
 
         x = self.adapter(x)
         
-        mask = mask[:, : x.shape[1]]
-
+        # mask = mask[:, : x.shape[1]]
+        mask = torch.ones(x.shape[0],x.shape[1]).to(self.device)
         return x, mask
