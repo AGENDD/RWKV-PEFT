@@ -24,7 +24,7 @@ class Adapter(nn.Module):
         self.transformer = TransformerEncoder(encoder_layers, num_layers=1)
         # 前馈层，维度为4096
         self.ffn = nn.Sequential(
-            nn.Linear(model_output_dim, 4096),
+            nn.Linear(model_output_dim*self.downsample_K, 4096),
             nn.ReLU(),
         )
         # 线性层，输出和原始输出有相同的形状
