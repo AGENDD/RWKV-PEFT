@@ -1,4 +1,4 @@
-load_model='temp_models/RWKV-x060-World-3B-v2.1-20240417-ctx4096.pth' 3B
+load_model='temp_models/RWKV-x060-World-3B-v2.1-20240417-ctx4096.pth' 
 # load_model='temp_models/RWKV-x060-World-7B-v2.1-20240507-ctx4096.pth'
 proj_dir='output'
 data_file='temp_datasets'
