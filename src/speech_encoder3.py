@@ -126,7 +126,7 @@ class SpeechEncoder(nn.Module):
         padded_audio_tensor = torch.stack(padded_audio_list).unsqueeze(1)
         mask_tensor = torch.tensor(mask_list)
         
-        return padded_audio_tensor, mask_tensor
+        return padded_audio_tensor.to(self.device).to(torch.bfloat16), mask_tensor.to(self.device).to(torch.bfloat16)
         
 
     def forward(self, x):
