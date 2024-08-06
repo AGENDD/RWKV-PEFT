@@ -133,17 +133,32 @@ class SpeechEncoder(nn.Module):
         # ).to(self.device,dtype=torch.bfloat16)
         x,mask = self.padding_mask(x)#x:(B,channel,T) mask:(B,T)
         
+        print(f"x after padding{x.shape}")
+        print(f"mask after padding{mask.shape}")
+        
+        
+        
+        
         x = self.model.encode(x)#x:(n_q,B,T)
+        print(f"x after ST{x.shape}")
+        
         x = x.permute(1,2,0)#x:(B,T,n_q)
+        
+        print(f"x after ST(permute){x.shape}")
         x = x.unfold(1, self.downsample_K, self.downsample_K).flatten(2) #x:(B,T//k,n_q*k)
+        mask = self.downsample_mask(mask) #mask:(B,T//k)
+        
+        print(f"x after downsample{x.shape}")
+        print(f"mask after downsample{mask.shape}")
         
         
-        mask = self.downsample_mask(mask)
         # x = self.model(**input_dict).last_hidden_state
         # reshape the output from [batch_size, num_frames, hidden_size] to [batch_size, num_frames//downsample_K, hidden_size*downsample_K]
         # x = x.unfold(1, self.downsample_K, self.downsample_K).flatten(2)
         x = x.to(torch.bfloat16)
         x = self.adapter(x)#x:(B,T,hidden dim)
+        print(f"x after adapter{x.shape}")
+        
         
         assert mask.shape == x.shape[:2], f"Shape mismatch: mask.shape = {mask.shape}, x.shape[:2] = {x.shape[:2]}"
         # mask = mask[:, : x.shape[1]]
