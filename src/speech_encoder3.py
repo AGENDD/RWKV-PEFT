@@ -9,46 +9,7 @@ from transformers import Wav2Vec2FeatureExtractor
 from transformers import Wav2Vec2Processor
 from transformers import Wav2Vec2CTCTokenizer
 
-
-class Adapter(nn.Module):
-    def __init__(self, model_output_dim, project_dim):
-        super(Adapter, self).__init__()
-        # 一维卷积层，步长为2，核大小为3
-        self.conv1 = nn.Conv1d(model_output_dim, model_output_dim, kernel_size=3, stride=2, padding=1)
-        # 添加一个下采样操作，这里我们使用最大池化
-        self.pool = nn.MaxPool1d(2)
-        
-        # Transformer层，latent dimension为3072
-        encoder_layers = TransformerEncoderLayer(d_model=model_output_dim, nhead=8, dim_feedforward=3072)
-        self.transformer = TransformerEncoder(encoder_layers, num_layers=4)
-        # 前馈层，维度为4096
-        self.ffn = nn.Sequential(
-            nn.Linear(model_output_dim, 4096),
-            nn.ReLU(),
-        )
-        # 线性层，输出和原始输出有相同的形状
-        self.linear = nn.Linear(4096, project_dim)
-
-    def forward(self, x):
-        # 交换维度，使得卷积在seq length维度上进行:(batch, feature, seq_length)
-        x = x.transpose(1, 2)
-        # 对输入进行一维卷积
-        x = self.conv1(x)
-        # 对卷积的输出进行下采样
-        x = self.pool(x)
-        # 再次交换维度，使得输出的形状与原始输入的形状相同
-        x = x.transpose(1, 2)
-        # 再次交换维度，使得输出的形状为:(seq_length, batch, feature)
-        x = x.transpose(0, 1)
-        # 将输出送入Transformer层
-        x = self.transformer(x)
-        # 变回:(batch, seq_length, feature)
-        x = x.transpose(0, 1)
-        # 将输出送入前馈层
-        x = self.ffn(x)
-        # 将输出送入线性层，得到最终输出
-        x = self.linear(x)
-        return x
+from speechtokenizer import SpeechTokenizer
 
 
 class SpeechEncoder(nn.Module):
@@ -64,37 +25,44 @@ class SpeechEncoder(nn.Module):
         assert train_mode in ["adapter", "full"]
         super(SpeechEncoder, self).__init__()
 
-        feature_extractor = Wav2Vec2FeatureExtractor(
-            feature_size=1,
-            sampling_rate=16000,
-            padding_value=0.0,
-            do_normalize=True,
-            return_attention_mask=False,
-        )
+        # feature_extractor = Wav2Vec2FeatureExtractor(
+        #     feature_size=1,
+        #     sampling_rate=16000,
+        #     padding_value=0.0,
+        #     do_normalize=True,
+        #     return_attention_mask=False,
+        # )
         self.device = device
-        try:
-            self.processor = AutoProcessor.from_pretrained(model_id)
-        except:
-            self.processor = AutoProcessor.from_pretrained("facebook/hubert-large-ls960-ft")
-        self.time_reduction_factor = int(
-            self.processor.feature_extractor.sampling_rate / 50
-        )
+        # try:
+        #     self.processor = AutoProcessor.from_pretrained(model_id)
+        # except:
+        #     self.processor = AutoProcessor.from_pretrained("facebook/hubert-large-ls960-ft")
+        # self.time_reduction_factor = int(
+        #     self.processor.feature_extractor.sampling_rate / 50
+        # )
         self.padding_length = 320
-        self.model = AutoModel.from_pretrained(model_id).to(self.device,dtype=torch.bfloat16)
-        self.model_output_dim = self.model.config.hidden_size
+        
+        config_path = "temp_models/ST/config.json"
+        ckpt_path = "temp_models/ST/SpeechTokenizer.pt"
+        
+        
+        self.model = SpeechTokenizer.load_from_checkpoint(config_path, ckpt_path).eval().to(self.device,dtype=torch.bfloat16)
+
+        
+        # self.model_output_dim = self.model.config.hidden_size
+        self.model_output_dim = self.model.n_q
         # self.downsample_K = downsample_K
         self.project_dim = project_dim
         if hidden_dim is None:
             self.hidden_dim = self.project_dim * 2
         else:
             self.hidden_dim = hidden_dim
-        # adapter shall be a Linear(Relu(Linear)) structure
-        # self.adapter = nn.Sequential(
-        #     nn.Linear(self.model_output_dim * self.downsample_K, self.hidden_dim),
-        #     nn.ReLU(),
-        #     nn.Linear(self.hidden_dim, self.project_dim),
-        # ).to(self.device,dtype=torch.bfloat16)
-        self.adapter = Adapter(self.model_output_dim, self.project_dim).to(self.device,dtype=torch.bfloat16)
+            
+        self.adapter = nn.Sequential(
+            nn.Linear(self.model_output_dim , self.hidden_dim),
+            nn.ReLU(),
+            nn.Linear(self.hidden_dim, self.project_dim),
+        ).to(self.device,dtype=torch.bfloat16)
         self.set_gradient(train_mode)
         
         # print("Parameters in speech encoder that require grad:")
@@ -134,17 +102,49 @@ class SpeechEncoder(nn.Module):
         # mask = attention_mask[:, :: (self.time_reduction_factor * )]
         return mask
 
+
+    def padding_mask(self, x):
+        #x:List[float]
+        #return x:tensor(B,channel,seq_length) , mask:tensor(B,seq_length)
+        
+        max_length = max(len(audio) for audio in x)
+
+        # 填充音频数据并生成 mask
+        padded_audio_list = []
+        mask_list = []
+
+        for audio in x:
+            # 填充音频数据
+            padded_audio = F.pad(torch.tensor(audio), (0, max_length - len(audio)))
+            padded_audio_list.append(padded_audio)
+            
+            # 生成 mask
+            mask = [1] * len(audio) + [0] * (max_length - len(audio))
+            mask_list.append(mask)
+
+        # 将列表转换为 PyTorch 张量
+        padded_audio_tensor = torch.stack(padded_audio_list).unsqueeze(1)
+        mask_tensor = torch.tensor(mask_list)
+        
+        return padded_audio_tensor, mask_tensor
+        
+
     def forward(self, x):
-        input_dict = self.processor(
-            x, return_tensors="pt", padding=True, sampling_rate=16000
-        ).to(self.device,dtype=torch.bfloat16)
+        # input_dict = self.processor(
+        #     x, return_tensors="pt", padding=True, sampling_rate=16000
+        # ).to(self.device,dtype=torch.bfloat16)
+        x,mask = self.padding_mask(x)#x:(B,channel,T) mask:(B,T)
+        
+        x = self.model.encode(x)#x:(n_q,B,T)
+        x = x.permute(1,2,0)#x:(B,T,n_q)
+        
         # mask = self.calculate_mask(input_dict)
-        x = self.model(**input_dict).last_hidden_state
+        # x = self.model(**input_dict).last_hidden_state
         # reshape the output from [batch_size, num_frames, hidden_size] to [batch_size, num_frames//downsample_K, hidden_size*downsample_K]
         # x = x.unfold(1, self.downsample_K, self.downsample_K).flatten(2)
 
-        x = self.adapter(x)
+        x = self.adapter(x)#x:(B,T,hidden dim)
         
         # mask = mask[:, : x.shape[1]]
-        mask = torch.ones(x.shape[0],x.shape[1])
+        # mask = torch.ones(x.shape[0],x.shape[1])
         return x, mask

@@ -11,13 +11,13 @@ from transformers import LlamaForCausalLM, LlamaTokenizer
 from typing import List
 
 try:
-    from .speech_encoder import SpeechEncoder
+    # from .speech_encoder import SpeechEncoder
     # from .speech_encoder2 import SpeechEncoder
-    # from .speech_encoder3 import SpeechEncoder
+    from .speech_encoder3 import SpeechEncoder
 except ImportError:
-    from speech_encoder import SpeechEncoder
+    # from speech_encoder import SpeechEncoder
     # from speech_encoder2 import SpeechEncoder
-    # from speech_encoder3 import SpeechEncoder
+    from speech_encoder3 import SpeechEncoder
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from .model import RWKV
@@ -102,7 +102,7 @@ class SLAM_ASR(pl.LightningModule):
                 
         # language_project_dim = self.language_model.args.hidden_size
         # language_project_dim = 2560 3B
-        language_project_dim = 4096
+        # language_project_dim = 4096
         language_project_dim = args.n_embd
         
         self.speech_encoder = SpeechEncoder(
