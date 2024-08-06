@@ -427,7 +427,7 @@ class SLAM_ASR(pl.LightningModule):
         """
         Generate the transcription
         """
-        prompt_embed, prompt_mask, _ = self._prepare_input_embeds(audios)
+        prompt_embed, prompt_mask, _ = self._prepare_input_embeds([audios])
         
         # outputs = self.language_model(
         #     inputs_embeds=prompt_embed,
