@@ -50,7 +50,7 @@ class SpeechEncoder(nn.Module):
         self.model = self.model.to(self.device,dtype=torch.bfloat16)
         
         
-        self.downsample_K = downsample_K
+        # self.downsample_K = downsample_K
         
         # self.model_output_dim = self.model.config.hidden_size
         self.model_output_dim = self.model.n_q
@@ -62,7 +62,7 @@ class SpeechEncoder(nn.Module):
             self.hidden_dim = hidden_dim
             
         self.adapter = nn.Sequential(
-            nn.Linear(self.model_output_dim * self.downsample_K, self.hidden_dim),
+            nn.Linear(self.model_output_dim, self.hidden_dim),
             nn.ReLU(),
             nn.Linear(self.hidden_dim, self.project_dim),
         ).to(self.device,dtype=torch.bfloat16)
@@ -131,33 +131,17 @@ class SpeechEncoder(nn.Module):
         # input_dict = self.processor(
         #     x, return_tensors="pt", padding=True, sampling_rate=16000
         # ).to(self.device,dtype=torch.bfloat16)
-        x,mask = self.padding_mask(x)#x:(B,channel,T) mask:(B,T)
+        x,mask = self.padding_mask(x)#x:(B,1,T) mask:(B,T)    
         
-        print(f"x after padding{x.shape}")
-        print(f"mask after padding{mask.shape}")
-        
-        
-        
-        
-        x = self.model.encode(x)#x:(n_q,B,T)
-        print(f"x after ST{x.shape}")
-        
+        x = self.model.encode(x)#x:(n_q,B,T*) 这里时间步被除以了320
         x = x.permute(1,2,0)#x:(B,T,n_q)
+
+        # mask = self.downsample_mask(mask) #mask:(B,T//k)
         
-        print(f"x after ST(permute){x.shape}")
-        x = x.unfold(1, self.downsample_K, self.downsample_K).flatten(2) #x:(B,T//k,n_q*k)
-        mask = self.downsample_mask(mask) #mask:(B,T//k)
-        
-        print(f"x after downsample{x.shape}")
-        print(f"mask after downsample{mask.shape}")
-        
-        
-        # x = self.model(**input_dict).last_hidden_state
-        # reshape the output from [batch_size, num_frames, hidden_size] to [batch_size, num_frames//downsample_K, hidden_size*downsample_K]
-        # x = x.unfold(1, self.downsample_K, self.downsample_K).flatten(2)
         x = x.to(torch.bfloat16)
         x = self.adapter(x)#x:(B,T,hidden dim)
-        print(f"x after adapter{x.shape}")
+        
+        mask = torch.ones(x.shape[0],x.shape[1]).to(self.device,dtype=torch.bfloat16)
         
         
         assert mask.shape == x.shape[:2], f"Shape mismatch: mask.shape = {mask.shape}, x.shape[:2] = {x.shape[:2]}"
