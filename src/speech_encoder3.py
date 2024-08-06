@@ -47,7 +47,7 @@ class SpeechEncoder(nn.Module):
         
         
         self.model = SpeechTokenizer.load_from_checkpoint(config_path, ckpt_path).eval().to(self.device,dtype=torch.bfloat16)
-
+        self.downsample_K = downsample_K
         
         # self.model_output_dim = self.model.config.hidden_size
         self.model_output_dim = self.model.n_q
@@ -59,7 +59,7 @@ class SpeechEncoder(nn.Module):
             self.hidden_dim = hidden_dim
             
         self.adapter = nn.Sequential(
-            nn.Linear(self.model_output_dim , self.hidden_dim),
+            nn.Linear(self.model_output_dim * self.downsample_K, self.hidden_dim),
             nn.ReLU(),
             nn.Linear(self.hidden_dim, self.project_dim),
         ).to(self.device,dtype=torch.bfloat16)
@@ -137,6 +137,8 @@ class SpeechEncoder(nn.Module):
         
         x = self.model.encode(x)#x:(n_q,B,T)
         x = x.permute(1,2,0)#x:(B,T,n_q)
+        x = x.unfold(1, self.downsample_K, self.downsample_K).flatten(2) #x:(B,T//k,n_q*k)
+        
         
         # mask = self.calculate_mask(input_dict)
         # x = self.model(**input_dict).last_hidden_state
