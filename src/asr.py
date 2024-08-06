@@ -211,6 +211,9 @@ class SLAM_ASR(pl.LightningModule):
         #根据mask去除speech_output的padding部分
         x_no_padding = []
         # 对于每一个样本和对应的掩码
+        
+        
+        
         for x_i, mask_i in zip(x, mask):
             # 使用掩码来选择非填充部分
             x_i_no_padding = x_i[mask_i.bool()]

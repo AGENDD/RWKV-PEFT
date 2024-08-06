@@ -46,7 +46,10 @@ class SpeechEncoder(nn.Module):
         ckpt_path = "temp_models/ST/SpeechTokenizer.pt"
         
         
-        self.model = SpeechTokenizer.load_from_checkpoint(config_path, ckpt_path).eval().to(self.device,dtype=torch.bfloat16)
+        self.model = SpeechTokenizer.load_from_checkpoint(config_path, ckpt_path).eval()
+        self.model = self.model.to(self.device,dtype=torch.bfloat16)
+        
+        
         self.downsample_K = downsample_K
         
         # self.model_output_dim = self.model.config.hidden_size
@@ -87,18 +90,13 @@ class SpeechEncoder(nn.Module):
             for param in self.adapter.parameters():
                 param.requires_grad = True
 
-    def calculate_mask(self, input_dict):
+    def downsample_mask(self, mask):
         """
         Also need to handle the masking issue, to let the model not to attend to the padding tokens
         """
-        attention_mask = input_dict["attention_mask"]  # [batch, num_samples]
-        length_in_samples = (
-            attention_mask.shape[1] // self.padding_length * self.padding_length
-        )
-        # calculate the mask length
-        mask_length = length_in_samples // self.time_reduction_factor
+        attention_mask = mask  # [batch, num_samples]
         # create the mask
-        mask = attention_mask[:, :: (self.time_reduction_factor * self.adapter.downsample_K)]
+        mask = attention_mask[:, :: (self.downsample_K)]
         # mask = attention_mask[:, :: (self.time_reduction_factor * )]
         return mask
 
@@ -140,13 +138,14 @@ class SpeechEncoder(nn.Module):
         x = x.unfold(1, self.downsample_K, self.downsample_K).flatten(2) #x:(B,T//k,n_q*k)
         
         
-        # mask = self.calculate_mask(input_dict)
+        mask = self.downsample_mask(mask)
         # x = self.model(**input_dict).last_hidden_state
         # reshape the output from [batch_size, num_frames, hidden_size] to [batch_size, num_frames//downsample_K, hidden_size*downsample_K]
         # x = x.unfold(1, self.downsample_K, self.downsample_K).flatten(2)
         x = x.to(torch.bfloat16)
         x = self.adapter(x)#x:(B,T,hidden dim)
         
+        assert mask.shape == x.shape[:2], f"Shape mismatch: mask.shape = {mask.shape}, x.shape[:2] = {x.shape[:2]}"
         # mask = mask[:, : x.shape[1]]
         # mask = torch.ones(x.shape[0],x.shape[1])
         return x, mask

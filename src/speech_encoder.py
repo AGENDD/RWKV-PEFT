@@ -72,12 +72,7 @@ class SpeechEncoder(nn.Module):
         Also need to handle the masking issue, to let the model not to attend to the padding tokens
         """
         attention_mask = input_dict["attention_mask"]  # [batch, num_samples]
-        length_in_samples = (
-            attention_mask.shape[1] // self.padding_length * self.padding_length
-        )
-        # calculate the mask length
-        mask_length = length_in_samples // self.time_reduction_factor
-        # create the mask
+
         mask = attention_mask[:, :: (self.time_reduction_factor * self.downsample_K)]
         return mask
 
