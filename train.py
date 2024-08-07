@@ -15,6 +15,8 @@ if __name__ == "__main__":
     rank_zero_info("########## work in progress ##########")
 
     parser = ArgumentParser()
+    
+    parser.add_argument("--OP", default="1", type=int)
 
     parser.add_argument("--load_model", default="", type=str)  # full path, with .pth
     parser.add_argument("--wandb", default="", type=str)  # wandb project name. if "" then don't use wandb
