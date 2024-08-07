@@ -34,11 +34,12 @@ class MyDataset(Dataset):
         if('translation'in sample.keys()):
             #covost2
             
-            # sentence = sample['sentence']
-            # if(sentence[0] == '\"' and sentence[len(sentence)-1] == '\"'):
+            sentence = sample['sentence']
+            if(sentence[0] == '\"' and sentence[len(sentence)-1] == '\"'):
+                sentence = sentence[1:-1]
                 
-            answer = sample['sentence']
-            # answer = sample['sentence'] +'$'+ sample['translation']
+            answer = sentence
+            # answer = sentence +'$'+ sample['translation']
             audio = sample['audio']['array']
             audio = librosa.resample(audio,orig_sr= 48000,target_sr= 16000)
         elif('sentence' in sample.keys()):
