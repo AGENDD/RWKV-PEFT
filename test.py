@@ -19,6 +19,6 @@ with open("temp_audios/text.txt",'w') as f:
         f.write(f"{i}")
         f.write(f"{transcription}\n")
         f.write(f"{translation}\n")
-        sf.write(f'{i}.wav', audio, 16000)
+        sf.write(f'temp_audios/{i}.wav', audio, 16000)
         
         
