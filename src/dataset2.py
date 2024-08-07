@@ -42,11 +42,13 @@ class MyDataset(Dataset):
             # answer = sentence +'$'+ sample['translation']
             audio = sample['audio']['array']
             audio = librosa.resample(audio,orig_sr= 48000,target_sr= 16000)
+            
         elif('sentence' in sample.keys()):
             #common voice
             answer = sample['sentence']
             audio = sample['audio']['array']
             audio = librosa.resample(audio,orig_sr= 48000,target_sr= 16000)
+            
         elif('audio' in sample.keys()):
             #librispeech
             audio = sample['audio']['array']
