@@ -33,7 +33,7 @@ class MyDataset(Dataset):
         
         if('translation'in sample.keys()):
             #covost2
-            answer = sample['translation']
+            answer = sample['sentence'] +'$'+ sample['translation']
             audio = sample['audio']['array']
             audio = librosa.resample(audio,orig_sr= 48000,target_sr= 16000)
         elif('sentence' in sample.keys()):
