@@ -3,6 +3,7 @@ from datasets import load_from_disk,load_dataset, concatenate_datasets
 import soundfile as sf
 from tqdm import tqdm
 dataset = load_dataset('covost2','en_zh-CN',data_dir = 'temp_datasets/covost-en_zhCN')["train"].select(range(10))
+from scipy.io.wavfile import write
 
 import resampy
 
@@ -21,6 +22,6 @@ with open("temp_audios/text.txt",'w') as f:
         f.write(f"{i}\n")
         f.write(f"{transcription}\n")
         f.write(f"{translation}\n")
-        sf.write(f'temp_audios/{i}.wav', audio, 16000)
+        write(f'temp_audios/{i}.wav', 16000, audio.astype('int16'))
         
         
