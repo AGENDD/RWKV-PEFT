@@ -11,6 +11,7 @@ from .binidx import MMapIndexedDataset
 from .utils import MaybeIsPrime
 from rwkv.utils import PIPELINE
 import librosa
+import resampy
 pipeline = PIPELINE('rwkv6', "rwkv_vocab_v20230424")
 
 class MyDataset(Dataset):
@@ -38,16 +39,18 @@ class MyDataset(Dataset):
             if(sentence[0] == '\"' and sentence[len(sentence)-1] == '\"'):
                 sentence = sentence[1:-1]
                 
-            answer = sentence
-            # answer = sentence +'$'+ sample['translation']
+            # answer = sentence
+            answer = sentence +'$'+ sample['translation']
             audio = sample['audio']['array']
-            audio = librosa.resample(audio,orig_sr= 48000,target_sr= 16000)
+            audio = resampy.resample(audio, 48000, 16000)
+            # audio = librosa.resample(audio,orig_sr= 48000,target_sr= 16000)
             
         elif('sentence' in sample.keys()):
             #common voice
             answer = sample['sentence']
             audio = sample['audio']['array']
-            audio = librosa.resample(audio,orig_sr= 48000,target_sr= 16000)
+            audio = resampy.resample(audio, 48000, 16000)
+            # audio = librosa.resample(audio,orig_sr= 48000,target_sr= 16000)
             
         elif('audio' in sample.keys()):
             #librispeech

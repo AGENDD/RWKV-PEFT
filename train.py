@@ -518,8 +518,8 @@ if __name__ == "__main__":
         
         for data in dataset:
             import librosa
-            
-            output= Total_model.generate(librosa.resample(data['audio']['array'],orig_sr= 48000,target_sr= 16000))
+            import resampy
+            output= Total_model.generate(resampy.resample(data['audio']['array'], 48000, 16000))
             output = ''.join(output)
             
             print(f"output:\n{output}")
