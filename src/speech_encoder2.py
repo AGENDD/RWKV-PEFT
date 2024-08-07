@@ -24,7 +24,7 @@ class Adapter(nn.Module):
         
         # Transformer层，latent dimension为3072
         encoder_layers = TransformerEncoderLayer(d_model=model_output_dim*3, nhead=8, dim_feedforward=3072)
-        self.transformer = TransformerEncoder(encoder_layers, num_layers=4)
+        self.transformer = TransformerEncoder(encoder_layers, num_layers=2)
         # 前馈层，维度为4096
         self.ffn = nn.Sequential(
             nn.Linear(model_output_dim*3, 4096),
