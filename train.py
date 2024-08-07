@@ -482,7 +482,7 @@ if __name__ == "__main__":
     else:
         print("No files found. Loading origin model.")
     
-    OP = 2
+
     token = "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"
     from datasets import load_from_disk,load_dataset, concatenate_datasets
     # dataset = load_from_disk("temp_datasets/en-final")
@@ -496,7 +496,7 @@ if __name__ == "__main__":
     dataset = load_dataset('covost2','en_zh-CN',data_dir = 'temp_datasets/covost-en_zhCN')#train:289430 val/test: 15531
     
     
-    if(OP == 1):
+    if(args.OP == 1):
         
         dataset = dataset['train']
         # dataset = concatenate_datasets([dataset, dataset2, dataset3]).shuffle()
@@ -505,7 +505,7 @@ if __name__ == "__main__":
         print("train starting...")
         trainer.fit(Total_model, data_loader)
         
-    elif(OP == 2):#自回归
+    elif(args.OP == 2):#自回归
         dataset = dataset['train'].select(range(100))
         # dataset = dataset3.select(range(100))
         # dataset = load_from_disk("temp_datasets/en-final") #libri 960
@@ -525,7 +525,7 @@ if __name__ == "__main__":
             print(f"answer:\n{data['sentence'].lower()+'$'+ data['translation'].lower()}")
             print("\n\n")
 
-    elif(OP == 3):
+    elif(args.OP == 3):
         from datasets import load_from_disk
         dataset = load_from_disk("temp_datasets/en-final").select(range(100))
         tokenizer = Total_model.return_tokenizer()
@@ -542,7 +542,7 @@ if __name__ == "__main__":
             print(f"answer:{data['text'].lower()}")
             print()
             exit(0)
-    elif(OP == 4):
+    elif(args.OP == 4):
         from datasets import load_dataset
         ds1 = load_dataset("librispeech_asr","clean",split="test")
         ds2 = load_dataset("librispeech_asr","other",split="test")
@@ -578,75 +578,3 @@ if __name__ == "__main__":
             print(f"Average WER: {average_wer}")
     exit(0)
 
-    
-    # if args.LISA:
-    #     args.load_model=f'rwkv-0.pth'
-    #     model = RWKV(args)
-    #     model.requires_grad_(False)
-
-    #     select_layers = np.random.choice(range(args.n_layer), args.lisa_r, replace=False)
-    #     for name, module in model.named_modules():
-    #         for pname, param in module.named_parameters():
-    #             if 'emb' in pname or 'head' in pname or '.ln' in pname or 'time' in pname :
-    #                 param.requires_grad = True
-    #             match = re.search(r'\d+', pname)
-    #             if match:
-    #                 number = int(match.group())
-    #                 if number in select_layers:
-    #                     param.requires_grad  = True
-    #         break
-    #         rank_zero_info(f"########## Loading {args.load_model}... ##########")
-    #     try:
-    #         load_dict = torch.load(args.load_model, map_location="cpu")
-    #         load_keys = list(load_dict.keys())
-    #         for k in load_keys:
-    #             if k.startswith('_forward_module.'):
-    #                 load_dict[k.replace('_forward_module.','')] = load_dict[k]
-    #                 del load_dict[k]
-    #     except:
-    #         rank_zero_info(f"Bad checkpoint {args.load_model}")
-    #         if args.my_pile_stage >= 2:  # try again using another checkpoint
-    #             max_p = args.my_pile_prev_p
-    #             if max_p == -1:
-    #                 args.load_model = f"{args.proj_dir}/rwkv-init.pth"
-    #             else:
-    #                 args.load_model = f"{args.proj_dir}/rwkv-{max_p}.pth"
-    #             args.epoch_begin = max_p + 1
-    #             rank_zero_info(f"Trying {args.load_model}")
-    #             load_dict = torch.load(args.load_model, map_location="cpu")
-
-    #     if args.load_partial == 1:
-    #         load_keys = load_dict.keys()
-    #         for k in model.state_dict():
-    #             if k not in load_keys:
-    #                 load_dict[k] = model.state_dict()[k]
-    #     model.load_state_dict(load_dict, strict=(not args.lora))
-
-
-    #     if pl.__version__[0]=='2':
-    #         trainer = Trainer(accelerator=args.accelerator,strategy=args.strategy,devices=args.devices,num_nodes=args.num_nodes,precision=args.precision,
-    #         logger=args.logger,callbacks=[train_callback(args)],max_epochs=args.max_epochs,check_val_every_n_epoch=args.check_val_every_n_epoch,num_sanity_val_steps=args.num_sanity_val_steps,
-    #         log_every_n_steps=args.log_every_n_steps,enable_checkpointing=args.enable_checkpointing,accumulate_grad_batches=args.accumulate_grad_batches,gradient_clip_val=args.gradient_clip_val)
-    #     else:
-    #         trainer = Trainer.from_argparse_args(
-    #             args,
-    #             callbacks=[train_callback(args)],
-    #         )
-
-    #     if trainer.global_rank == 0:
-    #         for n in model.state_dict():
-    #             shape = model.state_dict()[n].shape
-    #             shape = [i for i in shape if i != 1]
-    #             if len(shape) > 1:
-    #                 print(f"{str(shape[0]).ljust(5)} {str(shape[1]).ljust(5)} {n}")
-    #             else:
-    #                 print(f"{str(shape[0]).ljust(5)}       {n}")
-
-    #     if "deepspeed" in args.strategy:
-    #         trainer.strategy.config["zero_optimization"]["allgather_bucket_size"] = args.ds_bucket_mb * 1000 * 1000
-    #         trainer.strategy.config["zero_optimization"]["reduce_bucket_size"] = args.ds_bucket_mb * 1000 * 1000
-
-    #     # must set shuffle=False, persistent_workers=False (because worker is in another thread)
-    #     data_loader = DataLoader(train_data, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=1, persistent_workers=False, drop_last=True)
-
-    #     trainer.fit(model, data_loader)   
