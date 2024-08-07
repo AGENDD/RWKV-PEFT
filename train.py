@@ -482,7 +482,7 @@ if __name__ == "__main__":
     else:
         print("No files found. Loading origin model.")
     
-    OP = 1
+    OP = 2
     token = "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"
     from datasets import load_from_disk,load_dataset, concatenate_datasets
     # dataset = load_from_disk("temp_datasets/en-final")
@@ -522,7 +522,7 @@ if __name__ == "__main__":
             
             print(f"output:\n{output}")
             # print(f"answer:\n{data['text'].lower()}")
-            print(f"answer:\n{data['translation'].lower()}")
+            print(f"answer:\n{data['sentence'].lower()+'$'+ data['translation'].lower()}")
             print("\n\n")
 
     elif(OP == 3):
