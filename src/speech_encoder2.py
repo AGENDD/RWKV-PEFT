@@ -14,15 +14,20 @@ class Adapter(nn.Module):
     def __init__(self, model_output_dim, project_dim):
         super(Adapter, self).__init__()
         # 一维卷积层，步长为2，核大小为3
-        self.conv1 = nn.Conv1d(model_output_dim, model_output_dim, kernel_size=3, stride=2, padding=1)
+        self.conv1 = nn.Conv1d(model_output_dim, model_output_dim*2, kernel_size=3, stride=2, padding=1)
         # 添加一个下采样操作，这里我们使用最大池化
-        self.pool = nn.MaxPool1d(2)
+        self.pool1 = nn.MaxPool1d(2)
+        
+        self.conv2 = nn.Conv1d(model_output_dim*2, model_output_dim*3, kernel_size=3, stride=2, padding=1)
+        # 添加一个下采样操作，这里我们使用最大池化
+        self.pool2 = nn.MaxPool1d(2)
+        
         # Transformer层，latent dimension为3072
-        encoder_layers = TransformerEncoderLayer(d_model=model_output_dim, nhead=8, dim_feedforward=3072)
-        self.transformer = TransformerEncoder(encoder_layers, num_layers=1)
+        encoder_layers = TransformerEncoderLayer(d_model=model_output_dim*3, nhead=8, dim_feedforward=3072)
+        self.transformer = TransformerEncoder(encoder_layers, num_layers=4)
         # 前馈层，维度为4096
         self.ffn = nn.Sequential(
-            nn.Linear(model_output_dim, 4096),
+            nn.Linear(model_output_dim*3, 4096),
             nn.ReLU(),
         )
         # 线性层，输出和原始输出有相同的形状
@@ -34,7 +39,11 @@ class Adapter(nn.Module):
         # 对输入进行一维卷积
         x = self.conv1(x)
         # 对卷积的输出进行下采样
-        x = self.pool(x)
+        x = self.pool1(x)
+        # 对输入进行一维卷积
+        x = self.conv2(x)
+        # 对卷积的输出进行下采样
+        x = self.pool2(x)
         # 再次交换维度，使得输出的形状与原始输入的形状相同
         x = x.transpose(1, 2)
         # 再次交换维度，使得输出的形状为:(seq_length, batch, feature)
