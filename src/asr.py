@@ -54,8 +54,8 @@ class SLAM_ASR(pl.LightningModule):
         speech_encoder_model_id,#facebook/hubert-base-ls960
         language_model,
         downsample_K=5,
-        # hidden_dim=2048,
-        hidden_dim=4096,
+        hidden_dim=2048,
+        # hidden_dim=4096,
         train_mode="adapter",
         device="cuda",
         token = "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",
