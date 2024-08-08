@@ -2,14 +2,14 @@ import librosa
 from datasets import load_from_disk,load_dataset, concatenate_datasets
 import soundfile as sf
 from tqdm import tqdm
-dataset = load_dataset('covost2','en_zh-CN',data_dir = 'temp_datasets/covost-en_zhCN')["train"].select(range(10))
+dataset = load_dataset('covost2','en_zh-CN',data_dir = 'temp_datasets/covost-en_zhCN')["train"].select(range(1))
 from scipy.io.wavfile import write
 
 import resampy
 
 with open("temp_audios/text.txt",'w') as f:
     
-    for i in tqdm(range(10)):    
+    for i in tqdm(range(1)):    
         sample = dataset[i]
         audio = sample['audio']['array']
         tqdm.write(f"before resample:{len(audio)}")
@@ -26,5 +26,8 @@ with open("temp_audios/text.txt",'w') as f:
         sf.write(f'temp_audios/temp{i}_1.wav', audio1, 16000)
         sf.write(f'temp_audios/temp{i}_2.wav', audio2, 16000)
         sf.write(f'temp_audios/temp{i}_3.wav', audio, 48000)
+        sf.write(f'temp_audios/temp{i}_4.wav', audio, 16000)
+        sf.write(f'temp_audios/temp{i}_5.wav', audio1, 48000)
+        sf.write(f'temp_audios/temp{i}_6.wav', audio2, 48000)
         
         
