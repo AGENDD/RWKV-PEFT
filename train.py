@@ -517,9 +517,8 @@ if __name__ == "__main__":
         Total_model.to("cuda", dtype=torch.bfloat16)
         
         for data in dataset:
-            import librosa
-            import resampy
-            output= Total_model.generate(resampy.resample(data['audio']['array'], 48000, 16000))
+
+            output= Total_model.generate(data['audio']['array'])
             output = ''.join(output)
             
             print(f"output:\n{output}")
