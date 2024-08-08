@@ -42,7 +42,7 @@ class MyDataset(Dataset):
             # answer = sentence
             answer = sentence +'$'+ sample['translation']
             audio = sample['audio']['array']
-            audio = resampy.resample(audio, 48000, 16000)
+            # audio = resampy.resample(audio, 48000, 16000)
             # audio = librosa.resample(audio,orig_sr= 48000,target_sr= 16000)
             
         elif('sentence' in sample.keys()):
