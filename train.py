@@ -496,7 +496,7 @@ if __name__ == "__main__":
     # dataset3 = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
     # dataset = load_dataset('covost2','zh-CN_en',data_dir = 'temp_datasets/covost-zhCN_en')
     # dataset = load_dataset('covost2','en_zh-CN',data_dir = 'temp_datasets/covost-en_zhCN')#train:289430 val/test: 15531
-    
+    import resampy
     
     if(args.OP == 1):
         
@@ -508,7 +508,7 @@ if __name__ == "__main__":
         trainer.fit(Total_model, data_loader)
         
     elif(args.OP == 2):#自回归
-        dataset = dataset['train'].select(range(100))
+        dataset = dataset.select(range(100))
         # dataset = dataset3.select(range(100))
         # dataset = load_from_disk("temp_datasets/en-final") #libri 960
         # dataset = dataset.select(range(len(dataset) - 100, len(dataset)))
@@ -517,8 +517,8 @@ if __name__ == "__main__":
         Total_model.to("cuda", dtype=torch.bfloat16)
         
         for data in dataset:
-
-            output= Total_model.generate(data['audio']['array'])
+            
+            output= Total_model.generate(resampy.resample(data['audio']['array'], 48000, 16000))
             output = ''.join(output)
             
             print(f"output:\n{output}")
