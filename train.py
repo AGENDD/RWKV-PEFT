@@ -514,7 +514,7 @@ if __name__ == "__main__":
         # dataset = dataset.select(range(len(dataset) - 100, len(dataset)))
         
         tokenizer = Total_model.return_tokenizer()
-        Total_model.to("cuda", dtype=torch.bfloat16)
+        Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
         
         for data in dataset:
             
@@ -522,8 +522,8 @@ if __name__ == "__main__":
             output = ''.join(output)
             
             print(f"output:\n{output}")
-            # print(f"answer:\n{data['text'].lower()}")
-            print(f"answer:\n{data['sentence'].lower()+'$'+ data['translation'].lower()}")
+            print(f"answer:\n{data['text'].lower()}")
+            # print(f"answer:\n{data['sentence'].lower()+'$'+ data['translation'].lower()}")
             print("\n\n")
 
     elif(args.OP == 3):
