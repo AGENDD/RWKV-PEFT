@@ -508,6 +508,8 @@ if __name__ == "__main__":
         trainer.fit(Total_model, data_loader)
         
     elif(args.OP == 2):#自回归
+        
+        dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
         dataset = dataset.select(range(100))
         # dataset = dataset3.select(range(100))
         # dataset = load_from_disk("temp_datasets/en-final") #libri 960
@@ -522,7 +524,7 @@ if __name__ == "__main__":
             output = ''.join(output)
             
             print(f"output:\n{output}")
-            print(f"answer:\n{data['text'].lower()}")
+            print(f"answer:\n{data['sentence'].lower()}")
             # print(f"answer:\n{data['sentence'].lower()+'$'+ data['translation'].lower()}")
             print("\n\n")
 
