@@ -547,11 +547,12 @@ if __name__ == "__main__":
             exit(0)
     elif(args.OP == 4):
         from datasets import load_dataset
-        ds1 = load_dataset("librispeech_asr","clean",split="test")
-        ds2 = load_dataset("librispeech_asr","other",split="test")
-        dss = [ds1,ds2]
+
+        dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
+        
         tokenizer = Total_model.return_tokenizer()
         Total_model.to("cuda", dtype=torch.bfloat16)
+        dss = [dataset]
         
         from jiwer import wer
         def calculate_wer(predictions, references):
@@ -567,11 +568,12 @@ if __name__ == "__main__":
             references = []
             for i in tqdm(range(len(ds))):
                 x = ds[i]["audio"]["array"]
-                z = ds[i]["text"].lower()
+                z = ds[i]["sentence"].lower()
                 # asr(x)
                 # print(f"Audio length:{len(x)/16000} s")
                 with torch.no_grad():
-                    output = Total_model.generate(x) 
+                    # output = Total_model.generate(x) 
+                    output = Total_model.generate(resampy.resample(x, 48000, 16000))
                 output = ''.join(output)
                 predictions.append(output)
                 references.append(z)
@@ -579,5 +581,41 @@ if __name__ == "__main__":
             average_wer = calculate_wer(predictions, references)
             # print(ds)
             print(f"Average WER: {average_wer}")
+    elif(args.OP == 5):
+        from jiwer import cer
+        from datasets import load_dataset
+
+        dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
+        
+        tokenizer = Total_model.return_tokenizer()
+        Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
+        
+        dss = [dataset]
+        def calculate_cer(predictions, references):
+            total_cer = 0.0
+            for pred, ref in zip(predictions, references):
+                total_cer += cer(ref, pred)
+            average_cer = total_cer / len(predictions)
+            return average_cer
+
+        for ds in dss:
+            predictions = []
+            references = []
+            for i in tqdm(range(len(ds))):
+                x = ds[i]["audio"]["array"]
+                z = ds[i]["sentence"].lower()
+                # asr(x)
+                # print(f"Audio length:{len(x)/16000} s")
+                with torch.no_grad():
+                    # output = Total_model.generate(x) 
+                    output = Total_model.generate(resampy.resample(x, 48000, 16000))
+                output = ''.join(output)
+                predictions.append(output)
+                references.append(z)
+            
+            average_cer = calculate_cer(predictions, references)
+            # print(ds)
+            print(f"Average CER: {average_cer}")
+
     exit(0)
 
