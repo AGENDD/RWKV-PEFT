@@ -13,7 +13,7 @@ n_embd=2560
 
 micro_bsz=4
 epoch_save=1
-epoch_steps=18089
+epoch_steps=1837
 ctx_len=1024
 
 OP=1
