@@ -584,7 +584,8 @@ if __name__ == "__main__":
     elif(args.OP == 5):
         from jiwer import cer
         from datasets import load_dataset
-
+        from tqdm import tqdm
+        
         dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
         
         tokenizer = Total_model.return_tokenizer()
