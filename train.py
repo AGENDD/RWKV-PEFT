@@ -491,16 +491,16 @@ if __name__ == "__main__":
     # dataset = load_dataset('librispeech_asr','clean',split='train.100')
     # dataset2 = load_dataset('librispeech_asr','clean',split='train.360')
     # dataset3 = load_dataset('librispeech_asr','other',split='train.500') # 281500
-    # dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="train",token = token)
+    dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="train",token = token)
     # dataset2 = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="validation",token = token)
     # dataset3 = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
     # dataset = load_dataset('covost2','zh-CN_en',data_dir = 'temp_datasets/covost-zhCN_en')
-    dataset = load_dataset('covost2','en_zh-CN',data_dir = 'temp_datasets/covost-en_zhCN')#train:289430 val/test: 15531
+    # dataset = load_dataset('covost2','en_zh-CN',data_dir = 'temp_datasets/covost-en_zhCN')#train:289430 val/test: 15531
     
     
     if(args.OP == 1):
         
-        dataset = dataset['train']
+        # dataset = dataset['train']
         # dataset = concatenate_datasets([dataset, dataset2, dataset3]).shuffle()
         dataset = MyDataset(args, dataset)
         data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=8, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)

@@ -48,10 +48,10 @@ class MyDataset(Dataset):
             
         elif('sentence' in sample.keys()):
             #common voice
+            
             answer = sample['sentence']
             audio = sample['audio']['array']
             audio = resampy.resample(audio, 48000, 16000)
-            # audio = librosa.resample(audio,orig_sr= 48000,target_sr= 16000)
             
         elif('audio' in sample.keys()):
             #librispeech
