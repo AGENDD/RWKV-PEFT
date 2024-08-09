@@ -40,7 +40,8 @@ class MyDataset(Dataset):
                 sentence = sentence[1:-1]
                 
             # answer = sentence
-            answer = sentence +'$'+ sample['translation']
+            # answer = sentence +'$'+ sample['translation']
+            answer = sample['translation']
             audio = sample['audio']['array']
             # audio = resampy.resample(audio, 48000, 16000)
             # audio = librosa.resample(audio,orig_sr= 48000,target_sr= 16000)
