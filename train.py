@@ -491,11 +491,48 @@ if __name__ == "__main__":
     # dataset = load_dataset('librispeech_asr','clean',split='train.100')
     # dataset2 = load_dataset('librispeech_asr','clean',split='train.360')
     # dataset3 = load_dataset('librispeech_asr','other',split='train.500') # 281500
-    dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="train",token = token)
+    # dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="train",token = token)
     # dataset2 = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="validation",token = token)
     # dataset3 = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
     # dataset = load_dataset('covost2','zh-CN_en',data_dir = 'temp_datasets/covost-zhCN_en')
     # dataset = load_dataset('covost2','en_zh-CN',data_dir = 'temp_datasets/covost-en_zhCN')#train:289430 val/test: 15531
+    
+    def aishell():
+        train_path = "temp_datasets/aishell/data_aishell/wav/train"
+        wav_filenames = []
+        for filename in os.listdir(train_path):
+            if filename.endswith('.wav'):
+                wav_filenames.append(os.path.splitext(filename)[0])
+        
+        
+        trans_path = 'temp_datasets/aishell/data_aishell/transcript/aishell_transcript_v0.8.txt'
+        result_dict = {}
+        with open(trans_path, 'r') as file:
+            for line in file:
+                elements = line.strip().split(' ')
+                key = elements[0]
+                value = ' '.join(elements[1:])
+                result_dict[key] = value
+        
+        print(len(wav_filenames))
+        print(len(result_dict))
+        
+        dataset_final = []
+        for i in wav_filenames:
+            if(i not in result_dict.keys()):
+                print(f"{i} not found")
+            else:
+                dataset_final.append(i)
+        
+        return dataset_final,result_dict
+    
+    dataset, transcipt = aishell()
+    
+    exit(0)
+        
+    
+    
+    
     import resampy
     
     if(args.OP == 1):

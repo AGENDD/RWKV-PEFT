@@ -31,8 +31,11 @@ class MyDataset(Dataset):
             except:
                 idx = idx+1
         
-        
-        if('translation'in sample.keys()):
+        if('path' in sample.keys()):
+            
+            
+            
+        elif('translation'in sample.keys()):
             #covost2
             
             sentence = sample['sentence']
