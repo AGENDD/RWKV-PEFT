@@ -35,7 +35,7 @@ class MyDataset(Dataset):
                 idx = idx+1
         
         if(self.aishell_transcipt):
-            path = 'temp_datasets/aishell/data_aishell/wav/'
+            path = 'temp_datasets/aishell/data_aishell/wav/train/'
             sr, audio = wav.read(path+sample+".wav")
             audio = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
             answer = self.aishell_transcipt[sample]
