@@ -12,6 +12,7 @@ from .utils import MaybeIsPrime
 from rwkv.utils import PIPELINE
 import librosa
 import resampy
+import scipy.io.wavfile as wav
 pipeline = PIPELINE('rwkv6', "rwkv_vocab_v20230424")
 
 class MyDataset(Dataset):
@@ -33,8 +34,11 @@ class MyDataset(Dataset):
             except:
                 idx = idx+1
         
-        if('path' in sample.keys()):
-            
+        if(self.aishell_transcipt):
+            path = 'temp_datasets/aishell/data_aishell/wav/'
+            sr, audio = wav.read(path+sample+"/"+".wav")
+            audio = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
+            answer = self.aishell_transcipt[sample]
             
             
         elif('translation'in sample.keys()):
