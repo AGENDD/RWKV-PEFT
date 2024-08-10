@@ -72,8 +72,6 @@ class MyDataset(Dataset):
             answer = sample['text']
         
         # print(f"speech input{idx}:{len(audio)}")
-        print(answer)
-        
-        exit(0)
+
         return audio, answer.lower()
         
