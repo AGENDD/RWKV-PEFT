@@ -523,7 +523,7 @@ if __name__ == "__main__":
                 print(f"{i} not found")
             else:
                 dataset_final.append(i)
-        
+        print(len(dataset_final))
         return dataset_final,result_dict
     
     dataset, transcipt = aishell()
