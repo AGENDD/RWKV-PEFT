@@ -15,10 +15,12 @@ import resampy
 pipeline = PIPELINE('rwkv6', "rwkv_vocab_v20230424")
 
 class MyDataset(Dataset):
-    def __init__(self, args, hf_dataset):
+    def __init__(self, args, hf_dataset, aishell_transcipt = None):
         self.args = args
         self.hf_dataset = hf_dataset
-
+        self.aishell_transcipt = aishell_transcipt
+        
+        
     def __len__(self):
         return len(self.hf_dataset)
 
