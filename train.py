@@ -676,6 +676,7 @@ if __name__ == "__main__":
                 output = output.replace(" ","")
                 predictions.append(output)
                 references.append(z)
+                tqdm.write(f"{output}\t{z}")
             
             average_cer = calculate_cer(predictions, references)
             # print(ds)
