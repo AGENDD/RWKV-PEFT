@@ -39,7 +39,7 @@ class MyDataset(Dataset):
             sr, audio = wav.read(path+sample+".wav")
             audio = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
             answer = self.aishell_transcipt[sample]
-            
+            answer = answer.replace(" ","")
             
         elif('translation'in sample.keys()):
             #covost2
