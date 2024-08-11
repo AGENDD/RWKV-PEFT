@@ -664,7 +664,7 @@ if __name__ == "__main__":
                 # # asr(x)
                 # # print(f"Audio length:{len(x)/16000} s")
                 
-                path = 'temp_datasets/aishell/data_aishell/wav/test'
+                path = 'temp_datasets/aishell/data_aishell/wav/test/'
                 sr, audio = wav.read(path+ds[i]+".wav")
                 x = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
                 z = transcipt[ds[i]].replace(" ","")
