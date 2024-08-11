@@ -532,8 +532,10 @@ if __name__ == "__main__":
         
     
     
-    
+    import librosa
     import resampy
+    import scipy.io.wavfile as wav
+    
     
     if(args.OP == 1):
         
@@ -546,22 +548,31 @@ if __name__ == "__main__":
         
     elif(args.OP == 2):#自回归
         
-        dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
-        dataset = dataset.select(range(100))
+        # dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
+        # dataset = dataset.select(range(100))
         # dataset = dataset3.select(range(100))
         # dataset = load_from_disk("temp_datasets/en-final") #libri 960
         # dataset = dataset.select(range(len(dataset) - 100, len(dataset)))
+        
+        
+        
         
         tokenizer = Total_model.return_tokenizer()
         Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
         
         for data in dataset:
             
-            output= Total_model.generate(resampy.resample(data['audio']['array'], 48000, 16000))
-            output = ''.join(output)
+            path = 'temp_datasets/aishell/data_aishell/wav/train/'
+            sr, audio = wav.read(path+data+".wav")
+            audio = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
             
+            # output= Total_model.generate(resampy.resample(data['audio']['array'], 48000, 16000))
+            output= Total_model.generate(audio)
+            output = ''.join(output)
+            answer = transcipt[data]
             print(f"output:\n{output}")
-            print(f"answer:\n{data['sentence'].lower()}")
+            print(f"answera:\n{answer}")
+            # print(f"answer:\n{data['sentence'].lower()}")
             # print(f"answer:\n{data['sentence'].lower()+'$'+ data['translation'].lower()}")
             print("\n\n")
 
