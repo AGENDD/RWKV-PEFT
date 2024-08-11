@@ -497,8 +497,13 @@ if __name__ == "__main__":
     # dataset = load_dataset('covost2','zh-CN_en',data_dir = 'temp_datasets/covost-zhCN_en')
     # dataset = load_dataset('covost2','en_zh-CN',data_dir = 'temp_datasets/covost-en_zhCN')#train:289430 val/test: 15531
     
-    def aishell():
-        train_path = "temp_datasets/aishell/data_aishell/wav/train"
+    def aishell(split="train"):
+        if(split == 'train'):
+            train_path = "temp_datasets/aishell/data_aishell/wav/train"
+        else:
+            train_path = "temp_datasets/aishell/data_aishell/wav/test"
+        
+        
         wav_filenames = []
         for filename in os.listdir(train_path):
             if filename.endswith('.wav'):
@@ -526,7 +531,7 @@ if __name__ == "__main__":
         print(len(dataset_final))
         return dataset_final,result_dict
     
-    dataset, transcipt = aishell()
+    
     
 
         
@@ -541,6 +546,7 @@ if __name__ == "__main__":
         
         # dataset = dataset['train']
         # dataset = concatenate_datasets([dataset, dataset2, dataset3]).shuffle()
+        dataset, transcipt = aishell()
         dataset = MyDataset(args, dataset, aishell_transcipt=transcipt)
         data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=8, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
         print("train starting...")
@@ -634,7 +640,9 @@ if __name__ == "__main__":
         from datasets import load_dataset
         from tqdm import tqdm
         
-        dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
+        # dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
+        
+        dataset, transcipt = aishell(split="test")
         
         tokenizer = Total_model.return_tokenizer()
         Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
@@ -651,14 +659,21 @@ if __name__ == "__main__":
             predictions = []
             references = []
             for i in tqdm(range(len(ds))):
-                x = ds[i]["audio"]["array"]
-                z = ds[i]["sentence"].lower()
-                # asr(x)
-                # print(f"Audio length:{len(x)/16000} s")
+                # x = ds[i]["audio"]["array"]
+                # z = ds[i]["sentence"].lower()
+                # # asr(x)
+                # # print(f"Audio length:{len(x)/16000} s")
+                
+                path = 'temp_datasets/aishell/data_aishell/wav/'
+                sr, audio = wav.read(path+ds[i]+".wav")
+                x = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
+                z = transcipt[ds[i]].replace(" ","")
                 with torch.no_grad():
-                    # output = Total_model.generate(x) 
-                    output = Total_model.generate(resampy.resample(x, 48000, 16000))
+                    output = Total_model.generate(x) 
+                    # output = Total_model.generate(resampy.resample(x, 48000, 16000))
+                
                 output = ''.join(output)
+                output = output.replace(" ","")
                 predictions.append(output)
                 references.append(z)
             
