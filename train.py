@@ -560,7 +560,7 @@ if __name__ == "__main__":
         # dataset = load_from_disk("temp_datasets/en-final") #libri 960
         # dataset = dataset.select(range(len(dataset) - 100, len(dataset)))
         
-        
+        dataset, transcipt = aishell()
         
         
         tokenizer = Total_model.return_tokenizer()
