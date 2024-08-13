@@ -491,12 +491,13 @@ if __name__ == "__main__":
     # dataset = load_dataset('librispeech_asr','clean',split='train.100')
     # dataset2 = load_dataset('librispeech_asr','clean',split='train.360')
     # dataset3 = load_dataset('librispeech_asr','other',split='train.500') # 281500
-    # dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="train",token = token)
+    dataset = load_dataset("mozilla-foundation/common_voice_13_0", "tr", split="train",token = token)
     # dataset2 = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="validation",token = token)
     # dataset3 = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
     # dataset = load_dataset('covost2','zh-CN_en',data_dir = 'temp_datasets/covost-zhCN_en')
     # dataset = load_dataset('covost2','en_zh-CN',data_dir = 'temp_datasets/covost-en_zhCN')#train:289430 val/test: 15531
     
+    print(dataset)
     def aishell(split="train"):
         if(split == 'train'):
             train_path = "temp_datasets/aishell/data_aishell/wav/train"
@@ -546,8 +547,11 @@ if __name__ == "__main__":
         
         # dataset = dataset['train']
         # dataset = concatenate_datasets([dataset, dataset2, dataset3]).shuffle()
-        dataset, transcipt = aishell()
-        dataset = MyDataset(args, dataset, aishell_transcipt=transcipt)
+        # dataset, transcipt = aishell()
+        
+        
+        
+        dataset = MyDataset(args, dataset)
         data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=8, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
         print("train starting...")
         trainer.fit(Total_model, data_loader)
