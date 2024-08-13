@@ -78,28 +78,9 @@ class SLAM_ASR(pl.LightningModule):
         """
 
         self.language_tokenizer = AutoTokenizer.from_pretrained("RWKV/rwkv-6-world-1b6",trust_remote_code=True)
-        # self.language_model = AutoModelForCausalLM.from_pretrained(
-        #     language_model_id,
-        #     trust_remote_code=True,
-        #     # token = token
-        # ).to(self.device)
-        # self.language_model = AutoModelForCausalLM.from_pretrained("temp_models/rwkv-6-world-1b6", trust_remote_code=True)
-        
-        # self.language_tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-        # self.language_model.resize_token_embeddings(len(self.language_tokenizer))
-        
-        ###
-        # print("Model before lora:")
-        # print(self.language_model)
-        # self.load_lora(self.language_model)
-        # print("Model after lora:")
-        # print(self.language_model)
-        ###
-        
-        ########################################换成RWKV-PEFRT的模型结构
+
 
         self.language_model = language_model
-        #########################################
                 
         # language_project_dim = self.language_model.args.hidden_size
         # language_project_dim = 2560 3B
@@ -120,21 +101,7 @@ class SLAM_ASR(pl.LightningModule):
         self.T_vector = 0
         self.T_rwkv = 0
         
-        # print("show language params")
-        # for name,param in self.language_model.named_parameters():
-        #     print(f"{name}:{param.requires_grad}")
-        # print("show language model")
-        # print(self.language_model)
-
-
         self.set_gradient(train_mode,'state')
-
-        # self.prompt_part1 = """User:"""
-        # self.prompt_part2 = (
-        #     """transcribe it.\nAssistant:"""
-        # )
-        # self.embed_bank = {"embed1": None, "embed2": None, "att1": None, "att2": None}
-        # self.set_embed_bank()
 
     def gradient_checkpointing_enable(self, **kwargs):
         self.language_model.gradient_checkpointing_enable(**kwargs)
@@ -184,21 +151,6 @@ class SLAM_ASR(pl.LightningModule):
 
         # call set_gradient for speech encoder
         self.speech_encoder.set_gradient(train_mode)
-
-        # freeze the whole language_model
-        # if train_mode != "full":
-        #     for name, param in self.language_model.named_parameters():
-        #         # print(f"layer:{name}")
-                
-        #         if(tuning == 'lora' and 'lora' not in name.lower()):
-        #             param.requires_grad = False
-        #         elif(tuning == 'state'):
-        #             if('state' not in name.lower()):
-        #                 param.requires_grad = False
-        #             else:
-        #                 param.requires_grad = True
-        # for param in self.speech_encoder.parameters():#这里明明在上一步设置了全部求梯度，但是speech_encoder.model在这里全部变成false。所以在此重新设置
-        #     param.requires_grad = True        
         
         # now list all parameters that require grad
         print("Parameters that require grad:")
@@ -212,8 +164,6 @@ class SLAM_ASR(pl.LightningModule):
         #根据mask去除speech_output的padding部分
         x_no_padding = []
         # 对于每一个样本和对应的掩码
-        
-        
         
         for x_i, mask_i in zip(x, mask):
             # 使用掩码来选择非填充部分
