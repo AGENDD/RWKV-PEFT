@@ -13,10 +13,10 @@ n_embd=2560
 
 micro_bsz=4
 epoch_save=1
-epoch_steps=7506
+epoch_steps=1943
 ctx_len=1024
 
-OP=5
+OP=1
 
 
 QUANT='nf4' 
