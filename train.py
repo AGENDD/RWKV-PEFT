@@ -471,7 +471,7 @@ if __name__ == "__main__":
         "microsoft/wavlm-large",
         # "facebook/hubert-large-ll60k",
         model,
-        downsample_K=10,
+        downsample_K=8,
     )
     
     import glob
