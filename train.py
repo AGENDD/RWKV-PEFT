@@ -545,7 +545,7 @@ if __name__ == "__main__":
         
         
         
-        dataset = MyDataset(args, dataset,aishell_transcipt=transcipt)
+        dataset = MyDataset(args, dataset, aishell_transcipt=transcipt)
         data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=8, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
         print("train starting...")
         trainer.fit(Total_model, data_loader)
@@ -656,25 +656,27 @@ if __name__ == "__main__":
         for ds in dss:
             predictions = []
             references = []
-            for i in tqdm(range(len(ds))):
-                # x = ds[i]["audio"]["array"]
-                # z = ds[i]["sentence"].lower()
-                # # asr(x)
-                # # print(f"Audio length:{len(x)/16000} s")
-                
-                path = 'temp_datasets/aishell/data_aishell/wav/test/'
-                sr, audio = wav.read(path+ds[i]+".wav")
-                x = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
-                z = transcipt[ds[i]].replace(" ","")
-                with torch.no_grad():
-                    output = Total_model.generate(x) 
-                    # output = Total_model.generate(resampy.resample(x, 48000, 16000))
-                
-                output = ''.join(output)
-                output = output.replace(" ","")
-                predictions.append(output)
-                references.append(z)
-                tqdm.write(f"{output}\t{z}")
+            with open("cer_log.txt","w") as f:
+                for i in tqdm(range(len(ds))):
+                    # x = ds[i]["audio"]["array"]
+                    # z = ds[i]["sentence"].lower()
+                    # # asr(x)
+                    # # print(f"Audio length:{len(x)/16000} s")
+                    
+                    path = 'temp_datasets/aishell/data_aishell/wav/test/'
+                    sr, audio = wav.read(path+ds[i]+".wav")
+                    x = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
+                    z = transcipt[ds[i]].replace(" ","")
+                    with torch.no_grad():
+                        output = Total_model.generate(x) 
+                        # output = Total_model.generate(resampy.resample(x, 48000, 16000))
+                    
+                    output = ''.join(output)
+                    output = output.replace(" ","")
+                    predictions.append(output)
+                    references.append(z)
+                    tqdm.write(f"{output}\t{z}")
+                    f.write(f"{output}\t{z}\n")
             
             average_cer = calculate_cer(predictions, references)
             # print(ds)
