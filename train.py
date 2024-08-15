@@ -642,6 +642,9 @@ if __name__ == "__main__":
         
         dataset, transcipt = aishell(split="test")
         
+        dataset = dataset[:1000]
+        
+        
         tokenizer = Total_model.return_tokenizer()
         Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
         
