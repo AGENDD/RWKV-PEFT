@@ -468,7 +468,8 @@ if __name__ == "__main__":
         args,
         # "facebook/hubert-large-ls960-ft", # SHOULD NOT BE USED, THIS IS A FINETUNED VERSION.
         # "microsoft/wavlm-base-plus",
-        "microsoft/wavlm-large",
+        # "microsoft/wavlm-large",
+        "jonatasgrosman/exp_w2v2t_zh-cn_wavlm_s368",
         # "facebook/hubert-large-ll60k",
         model,
         # downsample_K=1,
