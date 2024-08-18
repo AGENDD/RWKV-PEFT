@@ -643,7 +643,7 @@ if __name__ == "__main__":
         
         dataset, transcipt = aishell(split="test")
         
-        dataset = dataset[:1000]
+        # dataset = dataset[:1000]
         
         
         tokenizer = Total_model.return_tokenizer()
