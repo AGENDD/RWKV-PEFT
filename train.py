@@ -558,8 +558,8 @@ if __name__ == "__main__":
         # dataset = dataset3.select(range(100))
         # dataset = load_from_disk("temp_datasets/en-final") #libri 960
         # dataset = dataset.select(range(len(dataset) - 100, len(dataset)))
-        
-        dataset, transcipt = aishell()
+        dataset = dataset['train'].select(range(100))
+        # dataset, transcipt = aishell()
         
         
         tokenizer = Total_model.return_tokenizer()
@@ -567,14 +567,17 @@ if __name__ == "__main__":
         
         for data in dataset:
             
-            path = 'temp_datasets/aishell/data_aishell/wav/train/'
-            sr, audio = wav.read(path+data+".wav")
-            audio = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
+            # path = 'temp_datasets/aishell/data_aishell/wav/train/'
+            # sr, audio = wav.read(path+data+".wav")
+            # audio = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
             
             # output= Total_model.generate(resampy.resample(data['audio']['array'], 48000, 16000))
+            audio = data['audio']['array']
+            
             output= Total_model.generate(audio)
             output = ''.join(output)
-            answer = transcipt[data]
+            answer = data['translation']
+            # answer = transcipt[data]
             print(f"output:\n{output}")
             print(f"answera:\n{answer}")
             # print(f"answer:\n{data['sentence'].lower()}")
