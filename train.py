@@ -497,7 +497,7 @@ if __name__ == "__main__":
     # dataset2 = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="validation",token = token)
     # dataset3 = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
     # dataset = load_dataset('covost2','zh-CN_en',data_dir = 'temp_datasets/covost-zhCN_en')
-    # dataset = load_dataset('covost2','en_zh-CN',data_dir = 'temp_datasets/covost-en_zhCN')#train:289430 val/test: 15531
+    dataset = load_dataset('covost2','en_zh-CN',data_dir = 'temp_datasets/covost-en_zhCN')#train:289430 val/test: 15531
 
     def aishell(split="train"):
         if(split == 'train'):
@@ -540,14 +540,14 @@ if __name__ == "__main__":
     
     if(args.OP == 1):
         
-        # dataset = dataset['train']
+        dataset = dataset['train']
         # dataset = concatenate_datasets([dataset, dataset2, dataset3]).shuffle()
-        dataset, transcipt = aishell() # 120098
+        # dataset, transcipt = aishell() # 120098
         
         
         
-        dataset = MyDataset(args, dataset, aishell_transcipt=transcipt)
-        data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=8, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
+        dataset = MyDataset(args, dataset)
+        data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=10, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
         print("train starting...")
         trainer.fit(Total_model, data_loader)
         
