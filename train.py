@@ -486,6 +486,8 @@ if __name__ == "__main__":
     else:
         print("No files found. Loading origin model.")
     
+    
+    
 
     token = "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"
     from datasets import load_from_disk,load_dataset, concatenate_datasets
@@ -688,48 +690,5 @@ if __name__ == "__main__":
             average_cer = calculate_cer(predictions, references)
             # print(ds)
             print(f"Average CER: {average_cer}")
-    elif(args.OP == 6):
-        Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
-        
-        import pyaudio
-        import numpy as np
-        
-        # 设置参数
-        FORMAT = pyaudio.paInt16
-        CHANNELS = 1
-        RATE = 16000
-        CHUNK = 1024
-        THRESHOLD = 500
-        
-        # 初始化pyaudio
-        audio = pyaudio.PyAudio()
-
-        # 打开流
-        stream = audio.open(format=FORMAT,
-                            channels=CHANNELS,
-                            rate=RATE,
-                            input=True,
-                            frames_per_buffer=CHUNK)
-
-        print("start recording...")
-        frames = []
-        recording = False
-        
-        while True:
-            data = stream.read(CHUNK)
-            audio_data = np.frombuffer(data, dtype=np.int16)
-            if np.max(audio_data) > THRESHOLD:
-                if not recording:
-                    print("audio start...")
-                    recording = True
-                frames.append(audio_data)
-            elif recording:
-                print("audio end...")
-                # output= Total_model.generate(np.hstack(frames))
-                # output = ''.join(output)
-                print(np.hstack(frames))
-                frames = []
-                # print(f"output:{output}")
-                recording = False
     exit(0)
 
