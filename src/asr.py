@@ -82,7 +82,7 @@ class SLAM_ASR(pl.LightningModule):
 
         self.language_model = language_model
         
-        for name, param in model.named_parameters():
+        for name, param in self.language_model.named_parameters():
             print(f"参数名称: {name}, 形状: {param.shape}")
         exit(0)
         # language_project_dim = self.language_model.args.hidden_size
