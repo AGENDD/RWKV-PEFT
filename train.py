@@ -690,5 +690,22 @@ if __name__ == "__main__":
             average_cer = calculate_cer(predictions, references)
             # print(ds)
             print(f"Average CER: {average_cer}")
+    elif(args.op == 6):
+        
+        import librosa
+        import time
+        
+        audio, sr = librosa.load("output.wav", sr=None)
+        audio = librosa.resample(audio, orig_sr=sr, target_sr=16000)
+        Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
+        
+        start_time = time.time()
+        output= Total_model.generate(audio)
+        output = ''.join(output)
+        end_time = time.time()
+        
+        print(f"audio: {args.file_path}")
+        print(f"predict: {output}")
+        print(f"Response time: {end_time - start_time} seconds")
     exit(0)
 
