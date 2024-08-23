@@ -462,7 +462,7 @@ if __name__ == "__main__":
 
     # must set shuffle=False, persistent_workers=False (because worker is in another thread)
     # data_loader = DataLoader(train_data, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=1, persistent_workers=False, drop_last=True)
-    
+    model = model.to(dtype=torch.bfloat16)
     from src.asr import SLAM_ASR
     Total_model = SLAM_ASR(
         args,
@@ -473,7 +473,7 @@ if __name__ == "__main__":
         # "facebook/hubert-large-ll60k",
         model,
         # downsample_K=1,
-    )
+    ).to(dtype=torch.bfloat16)
     
     import glob
     file_paths = glob.glob('output/rwkv-adapter*.pth')
