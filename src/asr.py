@@ -341,10 +341,6 @@ class SLAM_ASR(pl.LightningModule):
             ).to(self.device)
             with torch.no_grad():
                 end_of_audio = self.language_model.embed(end_of_audio.input_ids)
-            
-            # print(f"speech output:{speech_output.shape}")
-            # print(f"end_of_audio:{end_of_audio.shape}")
-            # exit(0)
             speech_output = torch.cat((speech_output, end_of_audio), dim= 1)
             
             prompt_embed = speech_output
@@ -387,6 +383,8 @@ class SLAM_ASR(pl.LightningModule):
         #     inputs_embeds=prompt_embed,
         #     attention_mask=prompt_mask.bool()
         # )
+        print(prompt_embed)
+        print(prompt_embed.shape)
         self.language_model.to(self._device, dtype=torch.bfloat16)
         outputs = self.language_model.generate(tokenizer= self.language_tokenizer,inputs_embeds=prompt_embed)
         
