@@ -704,7 +704,7 @@ if __name__ == "__main__":
         output = ''.join(output)
         end_time = time.time()
         
-        print(f"audio: {args.file_path}")
+        # print(f"audio: {args.file_path}")
         print(f"predict: {output}")
         print(f"Response time: {end_time - start_time} seconds")
     exit(0)
