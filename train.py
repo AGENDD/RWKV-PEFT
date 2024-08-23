@@ -690,7 +690,7 @@ if __name__ == "__main__":
             average_cer = calculate_cer(predictions, references)
             # print(ds)
             print(f"Average CER: {average_cer}")
-    elif(args.op == 6):
+    elif(args.OP == 6):
         
         import librosa
         import time
