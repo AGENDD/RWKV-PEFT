@@ -551,7 +551,6 @@ if __name__ == "__main__":
         dataset = concatenate_datasets([dataset, dataset2, dataset3, dataset4, dataset5, dataset6]).shuffle()
         print(len(dataset))
         # dataset, transcipt = aishell() # 120098
-        exit(0)
         
         
         dataset = MyDataset(args, dataset)
