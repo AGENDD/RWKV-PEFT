@@ -575,7 +575,7 @@ if __name__ == "__main__":
         dataset4 = load_dataset('covost2','fr_en',data_dir = 'temp_datasets/covost-fr_en')['test'].select(range(10))
         dataset5 = load_dataset('covost2','mn_en',data_dir = 'temp_datasets/covost-mn_en')['test'].select(range(10))
         dataset6 = load_dataset('covost2','ar_en',data_dir = 'temp_datasets/covost-ar_en')['test'].select(range(10))
-        
+        dataset = concatenate_datasets([dataset, dataset2, dataset3, dataset4, dataset5, dataset6]).shuffle()
         
         tokenizer = Total_model.return_tokenizer()
         Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
