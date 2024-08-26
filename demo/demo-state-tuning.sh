@@ -15,7 +15,7 @@ micro_bsz=4
 epoch_save=1
 epoch_steps=1659
 ctx_len=1024
-epoch_count=1
+epoch_count=100
 
 OP=1
 

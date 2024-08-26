@@ -565,8 +565,16 @@ if __name__ == "__main__":
         # dataset = dataset3.select(range(100))
         # dataset = load_from_disk("temp_datasets/en-final") #libri 960
         # dataset = dataset.select(range(len(dataset) - 100, len(dataset)))
-        dataset = dataset['train'].select(range(100))
+        
         # dataset, transcipt = aishell()
+        
+        
+        dataset = load_dataset('covost2','zh-CN_en',data_dir = 'temp_datasets/covost-zhCN_en')['test'].select(range(10))
+        dataset2 = load_dataset('covost2','ja_en',data_dir = 'temp_datasets/covost-ja_en')['test'].select(range(10))
+        dataset3 = load_dataset('covost2','de_en',data_dir = 'temp_datasets/covost-de_en')['test'].select(range(10))
+        dataset4 = load_dataset('covost2','fr_en',data_dir = 'temp_datasets/covost-fr_en')['test'].select(range(10))
+        dataset5 = load_dataset('covost2','mn_en',data_dir = 'temp_datasets/covost-mn_en')['test'].select(range(10))
+        dataset6 = load_dataset('covost2','ar_en',data_dir = 'temp_datasets/covost-ar_en')['test'].select(range(10))
         
         
         tokenizer = Total_model.return_tokenizer()
@@ -584,9 +592,11 @@ if __name__ == "__main__":
             output= Total_model.generate(audio)
             output = ''.join(output)
             answer = data['translation']
+            origin = data['sentence']
             # answer = transcipt[data]
+            print(f"original:\n{origin}")
             print(f"output:\n{output}")
-            print(f"answera:\n{answer}")
+            print(f"answer:\n{answer}")
             # print(f"answer:\n{data['sentence'].lower()}")
             # print(f"answer:\n{data['sentence'].lower()+'$'+ data['translation'].lower()}")
             print("\n\n")
