@@ -17,7 +17,7 @@ epoch_steps=18089
 ctx_len=1024
 epoch_count=1
 
-OP=6
+OP=1
 
 
 QUANT='nf4' 
