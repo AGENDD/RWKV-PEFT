@@ -541,11 +541,17 @@ if __name__ == "__main__":
     
     
     if(args.OP == 1):
-        dataset = load_dataset('covost2','en_zh-CN',data_dir = 'temp_datasets/covost-en_zhCN')#train:289430 val/test: 15531
-        dataset = dataset['train']
-        # dataset = concatenate_datasets([dataset, dataset2, dataset3]).shuffle()
+        dataset = load_dataset('covost2','zh-CN_en',data_dir = 'temp_datasets/covost-zhCN_en')['train']
+        dataset2 = load_dataset('covost2','ja_en',data_dir = 'temp_datasets/covost-ja_en')['train']
+        dataset3 = load_dataset('covost2','de_en',data_dir = 'temp_datasets/covost-de_en')['train'].select(range(7000))
+        dataset4 = load_dataset('covost2','fr_en',data_dir = 'temp_datasets/covost-fr_en')['train'].select(range(7000))
+        dataset5 = load_dataset('covost2','mn_en',data_dir = 'temp_datasets/covost-mn_en')['train']
+        dataset6 = load_dataset('covost2','ar_en',data_dir = 'temp_datasets/covost-ar_en')['train']
+        # dataset = dataset['train']
+        dataset = concatenate_datasets([dataset, dataset2, dataset3, dataset4, dataset5, dataset6]).shuffle()
+        print(len(dataset))
         # dataset, transcipt = aishell() # 120098
-        
+        exit(0)
         
         
         dataset = MyDataset(args, dataset)
