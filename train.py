@@ -579,7 +579,7 @@ if __name__ == "__main__":
         
         tokenizer = Total_model.return_tokenizer()
         Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
-        
+        print("start")
         for data in dataset:
             
             # path = 'temp_datasets/aishell/data_aishell/wav/train/'

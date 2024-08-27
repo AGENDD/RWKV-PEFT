@@ -47,10 +47,10 @@ class MyDataset(Dataset):
             sentence = sample['sentence']
             if(sentence[0] == '\"' and sentence[len(sentence)-1] == '\"'):
                 sentence = sentence[1:-1]
-                
+            sentence = sentence.strip()
             # answer = sentence
-            # answer = sentence +'$'+ sample['translation']
-            answer = sample['translation']
+            answer = sentence +'$'+ sample['translation']
+            # answer = sample['translation']
             audio = sample['audio']['array']
             # audio = resampy.resample(audio, 48000, 16000)
             # audio = librosa.resample(audio,orig_sr= 48000,target_sr= 16000)
