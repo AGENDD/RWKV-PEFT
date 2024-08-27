@@ -594,11 +594,11 @@ if __name__ == "__main__":
             answer = data['translation']
             origin = data['sentence']
             # answer = transcipt[data]
-            print(f"original:\n{origin}")
+            # print(f"original:\n{origin}")
             print(f"output:\n{output}")
-            print(f"answer:\n{answer}")
+            # print(f"answer:\n{answer}")
             # print(f"answer:\n{data['sentence'].lower()}")
-            # print(f"answer:\n{data['sentence'].lower()+'$'+ data['translation'].lower()}")
+            print(f"answer:\n{data['sentence'].lower()+'$'+ data['translation'].lower()}")
             print("\n\n")
 
     elif(args.OP == 3):
