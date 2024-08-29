@@ -1,15 +1,15 @@
-load_model='temp_models/RWKV-x060-World-3B-v2.1-20240417-ctx4096.pth' 
-# load_model='temp_models/RWKV-x060-World-7B-v2.1-20240507-ctx4096.pth'
+# load_model='temp_models/RWKV-x060-World-3B-v2.1-20240417-ctx4096.pth' 
+load_model='temp_models/RWKV-x060-World-7B-v2.1-20240507-ctx4096.pth'
 proj_dir='output'
 data_file='temp_datasets'
 
-# 3B
-n_layer=32
-n_embd=2560
+# # 3B
+# n_layer=32
+# n_embd=2560
 
 # 7B
-# n_layer=32
-# n_embd=4096
+n_layer=32
+n_embd=4096
 
 micro_bsz=4
 epoch_save=1
