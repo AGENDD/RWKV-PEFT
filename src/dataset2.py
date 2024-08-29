@@ -68,7 +68,7 @@ class MyDataset(Dataset):
         elif('audio' in sample.keys()):
             #librispeech
             audio = sample['audio']['array']
-            answer = sample['text']
+            answer = sample['transcript']
         else:
             #en-final
             audio = sample['speech']
