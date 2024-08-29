@@ -561,7 +561,6 @@ if __name__ == "__main__":
         con_dataset = con_dataset.shuffle()
         print(len(con_dataset))
         # dataset, transcipt = aishell() # 120098
-        exit(0)
         
         dataset = MyDataset(args, con_dataset)
         data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=10, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
