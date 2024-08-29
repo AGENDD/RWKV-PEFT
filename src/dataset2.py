@@ -61,7 +61,10 @@ class MyDataset(Dataset):
             answer = sample['sentence']
             audio = sample['audio']['array']
             audio = resampy.resample(audio, 48000, 16000)
-            
+        elif('transcipt' in sample.keys()):
+            #multilingual-librispeech
+            audio = sample['audio']['array']
+            answer = sample['transcript']
         elif('audio' in sample.keys()):
             #librispeech
             audio = sample['audio']['array']
