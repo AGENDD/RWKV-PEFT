@@ -559,7 +559,7 @@ if __name__ == "__main__":
             else:
                 con_dataset = concatenate_datasets([con_dataset, dataset1, dataset2])
         con_dataset = con_dataset.shuffle()
-        print(len(con_dataset))
+        print(len(con_dataset))#29060
         # dataset, transcipt = aishell() # 120098
         
         dataset = MyDataset(args, con_dataset)
@@ -578,18 +578,28 @@ if __name__ == "__main__":
         # dataset, transcipt = aishell()
         
         
-        dataset = load_dataset('covost2','zh-CN_en',data_dir = 'temp_datasets/covost-zhCN_en')['test'].select(range(10))
-        dataset2 = load_dataset('covost2','ja_en',data_dir = 'temp_datasets/covost-ja_en')['test'].select(range(10))
-        dataset3 = load_dataset('covost2','de_en',data_dir = 'temp_datasets/covost-de_en')['test'].select(range(10))
-        dataset4 = load_dataset('covost2','fr_en',data_dir = 'temp_datasets/covost-fr_en')['test'].select(range(10))
-        dataset5 = load_dataset('covost2','mn_en',data_dir = 'temp_datasets/covost-mn_en')['test'].select(range(10))
-        dataset6 = load_dataset('covost2','ar_en',data_dir = 'temp_datasets/covost-ar_en')['test'].select(range(10))
-        dataset = concatenate_datasets([dataset, dataset2, dataset3, dataset4, dataset5, dataset6]).shuffle()
+        # dataset = load_dataset('covost2','zh-CN_en',data_dir = 'temp_datasets/covost-zhCN_en')['test'].select(range(10))
+        # dataset2 = load_dataset('covost2','ja_en',data_dir = 'temp_datasets/covost-ja_en')['test'].select(range(10))
+        # dataset3 = load_dataset('covost2','de_en',data_dir = 'temp_datasets/covost-de_en')['test'].select(range(10))
+        # dataset4 = load_dataset('covost2','fr_en',data_dir = 'temp_datasets/covost-fr_en')['test'].select(range(10))
+        # dataset5 = load_dataset('covost2','mn_en',data_dir = 'temp_datasets/covost-mn_en')['test'].select(range(10))
+        # dataset6 = load_dataset('covost2','ar_en',data_dir = 'temp_datasets/covost-ar_en')['test'].select(range(10))
+        # dataset = concatenate_datasets([dataset, dataset2, dataset3, dataset4, dataset5, dataset6]).shuffle()
+        
+        arr = ['dutch','french','german','italian','polish','portuguese','spanish']
+        con_dataset = None
+        for i in arr:
+            dataset1 = load_dataset("facebook/multilingual_librispeech", i, split="9_hours").select(range(10))
+            if(con_dataset == None):
+                con_dataset = dataset1
+            else:
+                con_dataset = concatenate_datasets([con_dataset, dataset1])
+        con_dataset = con_dataset.shuffle()
         
         tokenizer = Total_model.return_tokenizer()
         Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
         print("start")
-        for data in dataset:
+        for data in con_dataset:
             
             # path = 'temp_datasets/aishell/data_aishell/wav/train/'
             # sr, audio = wav.read(path+data+".wav")
@@ -600,14 +610,13 @@ if __name__ == "__main__":
             
             output= Total_model.generate(audio)
             output = ''.join(output)
-            answer = data['translation']
-            origin = data['sentence']
+            origin = data['transcript'].lower()
             # answer = transcipt[data]
             # print(f"original:\n{origin}")
             print(f"output:\n{output}")
-            # print(f"answer:\n{answer}")
+            print(f"answer:\n{origin}")
             # print(f"answer:\n{data['sentence'].lower()}")
-            print(f"answer:\n{data['sentence'].lower()+'$'+ data['translation'].lower()}")
+            # print(f"answer:\n{data['sentence'].lower()+'$'+ data['translation'].lower()}")
             print("\n\n")
 
     elif(args.OP == 3):
