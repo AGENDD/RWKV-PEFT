@@ -670,8 +670,8 @@ if __name__ == "__main__":
                 # asr(x)
                 # print(f"Audio length:{len(x)/16000} s")
                 with torch.no_grad():
-                    # output = Total_model.generate(x) 
-                    output = Total_model.generate(resampy.resample(x, 48000, 16000))
+                    output = Total_model.generate(x) 
+                    # output = Total_model.generate(resampy.resample(x, 48000, 16000))
                 output = ''.join(output)
                 predictions.append(output)
                 references.append(z)
