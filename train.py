@@ -675,7 +675,7 @@ if __name__ == "__main__":
                 output = ''.join(output)
                 predictions.append(output)
                 references.append(z)
-            
+                tqdm.write(f"{output}\t{z}")
             average_wer = calculate_wer(predictions, references)
             # print(ds)
             print(f"Average WER: {average_wer}")
