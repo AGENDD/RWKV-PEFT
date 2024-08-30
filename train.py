@@ -639,11 +639,18 @@ if __name__ == "__main__":
     elif(args.OP == 4):
         from datasets import load_dataset
 
-        dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
+        arr = ['dutch','french','german','italian','polish','portuguese','spanish']
+        con_dataset = None
+        for i in arr:
+            dataset1 = load_dataset("facebook/multilingual_librispeech", i, split="test").select(range(10))
+            if(con_dataset == None):
+                con_dataset = dataset1
+            else:
+                con_dataset = concatenate_datasets([con_dataset, dataset1])
         
         tokenizer = Total_model.return_tokenizer()
         Total_model.to("cuda", dtype=torch.bfloat16)
-        dss = [dataset]
+        dss = [con_dataset]
         
         from jiwer import wer
         def calculate_wer(predictions, references):
@@ -659,7 +666,7 @@ if __name__ == "__main__":
             references = []
             for i in tqdm(range(len(ds))):
                 x = ds[i]["audio"]["array"]
-                z = ds[i]["sentence"].lower()
+                z = ds[i]["transcript"].lower()
                 # asr(x)
                 # print(f"Audio length:{len(x)/16000} s")
                 with torch.no_grad():
