@@ -6,7 +6,7 @@ for i in arr:
     print(i)
     while(True):
         try:
-            mls = load_dataset("facebook/multilingual_librispeech", i, split="9_hours")
+            mls = load_dataset("facebook/multilingual_librispeech", i, split="train")
             break
         except Exception as e:
             print(e)
