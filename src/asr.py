@@ -110,7 +110,8 @@ class SLAM_ASR(pl.LightningModule):
         self.T_rwkv = 0
         
         self.TTS = TTS(language='EN', device=device)
-        
+        for param in self.TTS.parameters():
+            param.requires_grad = False
         self.set_gradient(train_mode,'state')
 
     def gradient_checkpointing_enable(self, **kwargs):
