@@ -30,6 +30,11 @@ if importlib.util.find_spec('deepspeed'):
     import deepspeed
     from deepspeed.ops.adam import DeepSpeedCPUAdam, FusedAdam
 import time
+from melo.api import TTS
+import io
+import soundfile as sf
+import resampy
+import numpy as np
 
 class L2Wrap(torch.autograd.Function):
     @staticmethod
@@ -103,6 +108,8 @@ class SLAM_ASR(pl.LightningModule):
         self.T_hubert = 0
         self.T_vector = 0
         self.T_rwkv = 0
+        
+        self.TTS = TTS(language='EN', device=device)
         
         self.set_gradient(train_mode,'state')
 
@@ -351,7 +358,48 @@ class SLAM_ASR(pl.LightningModule):
             true_labels = None
         return prompt_embed, prompt_mask, true_labels
 
-    def forward(self, audios: List[float], transcriptions: List[str] = None):
+    # def forward(self, audios: List[float], transcriptions: List[str] = None):
+        
+    #     prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
+    #         audios, transcriptions
+    #     )
+    #     # run the prompt through the language model
+
+    #     # print(f"prompt_embed:\t{prompt_embed.shape}")
+    #     # print(f"attention_mask:\t{prompt_mask.shape}")
+    #     # print(f"true_labels:\t{true_labels.shape}")
+    #     # exit(0)
+    #     # outputs = self.language_model(
+    #     #     inputs_embeds=prompt_embed,
+    #     #     attention_mask=prompt_mask.bool(),
+    #     #     labels=true_labels,
+    #     # )  # CausalLMOutputWithPast
+    #     self.T_vector = time.time()
+    #     outputs = self.language_model(inputs_embeds=prompt_embed)
+    #     self.T_rwkv = time.time()
+        
+    #     # print(f"outputs:{outputs['loss']}")
+    #     # print(f"logits:\t{outputs.shape}")
+        
+    #     return outputs, true_labels, prompt_mask
+
+    def forward(self, questions: List[str], transcriptions: List[str] = None):
+        
+        question_wave = []
+        
+        for it in questions:
+            wave = self.TTS.tts_to_file(it, self.TTS.hps.data.spk2id['EN-US'], None, speed=1.0)
+            with io.BytesIO() as buffer:
+                sf.write(buffer, wave.astype(np.int16), 22050, format='WAV')
+                buffer.seek(0)
+                wave, sr = sf.read(buffer, dtype='int16')
+                wave = resampy.resample(wave, 22050, 16000)
+                question_wave.append(wave)
+                
+        audios = question_wave
+        print(audios)
+        print(audios[0])
+        exit(0)
         
         prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
             audios, transcriptions
@@ -375,6 +423,7 @@ class SLAM_ASR(pl.LightningModule):
         # print(f"logits:\t{outputs.shape}")
         
         return outputs, true_labels, prompt_mask
+    
 
     def generate(self, audios: List[float], stopping_criteria=None):
         """

@@ -40,6 +40,10 @@ class MyDataset(Dataset):
             audio = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
             answer = self.aishell_transcipt[sample]
             answer = answer.replace(" ","")
+
+        elif('prompt' in sample.keys()):
+            audio = sample['prompt']
+            answer = sample['prompt']
             
         elif('translation'in sample.keys()):
             #covost2

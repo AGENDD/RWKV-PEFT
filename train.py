@@ -549,20 +549,24 @@ if __name__ == "__main__":
         # dataset6 = load_dataset('covost2','ar_en',data_dir = 'temp_datasets/covost-ar_en')['train']
         # dataset = dataset['train']
         
-        arr = ['dutch','french','german','italian','polish','portuguese','spanish']
-        con_dataset = None
-        for i in arr:
-            dataset1 = load_dataset("facebook/multilingual_librispeech", i, split="9_hours")
-            dataset2 = load_dataset("facebook/multilingual_librispeech", i, split="dev")
-            if(con_dataset == None):
-                con_dataset = concatenate_datasets([dataset1, dataset2])
-            else:
-                con_dataset = concatenate_datasets([con_dataset, dataset1, dataset2])
-        con_dataset = con_dataset.shuffle()
-        print(len(con_dataset))#29060
+        # arr = ['dutch','french','german','italian','polish','portuguese','spanish']
+        # con_dataset = None
+        # for i in arr:
+        #     dataset1 = load_dataset("facebook/multilingual_librispeech", i, split="9_hours")
+        #     dataset2 = load_dataset("facebook/multilingual_librispeech", i, split="dev")
+        #     if(con_dataset == None):
+        #         con_dataset = concatenate_datasets([dataset1, dataset2])
+        #     else:
+        #         con_dataset = concatenate_datasets([con_dataset, dataset1, dataset2])
+        # con_dataset = con_dataset.shuffle()
+        dataset = load_dataset("HuggingFaceH4/ultrachat_200k",split="train_sft")#207865
+        
+        
+        
+        # print(len(con_dataset))#29060
         # dataset, transcipt = aishell() # 120098
         
-        dataset = MyDataset(args, con_dataset)
+        dataset = MyDataset(args, dataset)
         data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=10, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
         print("train starting...")
         trainer.fit(Total_model, data_loader)
