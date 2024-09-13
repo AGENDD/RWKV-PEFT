@@ -110,11 +110,12 @@ class SLAM_ASR(pl.LightningModule):
         self.T_rwkv = 0
         
         self.TTS = TTS(language='EN', device=device).to(torch.float32)
-        
-        for name, param in self.TTS.named_parameters():
-            print(f"Parameter name: {name}, Storage type: {param.dtype}")
-        
+        wave = self.TTS.tts_to_file("This is a testing", self.TTS.hps.data.spk2id['EN-US'], None, speed=1.0)
+        print(wave)
         exit(0)
+        # for name, param in self.TTS.named_parameters():
+        #     print(f"Parameter name: {name}, Storage type: {param.dtype}")
+        
         for param in self.TTS.parameters():
             param.requires_grad = False
         self.set_gradient(train_mode,'state')
@@ -394,6 +395,7 @@ class SLAM_ASR(pl.LightningModule):
         question_wave = []
         
         for it in questions:
+            
             wave = self.TTS.tts_to_file(it, self.TTS.hps.data.spk2id['EN-US'], None, speed=1.0)
             with io.BytesIO() as buffer:
                 sf.write(buffer, wave.astype(np.int16), 22050, format='WAV')
