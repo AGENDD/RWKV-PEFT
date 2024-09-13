@@ -389,7 +389,7 @@ class SLAM_ASR(pl.LightningModule):
         question_wave = []
         
         for it in questions:
-            wave = self.TTS.tts_to_file(it, self.TTS.hps.data.spk2id['EN-US'], None, speed=1.0)
+            wave = self.TTS.tts_to_file(it.to(torch.bfloat16), self.TTS.hps.data.spk2id['EN-US'], None, speed=1.0)
             with io.BytesIO() as buffer:
                 sf.write(buffer, wave.astype(np.int16), 22050, format='WAV')
                 buffer.seek(0)
