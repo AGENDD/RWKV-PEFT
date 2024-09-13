@@ -398,6 +398,7 @@ class SLAM_ASR(pl.LightningModule):
         for it in questions:
             self.TTS = self.TTS.to(torch.float32)
             wave = self.TTS.tts_to_file(it, self.TTS.hps.data.spk2id['EN-US'], None, speed=1.0)
+            print(wave)
             with io.BytesIO() as buffer:
                 sf.write(buffer, wave.astype(np.int16), 22050, format='WAV')
                 buffer.seek(0)
