@@ -110,6 +110,11 @@ class SLAM_ASR(pl.LightningModule):
         self.T_rwkv = 0
         
         self.TTS = TTS(language='EN', device=device).to(torch.float32)
+        
+        for name, param in self.TTS.named_parameters():
+            print(f"Parameter name: {name}, Storage type: {param.dtype}")
+        
+        exit(0)
         for param in self.TTS.parameters():
             param.requires_grad = False
         self.set_gradient(train_mode,'state')
