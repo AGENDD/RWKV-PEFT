@@ -569,7 +569,8 @@ if __name__ == "__main__":
         dataset = MyDataset(args, dataset)
         data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=10, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
         print("train starting...")
-        trainer.fit(Total_model, data_loader)
+        with torch.cuda.amp.autocast():
+            trainer.fit(Total_model, data_loader)
         
     elif(args.OP == 2):#自回归
         
