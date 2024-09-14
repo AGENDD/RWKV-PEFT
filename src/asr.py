@@ -418,21 +418,21 @@ class SLAM_ASR(pl.LightningModule):
             self.TTS = self.TTS.to(torch.float32)
             with self.suppress_stdout():
                 wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
-            print(wave)
-            print(wave[0])
+            # print(wave)
+            # print(wave[0])
             
-            with io.BytesIO() as buffer:
-                sf.write(buffer, wave.astype(np.int16), 22050, format='WAV')
-                buffer.seek(0)
-                wave, sr = sf.read(buffer, dtype='int16')
-                wave = resampy.resample(wave, 22050, 16000)
-                question_wave.append(wave)
+                with io.BytesIO() as buffer:
+                    sf.write(buffer, wave.astype(np.int16), 22050, format='WAV')
+                    buffer.seek(0)
+                    wave, sr = sf.read(buffer, dtype='int16')
+                    wave = resampy.resample(wave, 22050, 16000)
+                    question_wave.append(wave)
                 
         audios = question_wave
-        print(audios)
-        print(audios[0])
-        print(audios[0][0])
-        exit(0)
+        # print(audios)
+        # print(audios[0])
+        # print(audios[0][0])
+        # exit(0)
         
         prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
             audios, transcriptions
