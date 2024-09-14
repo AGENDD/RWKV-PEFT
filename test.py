@@ -1,33 +1,16 @@
-import librosa
-from datasets import load_from_disk,load_dataset, concatenate_datasets
-import soundfile as sf
-from tqdm import tqdm
-dataset = load_dataset('covost2','en_zh-CN',data_dir = 'temp_datasets/covost-en_zhCN')["train"].select(range(1))
-from scipy.io.wavfile import write
+from datasets import load_dataset
 
-import resampy
 
-with open("temp_audios/text.txt",'w') as f:
-    
-    for i in tqdm(range(1)):    
-        sample = dataset[i]
-        audio = sample['audio']['array']
-        tqdm.write(f"before resample:{len(audio)}")
-        audio1 = librosa.resample(audio,orig_sr= 48000,target_sr= 16000)
-        audio2 = resampy.resample(audio, 48000, 16000)
-        tqdm.write(f"after resample1:{len(audio1)}")
-        tqdm.write(f"after resample2:{len(audio2)}")
-        transcription = sample['sentence']
-        translation = sample["translation"]
+dataset = load_dataset("HuggingFaceH4/ultrachat_200k",split="train_sft",cache_dir="temp_cache")#207865
         
-        f.write(f"{i}\n")
-        f.write(f"{transcription}\n")
-        f.write(f"{translation}\n")
-        sf.write(f'temp_audios/temp{i}_1.wav', audio1, 16000)
-        sf.write(f'temp_audios/temp{i}_2.wav', audio2, 16000)
-        sf.write(f'temp_audios/temp{i}_3.wav', audio, 48000)
-        sf.write(f'temp_audios/temp{i}_4.wav', audio, 16000)
-        sf.write(f'temp_audios/temp{i}_5.wav', audio1, 48000)
-        sf.write(f'temp_audios/temp{i}_6.wav', audio2, 48000)
-        
-        
+# 定义过滤函数
+def filter_long_prompts(example):
+    return len(example['prompt'].split()) <= 30
+
+# 过滤数据集，使用32个线程
+filtered_dataset = dataset.filter(filter_long_prompts, num_proc=32)
+
+print(len(filtered_dataset))
+
+filtered_dataset.save_to_disk("temp_datasets/ultrachat")
+
