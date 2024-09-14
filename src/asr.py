@@ -37,6 +37,9 @@ import resampy
 import numpy as np
 from contextlib import contextmanager
 import sys
+np.set_printoptions(threshold=np.inf)
+
+
 
 class L2Wrap(torch.autograd.Function):
     @staticmethod
@@ -409,12 +412,15 @@ class SLAM_ASR(pl.LightningModule):
     def forward(self, questions: List[str], transcriptions: List[str] = None):
         
         question_wave = []
-        for name, param in self.TTS.named_parameters():
-            print(f"Parameter name: {name}, Storage type: {param.dtype}")
+        # for name, param in self.TTS.named_parameters():
+        #     print(f"Parameter name: {name}, Storage type: {param.dtype}")
         for it in questions:
             self.TTS = self.TTS.to(torch.float32)
             with self.suppress_stdout():
                 wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
+            print(wave)
+            print(wave[0])
+            
             with io.BytesIO() as buffer:
                 sf.write(buffer, wave.astype(np.int16), 22050, format='WAV')
                 buffer.seek(0)
