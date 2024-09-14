@@ -421,6 +421,7 @@ class SLAM_ASR(pl.LightningModule):
             # wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
             # print(wave[0])
             # print(len(wave))
+            with self.suppress_stdout():
                 with io.BytesIO() as buffer:
                     sf.write(buffer, wave.astype(np.int16), 44100, format='WAV')
                     buffer.seek(0)
