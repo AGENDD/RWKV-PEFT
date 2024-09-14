@@ -429,7 +429,7 @@ class SLAM_ASR(pl.LightningModule):
                     sf.write(buffer, wave.astype(np.int16), 44100, format='WAV')
                     buffer.seek(0)
                     wave, sr = sf.read(buffer, dtype='int16')
-                    wave = resampy.resample(wave, sr, 16000)
+                    wave = resampy.resample(wave, 44100, 16000)
                     # print(len(wave))
                     question_wave.append(wave)
                 
