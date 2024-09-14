@@ -415,6 +415,9 @@ class SLAM_ASR(pl.LightningModule):
             
             with self.suppress_stdout():
                 wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
+            if(len(wave) == 0):
+                print(f"0 length audio:{it}")
+                exit(0)
             # wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
             # print(wave[0])
             # print(len(wave))
