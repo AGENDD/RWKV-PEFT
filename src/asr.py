@@ -435,9 +435,9 @@ class SLAM_ASR(pl.LightningModule):
                 
         audios = question_wave
 
-        for it in audios:
-            print(len(it))
-        exit(0)
+        # for it in audios:
+        #     print(len(it))
+        # exit(0)
         
         prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
             audios, transcriptions
