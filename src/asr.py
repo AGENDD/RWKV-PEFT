@@ -403,11 +403,14 @@ class SLAM_ASR(pl.LightningModule):
     def suppress_stdout(*args, **kwargs):
         with open(os.devnull, 'w') as devnull:
             old_stdout = sys.stdout
+            old_stdeer = sys.stdeer
             sys.stdout = devnull
+            sys.stdeer = devnull
             try:
                 yield
             finally:
                 sys.stdout = old_stdout
+                sys.stdeer = old_stdeer
 
     def forward(self, questions: List[str], transcriptions: List[str] = None):
         
@@ -422,13 +425,13 @@ class SLAM_ASR(pl.LightningModule):
             # wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
             # print(wave[0])
             # print(len(wave))
-            with io.BytesIO() as buffer:
-                sf.write(buffer, wave.astype(np.int16), 44100, format='WAV')
-                buffer.seek(0)
-                wave, sr = sf.read(buffer, dtype='int16')
-                wave = resampy.resample(wave, sr, 16000)
-                print(len(wave))
-                question_wave.append(wave)
+                with io.BytesIO() as buffer:
+                    sf.write(buffer, wave.astype(np.int16), 44100, format='WAV')
+                    buffer.seek(0)
+                    wave, sr = sf.read(buffer, dtype='int16')
+                    wave = resampy.resample(wave, sr, 16000)
+                    # print(len(wave))
+                    question_wave.append(wave)
                 
         audios = question_wave
 
