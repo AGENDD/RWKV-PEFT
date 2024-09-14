@@ -111,11 +111,13 @@ class SLAM_ASR(pl.LightningModule):
         
         self.TTS = TTS(language='EN', device='auto')
         self.speaker_ids = self.TTS.hps.data.spk2id
+        for name, param in self.TTS.named_parameters():
+            print(f"Parameter name: {name}, Storage type: {param.dtype}")
+        
         wave = self.TTS.tts_to_file("This is a testing", self.speaker_ids['EN-US'], None, speed=1.0)
         print(wave)
         exit(0)
-        # for name, param in self.TTS.named_parameters():
-        #     print(f"Parameter name: {name}, Storage type: {param.dtype}")
+
         
         for param in self.TTS.parameters():
             param.requires_grad = False
