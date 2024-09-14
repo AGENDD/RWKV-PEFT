@@ -417,12 +417,12 @@ class SLAM_ASR(pl.LightningModule):
         #     print(f"Parameter name: {name}, Storage type: {param.dtype}")
         for it in questions:
             
-            # with self.suppress_stdout():
-            #     wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
-            wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
-            # print(wave)
+            with self.suppress_stdout():
+                wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
+            # wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
+            print(wave)
             # print(wave[0])
-            print(len(wave))
+            # print(len(wave))
             with io.BytesIO() as buffer:
                 sf.write(buffer, wave.astype(np.int16), 22050, format='WAV')
                 buffer.seek(0)
