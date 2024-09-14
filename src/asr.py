@@ -109,8 +109,9 @@ class SLAM_ASR(pl.LightningModule):
         self.T_vector = 0
         self.T_rwkv = 0
         
-        self.TTS = TTS(language='EN', device=device).to(torch.float32)
-        wave = self.TTS.tts_to_file("This is a testing", self.TTS.hps.data.spk2id['EN-US'], None, speed=1.0)
+        self.TTS = TTS(language='EN', device='auto')
+        self.speaker_ids = self.TTS.hps.data.spk2id
+        wave = self.TTS.tts_to_file("This is a testing", self.speaker_ids['EN-US'], None, speed=1.0)
         print(wave)
         exit(0)
         # for name, param in self.TTS.named_parameters():
