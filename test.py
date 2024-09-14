@@ -1,7 +1,7 @@
 from datasets import load_dataset
 
 
-dataset = load_dataset("HuggingFaceH4/ultrachat_200k",split="train_sft",cache_dir="temp_cache")#207865
+dataset = load_dataset("HuggingFaceH4/ultrachat_200k",split="train_sft")#207865
         
 # 定义过滤函数
 def filter_long_prompts(example):
