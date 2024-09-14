@@ -397,7 +397,7 @@ class SLAM_ASR(pl.LightningModule):
     
     
     @contextmanager
-    def suppress_stdout():
+    def suppress_stdout(*args, **kwargs):
         with open(os.devnull, 'w') as devnull:
             old_stdout = sys.stdout
             sys.stdout = devnull
