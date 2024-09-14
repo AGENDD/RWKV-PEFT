@@ -412,10 +412,11 @@ class SLAM_ASR(pl.LightningModule):
     def forward(self, questions: List[str], transcriptions: List[str] = None):
         
         question_wave = []
+        self.TTS = self.TTS.to(torch.float32)
         # for name, param in self.TTS.named_parameters():
         #     print(f"Parameter name: {name}, Storage type: {param.dtype}")
         for it in questions:
-            self.TTS = self.TTS.to(torch.float32)
+            
             with self.suppress_stdout():
                 wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
             # print(wave)
@@ -429,10 +430,10 @@ class SLAM_ASR(pl.LightningModule):
                     question_wave.append(wave)
                 
         audios = question_wave
-        # print(audios)
-        # print(audios[0])
-        # print(audios[0][0])
-        # exit(0)
+
+        for it in audios:
+            print(len(it))
+        exit(0)
         
         prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
             audios, transcriptions
