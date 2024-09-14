@@ -116,8 +116,11 @@ class SLAM_ASR(pl.LightningModule):
         
         wave = self.TTS.tts_to_file("Did you ever hear a folk tale about a giant turtle?", self.speaker_ids['EN-US'], None, speed=1.0)
         print(wave)
-        wave = self.TTS.tts_to_file("This is a testing", self.speaker_ids['EN-US'], None, speed=1.0)
-        print(wave)
+        print(wave[0])
+        print(type(wave))
+        # wave = self.TTS.tts_to_file("This is a testing", self.speaker_ids['EN-US'], None, speed=1.0)
+        # print(wave)
+        # print(wave[0])
         exit(0)
 
         
