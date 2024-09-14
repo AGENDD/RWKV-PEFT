@@ -35,6 +35,8 @@ import io
 import soundfile as sf
 import resampy
 import numpy as np
+from contextlib import contextmanager
+import sys
 
 class L2Wrap(torch.autograd.Function):
     @staticmethod
@@ -114,14 +116,9 @@ class SLAM_ASR(pl.LightningModule):
         # for name, param in self.TTS.named_parameters():
         #     print(f"Parameter name: {name}, Storage type: {param.dtype}")
         
-        wave = self.TTS.tts_to_file("Did you ever hear a folk tale about a giant turtle?", self.speaker_ids['EN-US'], None, speed=1.0)
-        print(wave)
-        print(wave[0])
-        print(type(wave))
         # wave = self.TTS.tts_to_file("This is a testing", self.speaker_ids['EN-US'], None, speed=1.0)
         # print(wave)
         # print(wave[0])
-        exit(0)
 
         
         for param in self.TTS.parameters():
@@ -397,6 +394,17 @@ class SLAM_ASR(pl.LightningModule):
     #     # print(f"logits:\t{outputs.shape}")
         
     #     return outputs, true_labels, prompt_mask
+    
+    
+    @contextmanager
+    def suppress_stdout():
+        with open(os.devnull, 'w') as devnull:
+            old_stdout = sys.stdout
+            sys.stdout = devnull
+            try:
+                yield
+            finally:
+                sys.stdout = old_stdout
 
     def forward(self, questions: List[str], transcriptions: List[str] = None):
         
@@ -405,8 +413,8 @@ class SLAM_ASR(pl.LightningModule):
             print(f"Parameter name: {name}, Storage type: {param.dtype}")
         for it in questions:
             self.TTS = self.TTS.to(torch.float32)
-            wave = self.TTS.tts_to_file(it, self.TTS.hps.data.spk2id['EN-US'], None, speed=1.0)
-            print(wave)
+            with self.suppress_stdout():
+                wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
             with io.BytesIO() as buffer:
                 sf.write(buffer, wave.astype(np.int16), 22050, format='WAV')
                 buffer.seek(0)
@@ -417,6 +425,7 @@ class SLAM_ASR(pl.LightningModule):
         audios = question_wave
         print(audios)
         print(audios[0])
+        print(audios[0][0])
         exit(0)
         
         prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
