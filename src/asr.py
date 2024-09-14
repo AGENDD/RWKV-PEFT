@@ -403,14 +403,14 @@ class SLAM_ASR(pl.LightningModule):
     def suppress_stdout(*args, **kwargs):
         with open(os.devnull, 'w') as devnull:
             old_stdout = sys.stdout
-            old_stdeer = sys.stdeer
+            old_stderr = sys.stderr
             sys.stdout = devnull
-            sys.stdeer = devnull
+            sys.stderr = devnull
             try:
                 yield
             finally:
                 sys.stdout = old_stdout
-                sys.stdeer = old_stdeer
+                sys.stdeer = old_stderr
 
     def forward(self, questions: List[str], transcriptions: List[str] = None):
         
