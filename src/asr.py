@@ -417,22 +417,24 @@ class SLAM_ASR(pl.LightningModule):
         #     print(f"Parameter name: {name}, Storage type: {param.dtype}")
         for it in questions:
             
-            with self.suppress_stdout():
-                wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
+            # with self.suppress_stdout():
+            #     wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
+            wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
             # print(wave)
             # print(wave[0])
-            
-                with io.BytesIO() as buffer:
-                    sf.write(buffer, wave.astype(np.int16), 22050, format='WAV')
-                    buffer.seek(0)
-                    wave, sr = sf.read(buffer, dtype='int16')
-                    wave = resampy.resample(wave, 22050, 16000)
-                    question_wave.append(wave)
+            print(len(wave))
+            with io.BytesIO() as buffer:
+                sf.write(buffer, wave.astype(np.int16), 22050, format='WAV')
+                buffer.seek(0)
+                wave, sr = sf.read(buffer, dtype='int16')
+                wave = resampy.resample(wave, 22050, 16000)
+                print(len(wave))
+                question_wave.append(wave)
                 
         audios = question_wave
 
-        for it in audios:
-            print(len(it))
+        # for it in audios:
+        #     print(len(it))
         exit(0)
         
         prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
