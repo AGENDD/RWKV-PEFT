@@ -124,8 +124,8 @@ class SLAM_ASR(pl.LightningModule):
         # print(wave[0])
 
         
-        for param in self.TTS.parameters():
-            param.requires_grad = False
+        # for param in self.TTS.parameters():
+        #     param.requires_grad = False
         self.set_gradient(train_mode,'state')
 
     def gradient_checkpointing_enable(self, **kwargs):
