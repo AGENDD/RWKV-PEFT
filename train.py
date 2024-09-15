@@ -560,7 +560,7 @@ if __name__ == "__main__":
         #         con_dataset = concatenate_datasets([con_dataset, dataset1, dataset2])
         # con_dataset = con_dataset.shuffle()
         # dataset = load_dataset("HuggingFaceH4/ultrachat_200k",split="train_sft")#207865
-        dataset = load_from_disk("temp_datasets/ultrachat_speech")#55466
+        dataset = load_from_disk("temp_datasets/ultrachat_speech")#55464
         
         
         # print(len(con_dataset))#29060

@@ -114,8 +114,8 @@ class SLAM_ASR(pl.LightningModule):
         self.T_vector = 0
         self.T_rwkv = 0
         
-        self.TTS = TTS(language='EN', device='auto')
-        self.speaker_ids = self.TTS.hps.data.spk2id
+        # self.TTS = TTS(language='EN', device='auto')
+        # self.speaker_ids = self.TTS.hps.data.spk2id
         # for name, param in self.TTS.named_parameters():
         #     print(f"Parameter name: {name}, Storage type: {param.dtype}")
         
