@@ -42,7 +42,7 @@ class MyDataset(Dataset):
             answer = answer.replace(" ","")
 
         elif('prompt' in sample.keys()):
-            audio = sample['prompt']
+            audio = sample['speech']
             answer = sample['prompt']
             
         elif('translation'in sample.keys()):

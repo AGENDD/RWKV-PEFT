@@ -405,36 +405,36 @@ class SLAM_ASR(pl.LightningModule):
             with redirect_stdout(devnull), redirect_stderr(devnull):
                 yield
 
-    def forward(self, questions: List[str], transcriptions: List[str] = None):
+    def forward(self, audios: List[str], transcriptions: List[str] = None):
         
-        question_wave = []
-        self.TTS = self.TTS.to(torch.float32)
-        # for name, param in self.TTS.named_parameters():
-        #     print(f"Parameter name: {name}, Storage type: {param.dtype}")
-        for it in questions:
+        # question_wave = []
+        # self.TTS = self.TTS.to(torch.float32)
+        # # for name, param in self.TTS.named_parameters():
+        # #     print(f"Parameter name: {name}, Storage type: {param.dtype}")
+        # for it in questions:
             
-            with self.suppress_stdout():
-                wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
+        #     with self.suppress_stdout():
+        #         wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
 
-            # wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
-            # print(wave[0])
-            # print(len(wave))
-            with io.BytesIO() as buffer:
-                sf.write(buffer, wave.astype(np.int16), 44100, format='WAV')
-                buffer.seek(0)
-                wave, sr = sf.read(buffer, dtype='int16')
-                try:
-                    wave = resampy.resample(wave, 44100, 16000)
-                except Exception as e:
-                    print(e)
-                    print(it)
-                    print(wave)
-                    print(len(wave))
-                    exit(0)
-                # print(len(wave))
-                question_wave.append(wave)
+        #     # wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
+        #     # print(wave[0])
+        #     # print(len(wave))
+        #     with io.BytesIO() as buffer:
+        #         sf.write(buffer, wave.astype(np.int16), 44100, format='WAV')
+        #         buffer.seek(0)
+        #         wave, sr = sf.read(buffer, dtype='int16')
+        #         try:
+        #             wave = resampy.resample(wave, 44100, 16000)
+        #         except Exception as e:
+        #             print(e)
+        #             print(it)
+        #             print(wave)
+        #             print(len(wave))
+        #             exit(0)
+        #         # print(len(wave))
+        #         question_wave.append(wave)
                 
-        audios = question_wave
+        # audios = question_wave
 
         # for it in audios:
         #     print(len(it))
