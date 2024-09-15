@@ -24,17 +24,18 @@ speaker_ids = TTS.hps.data.spk2id
 def fun(example):
     transcript = example['prompt']
     
-    with suppress_stdout():
-        wave = TTS.tts_to_file(transcript, speaker_ids['EN-US'], None, speed=1.0)
+    try:
+        with suppress_stdout():
+            wave = TTS.tts_to_file(transcript, speaker_ids['EN-US'], None, speed=1.0)
 
-    with io.BytesIO() as buffer:
-        sf.write(buffer, wave.astype(np.int16), 44100, format='WAV')
-        buffer.seek(0)
-        wave, sr = sf.read(buffer, dtype='int16')
-        try:
+        with io.BytesIO() as buffer:
+            sf.write(buffer, wave.astype(np.int16), 44100, format='WAV')
+            buffer.seek(0)
+            wave, sr = sf.read(buffer, dtype='int16')
+
             example['speech'] = resampy.resample(wave, 44100, 16000)
-        except:
-            example['speech'] = None
+    except:
+        example['speech'] = None
     return example
 
 dataset = dataset.map(fun,remove_columns=["prompt_id","messages"])
