@@ -591,15 +591,17 @@ if __name__ == "__main__":
         # dataset6 = load_dataset('covost2','ar_en',data_dir = 'temp_datasets/covost-ar_en')['test'].select(range(10))
         # dataset = concatenate_datasets([dataset, dataset2, dataset3, dataset4, dataset5, dataset6]).shuffle()
         
-        arr = ['dutch','french','german','italian','polish','portuguese','spanish']
-        con_dataset = None
-        for i in arr:
-            dataset1 = load_dataset("facebook/multilingual_librispeech", i, split="9_hours").select(range(10))
-            if(con_dataset == None):
-                con_dataset = dataset1
-            else:
-                con_dataset = concatenate_datasets([con_dataset, dataset1])
-        con_dataset = con_dataset.shuffle()
+        # arr = ['dutch','french','german','italian','polish','portuguese','spanish']
+        # con_dataset = None
+        # for i in arr:
+        #     dataset1 = load_dataset("facebook/multilingual_librispeech", i, split="9_hours").select(range(10))
+        #     if(con_dataset == None):
+        #         con_dataset = dataset1
+        #     else:
+        #         con_dataset = concatenate_datasets([con_dataset, dataset1])
+        # con_dataset = con_dataset.shuffle()
+        
+        con_dataset = load_from_disk("temp_datasets/ultrachat_speech")#55464
         
         tokenizer = Total_model.return_tokenizer()
         Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
@@ -611,11 +613,11 @@ if __name__ == "__main__":
             # audio = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
             
             # output= Total_model.generate(resampy.resample(data['audio']['array'], 48000, 16000))
-            audio = data['audio']['array']
-            
+            # audio = data['audio']['array']
+            audio = data['speech']
             output= Total_model.generate(audio)
             output = ''.join(output)
-            origin = data['transcript'].lower()
+            origin = data['prompt'].lower()
             # answer = transcipt[data]
             # print(f"original:\n{origin}")
             print(f"output:\n{output}")
