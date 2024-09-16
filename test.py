@@ -3,7 +3,7 @@ import torchaudio
 import torch
 # from melo.api import TTS
 # import io
-# import soundfile as sf
+import soundfile as sf
 # import resampy
 # import numpy as np
 # import sys
@@ -64,9 +64,9 @@ file_name = 'temp_datasets'
 for i,data in enumerate(dataset):
     
     waveform = data['speech']
-    waveform = torch.tensor(waveform)
+    # waveform = torch.tensor(waveform)
     sample_rate = 16000
-    torchaudio.save(f'temp_datasets/audio_{i}.wav', waveform, sample_rate)
+    sf.write(file_name, waveform, sample_rate)
 
 
 
