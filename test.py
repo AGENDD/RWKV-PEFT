@@ -58,7 +58,7 @@ import soundfile as sf
 
 
 dataset = load_from_disk("temp_datasets/ultrachat_speech").select(range(10))
-file_name = 'temp_datasets'
+
 
 
 for i,data in enumerate(dataset):
@@ -66,7 +66,7 @@ for i,data in enumerate(dataset):
     waveform = data['speech']
     # waveform = torch.tensor(waveform)
     sample_rate = 16000
-    sf.write(file_name, waveform, sample_rate)
+    sf.write(f"temp_audios/audio_{i}.wav", waveform, sample_rate)
 
 
 
