@@ -77,7 +77,7 @@ for i,data in enumerate(dataset):
     with io.BytesIO() as buffer:
         sf.write(buffer, wave, 16000, format='WAV')
         buffer.seek(0)
-        wave, sr = sf.read(buffer)
+        wave, sr = sf.read(buffer,dtype='float32')
     print(wave)
     sf.write("temp_audios/normal_16000.wav",wave, sr)
 
