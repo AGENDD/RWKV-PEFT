@@ -78,6 +78,6 @@ for i,data in enumerate(dataset):
     wave1 = resampy.resample(wave.astype(np.float32), 44100, 16000)
     sf.write("temp_audios/normal_16000_resampy_astype.wav",wave1, 16000)
     wave1 = librosa.resample(wave.astype(np.float32), 44100, 16000)
-    sf.write("temp_audios/normal_16000_librosa_astype.wav", wave, 16000)
+    sf.write("temp_audios/normal_16000_librosa_astype.wav", wave1, 16000)
     break
             
