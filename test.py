@@ -72,6 +72,6 @@ for i,data in enumerate(dataset):
         wave, sr = sf.read(buffer, dtype='int16')
     sf.write("temp_audios/normal_44100.wav",wave, sr)
     wave = resampy.resample(wave, 44100, 16000)
-    sf.write("temp_audios/normal_16000.wav",wave, sr)
+    sf.write("temp_audios/normal_16000.wav",wave, 16000)
     break
             
