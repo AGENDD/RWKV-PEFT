@@ -81,7 +81,7 @@ for i,data in enumerate(dataset):
         buffer.seek(0)
         wave, sr = sf.read(buffer,dtype='float32')
     print(f"{len(wave)}:{wave}")
-    sf.write("temp_audios/normal_16000.wav",wave, sr)
+    sf.write("temp_audios/normal.wav",wave, sr)
 
     
     break
