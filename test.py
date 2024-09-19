@@ -69,16 +69,18 @@ for i,data in enumerate(dataset):
 
     wave = TTS.tts_to_file(transcript, speaker_ids['EN-US'], None, speed=1.0)
     sf.write("temp_audios/origin.wav",wave, 44100)
+    print(f"{len(wave)}:{wave}")
     wave = torch.tensor(wave).unsqueeze(0)
     resample = Resample(44100, 16000)
     resampled_audio = resample(wave[0])
     wave = resampled_audio.squeeze(0).numpy()
-    print(wave)
+    sf.write("temp_audios/resempled.wav",wave, 16000)
+    print(f"{len(wave)}:{wave}")
     with io.BytesIO() as buffer:
         sf.write(buffer, wave, 16000, format='WAV')
         buffer.seek(0)
         wave, sr = sf.read(buffer,dtype='float32')
-    print(wave)
+    print(f"{len(wave)}:{wave}")
     sf.write("temp_audios/normal_16000.wav",wave, sr)
 
     
