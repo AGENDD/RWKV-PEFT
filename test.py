@@ -19,8 +19,8 @@ import os
 
 # dataset = load_from_disk("temp_datasets/ultrachat")
 
-# TTS = TTS(language='EN', device='auto')
-# speaker_ids = TTS.hps.data.spk2id
+TTS = TTS(language='EN', device='auto')
+speaker_ids = TTS.hps.data.spk2id
 
 
 # def fun(example):
