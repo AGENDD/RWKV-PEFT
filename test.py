@@ -11,6 +11,7 @@ from contextlib import contextmanager, redirect_stdout, redirect_stderr
 import os
 import librosa
 from torchaudio.transforms import Resample
+from torchaudio import load, save
 
 # @contextmanager
 # def suppress_stdout(*args, **kwargs):
@@ -71,10 +72,13 @@ for i,data in enumerate(dataset):
     with io.BytesIO() as buffer:
         sf.write(buffer, wave, 44100, format='WAV')
         buffer.seek(0)
-        wave, sr = sf.read(buffer, dtype='int16')
-    sf.write("temp_audios/normal_44100.wav",wave, sr)
+        # wave, sr = sf.read(buffer, dtype='int16')
+        audio = load(buffer)
+    print(audio)
+    print(audio[0])
+    # sf.write("temp_audios/normal_44100.wav",wave, sr)
     resample = Resample(44100, 16000)
-    resampled_audio = resample(wave)
+    resampled_audio = resample(audio[0])
     print(resampled_audio)
     sf.write("temp_audios/normal_16000.wav",resampled_audio, 16000)
     
