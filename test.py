@@ -67,7 +67,7 @@ for i,data in enumerate(dataset):
     wave = TTS.tts_to_file(transcript, speaker_ids['EN-US'], None, speed=1.0)
     sf.write("temp_audios/origin.wav",wave, 44100)
     with io.BytesIO() as buffer:
-        sf.write(buffer, wave.astype(np.int16), 44100, format='WAV')
+        sf.write(buffer, wave, 44100, format='WAV')
         buffer.seek(0)
         wave, sr = sf.read(buffer, dtype='int16')
     sf.write("temp_audios/normal_44100.wav",wave, sr)
