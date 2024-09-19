@@ -73,6 +73,7 @@ for i,data in enumerate(dataset):
     resample = Resample(44100, 16000)
     resampled_audio = resample(wave[0])
     wave = resampled_audio.squeeze(0).numpy()
+    print(wave)
     with io.BytesIO() as buffer:
         sf.write(buffer, wave, 16000, format='WAV')
         buffer.seek(0)
