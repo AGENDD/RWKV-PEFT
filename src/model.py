@@ -1265,7 +1265,7 @@ class RWKV(pl.LightningModule):
                 _, top_idx = probabilities.topk(1, dim=-1)
                 
                 decoded_token = tokenizer.decode(top_idx.squeeze(-1))
-                if endding != None and decoded_token == endding:
+                if endding != None and endding in decoded_token:
                     break
                 else:
                     true_output.append(decoded_token)
