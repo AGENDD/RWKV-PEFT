@@ -623,6 +623,7 @@ if __name__ == "__main__":
             print(f"prompt:\n{origin}")
             print(f"recognize:\n{output}")
             output= Total_model.generate(audio,endding=None)
+            output = ''.join(output)
             print(f"keep going:\n{output}")
             # print(f"answer:\n{data['sentence'].lower()}")
             # print(f"answer:\n{data['sentence'].lower()+'$'+ data['translation'].lower()}")
