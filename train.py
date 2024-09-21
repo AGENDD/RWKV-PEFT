@@ -615,7 +615,7 @@ if __name__ == "__main__":
             # output= Total_model.generate(resampy.resample(data['audio']['array'], 48000, 16000))
             # audio = data['audio']['array']
             audio = data['speech']
-            output= Total_model.generate(audio)
+            output= Total_model.generate(audio,endding='\n')
             output = ''.join(output)
             origin = data['prompt'].lower()
             # answer = transcipt[data]
