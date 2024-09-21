@@ -1251,7 +1251,7 @@ class RWKV(pl.LightningModule):
 
             return x
 
-        def generate(self, tokenizer, idx=None, inputs_embeds=None,):
+        def generate(self, tokenizer, idx=None, inputs_embeds=None,endding = '<s>'):
             MAX_LENGTH = 100
             output_seq = self(idx,inputs_embeds)#调用模型
             temp = output_seq.clone()
@@ -1265,7 +1265,7 @@ class RWKV(pl.LightningModule):
                 _, top_idx = probabilities.topk(1, dim=-1)
                 
                 decoded_token = tokenizer.decode(top_idx.squeeze(-1))
-                if decoded_token == '<s>':
+                if endding != None and decoded_token == endding:
                     break
                 else:
                     true_output.append(decoded_token)

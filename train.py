@@ -620,8 +620,10 @@ if __name__ == "__main__":
             origin = data['prompt'].lower()
             # answer = transcipt[data]
             # print(f"original:\n{origin}")
-            print(f"output:\n{output}")
-            print(f"answer:\n{origin}")
+            print(f"prompt:\n{origin}")
+            print(f"recognize:\n{output}")
+            output= Total_model.generate(audio,endding=None)
+            print(f"keep going:\n{output}")
             # print(f"answer:\n{data['sentence'].lower()}")
             # print(f"answer:\n{data['sentence'].lower()+'$'+ data['translation'].lower()}")
             print("\n\n")

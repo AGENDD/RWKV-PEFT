@@ -464,7 +464,7 @@ class SLAM_ASR(pl.LightningModule):
         return outputs, true_labels, prompt_mask
     
 
-    def generate(self, audios: List[float], stopping_criteria=None):
+    def generate(self, audios: List[float], endding='<s>'):
         """
         Generate the transcription
         """
@@ -476,7 +476,7 @@ class SLAM_ASR(pl.LightningModule):
         # )
 
         self.language_model.to(self._device, dtype=torch.bfloat16)
-        outputs = self.language_model.generate(tokenizer= self.language_tokenizer,inputs_embeds=prompt_embed)
+        outputs = self.language_model.generate(tokenizer= self.language_tokenizer,inputs_embeds=prompt_embed, endding=endding)
         
         return outputs
 
