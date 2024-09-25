@@ -473,7 +473,7 @@ class SLAM_ASR(pl.LightningModule):
             prompt_embed, prompt_mask, _ = self._prepare_input_embeds([audios])
         elif(prompts != None):
             prompts_tokens = self.language_tokenizer(
-                prompts,
+                [prompts],
                 return_tensors="pt",
                 padding=True,
                 truncation=True,
