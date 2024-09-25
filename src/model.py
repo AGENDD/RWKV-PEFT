@@ -1274,9 +1274,7 @@ class RWKV(pl.LightningModule):
                 output_seq = self(idx,inputs_embeds)
 
             return true_output
-            # init_input = output_seq[0][-1][:]
-            
-            # for i in range(MAX_LENGTH):
+
                 
             
 

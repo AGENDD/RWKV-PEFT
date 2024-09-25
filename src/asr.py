@@ -464,16 +464,26 @@ class SLAM_ASR(pl.LightningModule):
         return outputs, true_labels, prompt_mask
     
 
-    def generate(self, audios: List[float], endding='<s>'):
+    def generate(self,prompts: List[str] = None, audios: List[float] = None, endding='<s>'):
         """
         Generate the transcription
         """
-        prompt_embed, prompt_mask, _ = self._prepare_input_embeds([audios])
         
-        # outputs = self.language_model(
-        #     inputs_embeds=prompt_embed,
-        #     attention_mask=prompt_mask.bool()
-        # )
+        if(audios != None): 
+            prompt_embed, prompt_mask, _ = self._prepare_input_embeds([audios])
+        elif(prompts != None):
+            prompts_tokens = self.language_tokenizer(
+                prompts,
+                return_tensors="pt",
+                padding=True,
+                truncation=True,
+                add_special_tokens=False,
+            ).to(self.device)
+        
+            with torch.no_grad():
+                # labels_embeds = self.language_model.rwkv.get_input_embeddings()(_labels.input_ids)
+                prompt_embed = self.language_model.embed(prompts_tokens.input_ids)
+                prompt_mask = prompts_tokens.attention_mask
 
         self.language_model.to(self._device, dtype=torch.bfloat16)
         outputs = self.language_model.generate(tokenizer= self.language_tokenizer,inputs_embeds=prompt_embed, endding=endding)

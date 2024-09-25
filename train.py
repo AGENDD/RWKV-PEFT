@@ -615,14 +615,15 @@ if __name__ == "__main__":
             # output= Total_model.generate(resampy.resample(data['audio']['array'], 48000, 16000))
             # audio = data['audio']['array']
             audio = data['speech']
-            output= Total_model.generate(audio,endding='\n')
+            output= Total_model.generate(audio,endding='Assistant')
+            print(output)
             output = ''.join(output)
             origin = data['prompt'].lower()
             # answer = transcipt[data]
             # print(f"original:\n{origin}")
             print(f"prompt:\n{origin}")
             print(f"recognize:\n{output}")
-            output= Total_model.generate(audio,endding=None)
+            output= Total_model.generate(output+":",endding=None)
             output = ''.join(output)
             print(f"keep going:\n{output}")
             # print(f"answer:\n{data['sentence'].lower()}")
