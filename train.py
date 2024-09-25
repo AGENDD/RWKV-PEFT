@@ -472,6 +472,7 @@ if __name__ == "__main__":
         # "jonatasgrosman/exp_w2v2t_zh-cn_wavlm_s368",
         # "facebook/hubert-large-ll60k",
         model,
+        device="cpu"
         # downsample_K=1,
     )
     
