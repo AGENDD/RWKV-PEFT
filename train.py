@@ -624,11 +624,8 @@ if __name__ == "__main__":
             print(output)
             output = ''.join(output)
             
-            # answer = transcipt[data]
-            # print(f"original:\n{origin}")
-            
             print(f"recognize:\n{output}")
-            output= Total_model.generate(prompts = output+":",endding=None)
+            output= Total_model.generate(prompts = output+"Assistant:",endding=None)
             output = ''.join(output)
             print(f"keep going:\n{output}")
             # print(f"answer:\n{data['sentence'].lower()}")
