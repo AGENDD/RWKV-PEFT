@@ -604,7 +604,8 @@ if __name__ == "__main__":
         con_dataset = load_from_disk("temp_datasets/ultrachat_speech")#55464
         
         tokenizer = Total_model.return_tokenizer()
-        Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
+        # Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
+        Total_model = Total_model.to("cpu", dtype=torch.bfloat16)
         print("start")
         for data in con_dataset:
             
