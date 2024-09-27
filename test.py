@@ -41,7 +41,7 @@ def fun(example):
         example['speech'] = None
     return example
 
-dataset = dataset.map(fun,remove_columns=["prompt_id","messages"])
+dataset = dataset.map(fun,remove_columns=["messages"])
 
 def fil(example):
     if(example['speech'] == None):

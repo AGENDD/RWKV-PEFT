@@ -472,7 +472,6 @@ if __name__ == "__main__":
         # "jonatasgrosman/exp_w2v2t_zh-cn_wavlm_s368",
         # "facebook/hubert-large-ll60k",
         model,
-        device="cpu"
         # downsample_K=1,
     )
     
@@ -606,7 +605,7 @@ if __name__ == "__main__":
         
         tokenizer = Total_model.return_tokenizer()
         # Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
-        Total_model = Total_model.to("cpu", dtype=torch.bfloat16)
+        Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
         print("start")
         for data in con_dataset:
             
@@ -625,7 +624,7 @@ if __name__ == "__main__":
             output = ''.join(output)
             
             print(f"recognize:\n{output}")
-            output= Total_model.generate(prompts = output+"Assistant:",endding=None)
+            output= Total_model.generate(prompts = output+"Assistant:",endding='<s>')
             output = ''.join(output)
             print(f"keep going:\n{output}")
             # print(f"answer:\n{data['sentence'].lower()}")
