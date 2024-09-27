@@ -623,7 +623,7 @@ if __name__ == "__main__":
             # print(output)
             output = ''.join(output)
             
-            print(f"recognize:\n{output}")
+            print(f"recognize:\n{output}istant:")
             output= Total_model.generate(prompts = output+"istant:",endding='<s>')
             output = ''.join(output)
             print(f"keep going:\n{output}")
