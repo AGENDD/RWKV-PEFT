@@ -619,12 +619,12 @@ if __name__ == "__main__":
             print(f"prompt:\n{origin}")
             
             audio = data['speech']
-            output= Total_model.generate(audios = audio,endding='Assistant')
-            print(output)
+            output= Total_model.generate(audios = audio,endding='istant')
+            # print(output)
             output = ''.join(output)
             
             print(f"recognize:\n{output}")
-            output= Total_model.generate(prompts = output+"Assistant:",endding='<s>')
+            output= Total_model.generate(prompts = output+"istant:",endding='<s>')
             output = ''.join(output)
             print(f"keep going:\n{output}")
             # print(f"answer:\n{data['sentence'].lower()}")
