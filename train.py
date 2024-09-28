@@ -619,7 +619,7 @@ if __name__ == "__main__":
             print(f"prompt:\n{origin}")
             
             audio = data['speech']
-            output= Total_model.generate(audios = audio,endding=None)
+            output= Total_model.generate(audios = audio,endding='<s>')
             # print(output)
             output = ''.join(output)
             print(f"generated:\n{output}")
