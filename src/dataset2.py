@@ -43,7 +43,8 @@ class MyDataset(Dataset):
 
         elif('prompt' in sample.keys()):
             audio = sample['speech']
-            answer = "User: "+sample['prompt'].lower()+"\n\nAssistant: "
+            answer = sample['messages'][1]['content']
+            answer = answer[:64]
             
         elif('translation'in sample.keys()):
             #covost2
