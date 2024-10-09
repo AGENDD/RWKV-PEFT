@@ -1,3 +1,3 @@
 from datasets import load_dataset
-
-ds = load_dataset("gpt-omni/VoiceAssistant-400K", resume_from_checkpoint=True)
+token = "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"
+ds = load_dataset("gpt-omni/VoiceAssistant-400K", token = token)
