@@ -1,15 +1,3 @@
 from datasets import load_dataset
 
-arr = ['dutch','french','german','italian','polish','portuguese','spanish']
-
-for i in arr:
-    print(i)
-    while(True):
-        try:
-            mls = load_dataset("facebook/multilingual_librispeech", i, split="train")
-            break
-        except Exception as e:
-            print(e)
-            continue
-
-print("finish")
+ds = load_dataset("gpt-omni/VoiceAssistant-400K", resume_from_checkpoint=True)
