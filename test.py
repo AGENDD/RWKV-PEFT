@@ -17,7 +17,7 @@ from torchaudio import load, save
 ds = load_dataset("gpt-omni/VoiceAssistant-400K")['train']  # 假设这里是'train' split
 
 # 过滤掉 split_name 为 identity 的数据，并启用多进程
-filtered_ds = ds.filter(lambda x: x['split_name'] != 'identity', num_proc=4)
+filtered_ds = ds.filter(lambda x: x['split_name'] != 'identity', num_proc=32)
 
 # 去掉 index, round, answer_snac 这三列数据
 filtered_ds = filtered_ds.remove_columns(['index', 'round', 'answer_snac'])
