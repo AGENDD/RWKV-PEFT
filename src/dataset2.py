@@ -37,7 +37,12 @@ class MyDataset(Dataset):
         if('split_name' in sample.keys()):
             #Voice assistant
             
-            answer = sample['answer']+"<s>"
+
+            answer = sample['answer']
+            words = answer.split()
+            answer = words[:128]
+            answer = " ".join(answer)
+            
             audio = sample['question_audio']['array']
             audio = resampy.resample(audio, 22050, 16000)
             
