@@ -40,7 +40,7 @@ class MyDataset(Dataset):
 
             answer = sample['answer']
             words = answer.split()
-            answer = words[:128]
+            answer = words[:64]
             answer = " ".join(answer)
             
             audio = sample['question_audio']['array']
