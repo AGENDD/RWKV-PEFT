@@ -17,7 +17,7 @@ ds = load_from_disk("temp_datasets/VoiceAssistant")
 
 data = ds[0]
 
-audio = resampy.resample(data["question_audio"], 22050, 16000)
+audio = resampy.resample(data["question_audio"]["array"], 22050, 16000)
 
 sf.write("temp_audios/audio.wav", audio, 16000)
 
