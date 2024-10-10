@@ -41,9 +41,7 @@ class MyDataset(Dataset):
             audio = sample['question_audio']['array']
             audio = resampy.resample(audio, 22050, 16000)
             
-            
-            
-        if(self.aishell_transcipt):
+        elif(self.aishell_transcipt):
             #aishell
             path = 'temp_datasets/aishell/data_aishell/wav/train/'
             sr, audio = wav.read(path+sample+".wav")
