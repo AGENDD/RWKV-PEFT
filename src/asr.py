@@ -407,6 +407,8 @@ class SLAM_ASR(pl.LightningModule):
 
     def forward(self, audios: List[str], transcriptions: List[str] = None):
         
+        print(max([len(audio) / 16000 for audio in audios]))
+        
         prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
             audios, transcriptions
         )
