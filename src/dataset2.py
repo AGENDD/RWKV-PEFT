@@ -34,7 +34,17 @@ class MyDataset(Dataset):
             except:
                 idx = idx+1
         
+        if('split_name' in sample.keys()):
+            #Voice assistant
+            
+            answer = sample['answer']+"<s>"
+            audio = sample['question_audio']['array']
+            audio = resampy.resample(audio, 22050, 16000)
+            
+            
+            
         if(self.aishell_transcipt):
+            #aishell
             path = 'temp_datasets/aishell/data_aishell/wav/train/'
             sr, audio = wav.read(path+sample+".wav")
             audio = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
