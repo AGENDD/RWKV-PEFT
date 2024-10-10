@@ -407,53 +407,11 @@ class SLAM_ASR(pl.LightningModule):
 
     def forward(self, audios: List[str], transcriptions: List[str] = None):
         
-        # question_wave = []
-        # self.TTS = self.TTS.to(torch.float32)
-        # # for name, param in self.TTS.named_parameters():
-        # #     print(f"Parameter name: {name}, Storage type: {param.dtype}")
-        # for it in questions:
-            
-        #     with self.suppress_stdout():
-        #         wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
-
-        #     # wave = self.TTS.tts_to_file(it, self.speaker_ids['EN-US'], None, speed=1.0)
-        #     # print(wave[0])
-        #     # print(len(wave))
-        #     with io.BytesIO() as buffer:
-        #         sf.write(buffer, wave.astype(np.int16), 44100, format='WAV')
-        #         buffer.seek(0)
-        #         wave, sr = sf.read(buffer, dtype='int16')
-        #         try:
-        #             wave = resampy.resample(wave, 44100, 16000)
-        #         except Exception as e:
-        #             print(e)
-        #             print(it)
-        #             print(wave)
-        #             print(len(wave))
-        #             exit(0)
-        #         # print(len(wave))
-        #         question_wave.append(wave)
-                
-        # audios = question_wave
-
-        # for it in audios:
-        #     print(len(it))
-        # exit(0)
-        
         prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
             audios, transcriptions
         )
-        # run the prompt through the language model
 
-        # print(f"prompt_embed:\t{prompt_embed.shape}")
-        # print(f"attention_mask:\t{prompt_mask.shape}")
-        # print(f"true_labels:\t{true_labels.shape}")
-        # exit(0)
-        # outputs = self.language_model(
-        #     inputs_embeds=prompt_embed,
-        #     attention_mask=prompt_mask.bool(),
-        #     labels=true_labels,
-        # )  # CausalLMOutputWithPast
+        print(prompt_embed.shape)
         self.T_vector = time.time()
         outputs = self.language_model(inputs_embeds=prompt_embed)
         self.T_rwkv = time.time()

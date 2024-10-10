@@ -473,7 +473,7 @@ if __name__ == "__main__":
         # "facebook/hubert-large-ll60k",
         model,
         # downsample_K=1,
-    )
+    ).to(dtype=torch.bfloat16)
     
     import glob
     file_paths = glob.glob('output/rwkv-adapter*.pth')
