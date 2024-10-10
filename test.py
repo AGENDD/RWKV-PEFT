@@ -13,50 +13,65 @@ import librosa
 from torchaudio.transforms import Resample
 from torchaudio import load, save
 
-@contextmanager
-def suppress_stdout(*args, **kwargs):
-    with open(os.devnull, 'w') as devnull:
-        with redirect_stdout(devnull), redirect_stderr(devnull):
-            yield
+# 加载数据集
+ds = load_dataset("gpt-omni/VoiceAssistant-400K")['train']  # 假设这里是'train' split
+
+# 过滤掉 split_name 为 identity 的数据，并启用多进程
+filtered_ds = ds.filter(lambda x: x['split_name'] != 'identity', num_proc=4)
+
+# 去掉 index, round, answer_snac 这三列数据
+filtered_ds = filtered_ds.remove_columns(['index', 'round', 'answer_snac'])
+
+# 保存新的数据集
+filtered_ds.save_to_disk("temp_datasets/VoiceAssistant")
+
+###############################################################################################################
+# @contextmanager
+# def suppress_stdout(*args, **kwargs):
+#     with open(os.devnull, 'w') as devnull:
+#         with redirect_stdout(devnull), redirect_stderr(devnull):
+#             yield
 
 
-dataset = load_from_disk("temp_datasets/ultrachat")
+# dataset = load_from_disk("temp_datasets/ultrachat")
 
-TTS = TTS(language='EN', device='auto')
-speaker_ids = TTS.hps.data.spk2id
+# TTS = TTS(language='EN', device='auto')
+# speaker_ids = TTS.hps.data.spk2id
 
 
-def fun(example):
-    try:
-        with suppress_stdout():
-            transcript = example['prompt']
+# def fun(example):
+#     try:
+#         with suppress_stdout():
+#             transcript = example['prompt']
 
-            wave = TTS.tts_to_file(transcript, speaker_ids['EN-US'], None, speed=1.0)
-            wave = torch.tensor(wave).unsqueeze(0)
-            resample = Resample(44100, 16000)
-            resampled_audio = resample(wave[0])
-            wave = resampled_audio.squeeze(0).numpy()
-        example['speech'] = wave
-    except:
-        example['speech'] = None
-    return example
+#             wave = TTS.tts_to_file(transcript, speaker_ids['EN-US'], None, speed=1.0)
+#             wave = torch.tensor(wave).unsqueeze(0)
+#             resample = Resample(44100, 16000)
+#             resampled_audio = resample(wave[0])
+#             wave = resampled_audio.squeeze(0).numpy()
+#         example['speech'] = wave
+#     except:
+#         example['speech'] = None
+#     return example
 
-dataset = dataset.map(fun,remove_columns=["prompt_id"])
+# dataset = dataset.map(fun,remove_columns=["prompt_id"])
 
-def fil(example):
-    if(example['speech'] == None):
-        print(example['prompt'])
-        return False
-    else:
-        return True
+# def fil(example):
+#     if(example['speech'] == None):
+#         print(example['prompt'])
+#         return False
+#     else:
+#         return True
     
-dataset = dataset.filter(fil,num_proc=32)
+# dataset = dataset.filter(fil,num_proc=32)
 
 
-print(len(dataset))
+# print(len(dataset))
 
-dataset.save_to_disk("temp_datasets/ultrachat_speech")
+# dataset.save_to_disk("temp_datasets/ultrachat_speech")
 
+
+#############################################################################################################
 
 # dataset = load_from_disk("temp_datasets/ultrachat").select(range(10))
 
