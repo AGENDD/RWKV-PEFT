@@ -4,7 +4,7 @@ token = "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"
 
 while(True):
     try:
-        ds = load_dataset("gpt-omni/VoiceAssistant-400K", token = token, num_proc=8)
+        ds = load_dataset("gpt-omni/VoiceAssistant-400K", token = token)
         break
     except:
         continue
