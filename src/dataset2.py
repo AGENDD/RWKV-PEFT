@@ -39,9 +39,9 @@ class MyDataset(Dataset):
             
 
             answer = sample['answer']
-            words = answer.split()
-            answer = words[:64]
-            answer = " ".join(answer)
+            # words = answer.split()
+            # answer = words[:64]
+            # answer = " ".join(answer)
             
             audio = sample['question_audio']['array']
             audio = resampy.resample(audio, 22050, 16000)
