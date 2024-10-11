@@ -602,8 +602,8 @@ if __name__ == "__main__":
         #         con_dataset = concatenate_datasets([con_dataset, dataset1])
         # con_dataset = con_dataset.shuffle()
         
-        con_dataset = load_from_disk("temp_datasets/ultrachat_speech")#55464
-        
+        # con_dataset = load_from_disk("temp_datasets/ultrachat_speech")#55464
+        con_dataset = load_from_disk("temp_datasets/VoiceAssistant")
         tokenizer = Total_model.return_tokenizer()
         # Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
         Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
@@ -616,10 +616,11 @@ if __name__ == "__main__":
             
             # output= Total_model.generate(resampy.resample(data['audio']['array'], 48000, 16000))
             # audio = data['audio']['array']
-            origin = data['prompt'].lower()
-            print(f"prompt:\n{origin}")
+            origin = data['question'].lower()
+            print(f"question:\n{origin}")
             
-            audio = data['speech']
+            audio = data['question_audio']['array']
+            audio = resampy(audio, 22050, 16000)
             output= Total_model.generate(audios = audio,endding='<s>')
             # print(output)
             output = ''.join(output)
