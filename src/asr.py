@@ -428,9 +428,9 @@ class SLAM_ASR(pl.LightningModule):
         Generate the transcription
         """
         
-        if(audios != None): 
+        if(audios is not None): 
             prompt_embed, prompt_mask, _ = self._prepare_input_embeds([audios])
-        elif(prompts != None):
+        elif(prompts is not None):
             prompts_tokens = self.language_tokenizer(
                 [prompts],
                 return_tensors="pt",
