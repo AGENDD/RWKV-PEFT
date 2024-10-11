@@ -620,7 +620,7 @@ if __name__ == "__main__":
             print(f"question:\n{origin}")
             
             audio = data['question_audio']['array']
-            audio = resampy(audio, 22050, 16000)
+            audio = resampy.resample(audio, 22050, 16000)
             output= Total_model.generate(audios = audio,endding='<s>')
             # print(output)
             output = ''.join(output)
