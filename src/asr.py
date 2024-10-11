@@ -407,13 +407,12 @@ class SLAM_ASR(pl.LightningModule):
 
     def forward(self, audios: List[str], transcriptions: List[str] = None):
         
-        print(max([len(audio) / 16000 for audio in audios]))
         
         prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
             audios, transcriptions
         )
 
-        print(prompt_embed.shape)
+
         self.T_vector = time.time()
         outputs = self.language_model(inputs_embeds=prompt_embed)
         self.T_rwkv = time.time()
