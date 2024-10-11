@@ -13,27 +13,37 @@ import librosa
 from torchaudio.transforms import Resample
 from torchaudio import load, save
 
-ds = load_from_disk("temp_datasets/VoiceAssistant")
+# ds = load_from_disk("temp_datasets/VoiceAssistant")
 
-data = ds[0]
+# data = ds[0]
 
-audio = resampy.resample(data["question_audio"]["array"], 22050, 16000)
+# audio = resampy.resample(data["question_audio"]["array"], 22050, 16000)
 
-sf.write("temp_audios/audio.wav", audio, 16000)
+# sf.write("temp_audios/audio.wav", audio, 16000)
 
 #########################################################################################################
 
-# # 加载数据集
-# ds = load_dataset("gpt-omni/VoiceAssistant-400K")['train']  # 假设这里是'train' split
+# 加载数据集
+ds = load_dataset("gpt-omni/VoiceAssistant-400K")['train']  # 假设这里是'train' split
 
-# # 过滤掉 split_name 为 identity 的数据，并启用多进程
-# filtered_ds = ds.filter(lambda x: x['split_name'] != 'identity', num_proc=32)
+def fun(x):
+    
+    if(x['split_name'] == 'identity'):
+        return False
+    elif(len(x['question_audio']["array"]) / 22050 >= 15.0):
+        return False
+        
+    return True
 
-# # 去掉 index, round, answer_snac 这三列数据
-# filtered_ds = filtered_ds.remove_columns(['index', 'round', 'answer_snac'])
 
-# # 保存新的数据集
-# filtered_ds.save_to_disk("temp_datasets/VoiceAssistant")
+# 过滤掉 split_name 为 identity 的数据，并启用多进程
+filtered_ds = ds.filter(fun, num_proc=32)
+
+# 去掉 index, round, answer_snac 这三列数据
+filtered_ds = filtered_ds.remove_columns(['index', 'round', 'answer_snac'])
+
+# 保存新的数据集
+filtered_ds.save_to_disk("temp_datasets/VoiceAssistant")
 
 ###############################################################################################################
 # @contextmanager
