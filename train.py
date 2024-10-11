@@ -562,7 +562,7 @@ if __name__ == "__main__":
         # dataset = load_dataset("HuggingFaceH4/ultrachat_200k",split="train_sft")#207865
         # dataset = load_from_disk("temp_datasets/ultrachat_speech").shuffle()#55464
         
-        dataset = load_from_disk("temp_datasets/VoiceAssistant").shuffle() #465748
+        dataset = load_from_disk("temp_datasets/VoiceAssistant").shuffle()  #459067
         
         # print(len(con_dataset))#29060
         # dataset, transcipt = aishell() # 120098
