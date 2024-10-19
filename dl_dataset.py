@@ -37,18 +37,22 @@ def mapp(data):
             if(leng > 30):
                 break
             else:
-                with suppress_stdout():
-                    wave = TTS.tts_to_file(message["content"], speaker_ids['EN-US'], None, speed=1.0)
-                    wave = torch.tensor(wave).unsqueeze(0)
-                    resample = Resample(44100, 16000)
-                    resampled_audio = resample(wave[0])
-                    wave = resampled_audio.squeeze(0).numpy()
-                userdic = {}
-                userdic['content'] = wave
-                userdic['role'] = "user"
-                userdic['transcript'] = message['content']
-                speech_messages.append(userdic)
-                count += 1
+                while(True):
+                    try:
+                        with suppress_stdout():
+                            wave = TTS.tts_to_file(message["content"], speaker_ids['EN-US'], None, speed=1.0)
+                            wave = torch.tensor(wave).unsqueeze(0)
+                            resample = Resample(44100, 16000)
+                            resampled_audio = resample(wave[0])
+                            wave = resampled_audio.squeeze(0).numpy()
+                        userdic = {'content': wave, 'role': "user", 'transcript': message['content']}
+                        speech_messages.append(userdic)
+                        count += 1
+                        break
+                    except Exception as e:
+                        print(f"Error processing message: {e}")
+                        print(f"data: {message}")
+                        continue
     
     data["turns"] = count
     data['speech_messages'] = speech_messages
