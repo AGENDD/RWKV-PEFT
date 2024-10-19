@@ -26,12 +26,13 @@ def mapp(data):
     count = 0
     
     speech_messages = []
+    respond_messages = []
     for message in messages:
         if(message["role"] == "assistant"):
             assistantdic = {}
             assistantdic['role'] = 'assistent'
             assistantdic['content'] = message['content']
-            speech_messages.append(assistantdic)
+            respond_messages.append(assistantdic)
         else:
             leng = len(message["content"].split())
             if(leng > 30):
@@ -56,7 +57,7 @@ def mapp(data):
     
     data["turns"] = count
     data['speech_messages'] = speech_messages
-    
+    data['respond_messages'] = respond_messages
     return data
 
 ds = ds.map(mapp, remove_columns=['messages', 'prompt', 'prompt_id'])
