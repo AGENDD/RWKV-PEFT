@@ -38,22 +38,21 @@ def mapp(data):
             if(leng > 30):
                 break
             else:
-                while(True):
-                    try:
-                        with suppress_stdout():
-                            wave = TTS.tts_to_file(message["content"], speaker_ids['EN-US'], None, speed=1.0)
-                            wave = torch.tensor(wave).unsqueeze(0)
-                            resample = Resample(44100, 16000)
-                            resampled_audio = resample(wave[0])
-                            wave = resampled_audio.squeeze(0).numpy()
-                        userdic = {'content': wave, 'role': "user", 'transcript': message['content']}
-                        speech_messages.append(userdic)
-                        count += 1
-                        break
-                    except Exception as e:
-                        print(f"Error processing message: {e}")
-                        print(f"data: {message}")
-                        continue
+                try:
+                    with suppress_stdout():
+                        wave = TTS.tts_to_file(message["content"], speaker_ids['EN-US'], None, speed=1.0)
+                        wave = torch.tensor(wave).unsqueeze(0)
+                        resample = Resample(44100, 16000)
+                        resampled_audio = resample(wave[0])
+                        wave = resampled_audio.squeeze(0).numpy()
+                    userdic = {'content': wave, 'role': "user", 'transcript': message['content']}
+                    speech_messages.append(userdic)
+                    count += 1
+                except Exception as e:
+                    print(f"Error processing message: {e}")
+                    print(f"data: {message}")
+                    count = -1
+                    break
     
     data["turns"] = count
     data['speech_messages'] = speech_messages
@@ -62,7 +61,15 @@ def mapp(data):
 
 ds = ds.map(mapp, remove_columns=['messages', 'prompt', 'prompt_id'])
 
+def fil(data):
+    if(data["turns"] == -1):
+        return False
+    
+    return True
+
+ds = ds.filter(fil, num_proc=32)
 ds.save_to_disk("temp_datasets/ultrachat_speech_multiTurns")
+
 
 
 print("finish")
