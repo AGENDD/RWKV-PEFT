@@ -55,7 +55,7 @@ def mapp(data):
     
     return data
 
-ds = ds.map(mapp, remove_columns=['messages', 'prompt', 'promt_id'])
+ds = ds.map(mapp, remove_columns=['messages', 'prompt', 'prompt_id'])
 
 ds.save_to_disk("temp_datasets/ultrachat_speech_multiTurns")
 
