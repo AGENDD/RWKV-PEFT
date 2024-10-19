@@ -1,11 +1,10 @@
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk
 token = "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"
 
+ds = load_from_disk("temp_datasets/ultrachat")
 
-while(True):
-    try:
-        ds = load_dataset("gpt-omni/VoiceAssistant-400K", token = token)
-        break
-    except:
-        continue
+print(ds)
+print(ds[0])
+
+
 print("finish")
