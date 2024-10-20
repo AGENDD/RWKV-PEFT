@@ -45,6 +45,10 @@ def mapp(data):
                         resample = Resample(44100, 16000)
                         resampled_audio = resample(wave[0])
                         wave = resampled_audio.squeeze(0).numpy()
+                        
+                    if(len(wave) / 16000 > 15.0):
+                        break
+                    
                     userdic = {'content': wave, 'role': "user", 'transcript': message['content']}
                     speech_messages.append(userdic)
                     count += 1
@@ -60,6 +64,8 @@ def mapp(data):
     return data
 
 ds = ds.map(mapp, remove_columns=['messages', 'prompt', 'prompt_id'])
+
+ds.save_to_disk("temp_datasets/ultrachat_speech_multiTurns_unfiltered")
 
 def fil(data):
     if(data["turns"] == -1):
