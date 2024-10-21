@@ -21,7 +21,9 @@ for data in tqdm(ds):
         count[data['turns']] = 1
     else:
         count[data['turns']] += 1
-
+    
+    tqdm.write(count)
+print("finish")
 print(count)
 #########################################################################################################
 
