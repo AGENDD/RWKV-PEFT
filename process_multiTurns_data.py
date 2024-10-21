@@ -523,8 +523,8 @@ if __name__ == "__main__":
                 # print(strr.shape)
                 respond_vect = model.embed(strr.to("cuda"))
                 
-                print(audio_vect)
-                print(respond_vect)
+                print(audio_vect.shape)
+                print(respond_vect.shape)
                 audio_vect = torch.cat([audio_vect, respond_vect], 0)
                 
                 exit(0)
