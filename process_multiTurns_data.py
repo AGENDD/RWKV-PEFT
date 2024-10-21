@@ -471,6 +471,9 @@ if __name__ == "__main__":
         2560
     ).to(dtype=torch.bfloat16)
     
+    
+    for name, param in se.state_dict().items():
+        print(name)
     import glob
     file_paths = glob.glob('output/rwkv-adapter*.pth')
     # file_paths = glob.glob('output/rwkv*.pth')
@@ -482,10 +485,12 @@ if __name__ == "__main__":
         for name, param in checkpoint.items():
             if 'adapter' in name:
                 # 将参数加载到 SE 模型中
-                se.state_dict()[name].copy_(param)
+                se.state_dict()[name.replace("speech_encoder.", "")].copy_(param)
+
         print(f"Loaded model from {file_path}")
     else:
         print("No files found. Loading origin model.")
+    
     
     model.eval()
     se.eval()
