@@ -500,7 +500,7 @@ if __name__ == "__main__":
     
     
     from datasets import load_from_disk
-    dataset = load_from_disk("temp_datasets/ultrachat_speech_multiTurns")[:10000]
+    dataset = load_from_disk("temp_datasets/ultrachat_speech_multiTurns").select(10000)
     
     def mapp(data):
         
