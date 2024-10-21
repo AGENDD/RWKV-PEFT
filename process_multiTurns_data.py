@@ -508,7 +508,7 @@ if __name__ == "__main__":
         inputs = None
         
         for i in range(data['turns']):
-            audio_vect = se(data["speech_messages"][i]['content']).to('cuda')
+            audio_vect = se(data["speech_messages"][i]['content'])
             
             if(i != data['turns']-1):
                 strr = "$"+data["respond_messages"][i]['content']+"<s>"
@@ -521,7 +521,7 @@ if __name__ == "__main__":
                 )
                 strr = strr.input_ids
                 # print(strr.shape)
-                respond_vect = model(idx=strr.to("cuda")).to('cuda')
+                respond_vect = model(idx=strr.to("cuda"))
                 audio_vect = torch.cat([audio_vect, respond_vect], 0)
             
             if(inputs == None):
