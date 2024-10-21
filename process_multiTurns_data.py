@@ -508,7 +508,7 @@ if __name__ == "__main__":
         inputs = None
         
         for i in range(data['turns']):
-            audio_vect = se(data["speech_messages"][i]['content'].to('cuda'))
+            audio_vect = se(data["speech_messages"][i]['content'])
             
             if(i != data['turns']-1):
                 strr = "$"+data["respond_messages"][i]['content']+"<s>"
