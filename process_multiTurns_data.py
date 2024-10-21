@@ -495,6 +495,10 @@ if __name__ == "__main__":
     model.eval()
     se.eval()
     
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+    language_tokenizer = AutoTokenizer.from_pretrained("RWKV/rwkv-6-world-1b6",trust_remote_code=True)
+    
+    
     from datasets import load_from_disk
     
     dataset = load_from_disk("temp_datasets/ultrachat_speech_multiTurns")
@@ -507,8 +511,18 @@ if __name__ == "__main__":
             audio_vect = se(data["speech_messages"][i]['content'])
             
             if(i != data['truns']-1):
-                respond_vect = model("$"+data["respond_messages"][i]['content']+"<s>")
-                
+                strr = "$"+data["respond_messages"][i]['content']+"<s>"
+                strr = language_tokenizer(
+                    [strr],
+                    return_tensors="pt",
+                    padding=True,
+                    truncation=True,
+                    add_special_tokens=False,
+                )
+                strr = strr.input_ids
+                print(strr.shape)
+                exit(0)
+                respond_vect = model(idx=strr.to("cuda"))
                 audio_vect = torch.cat([audio_vect, respond_vect], 0)
             
             if(inputs == None):

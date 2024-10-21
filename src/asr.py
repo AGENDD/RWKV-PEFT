@@ -372,32 +372,6 @@ class SLAM_ASR(pl.LightningModule):
             prompt_mask = mask
             true_labels = None
         return prompt_embed, prompt_mask, true_labels
-
-    # def forward(self, audios: List[float], transcriptions: List[str] = None):
-        
-    #     prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
-    #         audios, transcriptions
-    #     )
-    #     # run the prompt through the language model
-
-    #     # print(f"prompt_embed:\t{prompt_embed.shape}")
-    #     # print(f"attention_mask:\t{prompt_mask.shape}")
-    #     # print(f"true_labels:\t{true_labels.shape}")
-    #     # exit(0)
-    #     # outputs = self.language_model(
-    #     #     inputs_embeds=prompt_embed,
-    #     #     attention_mask=prompt_mask.bool(),
-    #     #     labels=true_labels,
-    #     # )  # CausalLMOutputWithPast
-    #     self.T_vector = time.time()
-    #     outputs = self.language_model(inputs_embeds=prompt_embed)
-    #     self.T_rwkv = time.time()
-        
-    #     # print(f"outputs:{outputs['loss']}")
-    #     # print(f"logits:\t{outputs.shape}")
-        
-    #     return outputs, true_labels, prompt_mask
-    
     
     @contextmanager
     def suppress_stdout(*args, **kwargs):
