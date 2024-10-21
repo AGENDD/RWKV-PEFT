@@ -12,11 +12,11 @@ import os
 import librosa
 from torchaudio.transforms import Resample
 from torchaudio import load, save
-
+from tqdm import tqdm
 count = {}
 ds = load_from_disk("temp_datasets/ultrachat_speech_multiTurns")
 
-for data in ds:
+for data in tqdm(ds):
     if(data['turns'] not in count.keys()):
         count[data['turns']] = 1
     else:
