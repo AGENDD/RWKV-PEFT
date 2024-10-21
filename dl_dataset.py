@@ -72,7 +72,7 @@ ds = load_from_disk("temp_datasets/ultrachat_speech_multiTurns_unfiltered")
 
 
 def fil(data):
-    if(data["turns"] == -1):
+    if(data["turns"] == -1 or data["turns"] == 0):
         return False
     
     return True
