@@ -21,7 +21,7 @@ OP=1
 
 
 QUANT='nf4' 
-export HF_ENDPOINT=https://hf-mirror.com
+# export HF_ENDPOINT=https://hf-mirror.com
 python -u process_multiTurns_data.py --load_model $load_model --devices 1 --OP $OP \
 --proj_dir $proj_dir --data_file $data_file \
 --data_type binidx --vocab_size 65536 \
