@@ -523,18 +523,18 @@ if __name__ == "__main__":
                 # print(strr.shape)
                 respond_vect = model.embed(strr.to("cuda"))
                 
-                print(audio_vect.shape)
-                print(respond_vect.shape)
-                audio_vect = torch.cat([audio_vect, respond_vect], 0)
+                # print(audio_vect.shape)
+                # print(respond_vect.shape)
+                audio_vect = torch.cat([audio_vect, respond_vect], 1)
                 
-                exit(0)
+
             
             if(inputs == None):
                 inputs = audio_vect
             else:
-                inputs = torch.cat([inputs, audio_vect], 0)
+                inputs = torch.cat([inputs, audio_vect], 1)
         
-        return {"inputs": inputs,
+        return {"inputs": inputs.squeeze(0),
                 "respond": data["speech_messages"][-1]['content']}
     
     with torch.no_grad():
