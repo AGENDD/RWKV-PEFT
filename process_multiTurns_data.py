@@ -507,10 +507,10 @@ if __name__ == "__main__":
         
         inputs = None
         
-        for i in range(data['truns']):
+        for i in range(data['turns']):
             audio_vect = se(data["speech_messages"][i]['content'])
             
-            if(i != data['truns']-1):
+            if(i != data['turns']-1):
                 strr = "$"+data["respond_messages"][i]['content']+"<s>"
                 strr = language_tokenizer(
                     [strr],
