@@ -464,9 +464,9 @@ if __name__ == "__main__":
     # data_loader = DataLoader(train_data, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=1, persistent_workers=False, drop_last=True)
     model = model.to(dtype=torch.bfloat16)
     
-    from src import speech_encoder
+    from src.speech_encoder import SpeechEncoder
     
-    se = speech_encoder(
+    se = SpeechEncoder(
         "microsoft/wavlm-large",
         2560
     ).to(dtype=torch.bfloat16)
