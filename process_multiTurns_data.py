@@ -521,7 +521,7 @@ if __name__ == "__main__":
                 )
                 strr = strr.input_ids
                 # print(strr.shape)
-                respond_vect = model(idx=strr.to("cuda"))
+                respond_vect = model.embed(strr.to("cuda"))
                 audio_vect = torch.cat([audio_vect, respond_vect], 0)
             
             if(inputs == None):
