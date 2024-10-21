@@ -511,7 +511,7 @@ if __name__ == "__main__":
             audio_vect = se(data["speech_messages"][i]['content'])
             
             if(i != data['turns']-1):
-                strr = "$"+data["respond_messages"][i]['content']+"<s>"
+                strr = "#"+data["respond_messages"][i]['content']+"<s>"
                 strr = language_tokenizer(
                     [strr],
                     return_tensors="pt",
