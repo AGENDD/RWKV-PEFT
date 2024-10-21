@@ -462,18 +462,18 @@ if __name__ == "__main__":
 
     # must set shuffle=False, persistent_workers=False (because worker is in another thread)
     # data_loader = DataLoader(train_data, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=1, persistent_workers=False, drop_last=True)
-    model = model.to(dtype=torch.bfloat16)
+    model = model.to('cuda',dtype=torch.bfloat16)
     
     from src.speech_encoder import SpeechEncoder
     
     se = SpeechEncoder(
         "microsoft/wavlm-large",
         2560
-    ).to(dtype=torch.bfloat16)
+    ).to('cuda',dtype=torch.bfloat16)
     
     
-    for name, param in se.state_dict().items():
-        print(name)
+    # for name, param in se.state_dict().items():
+    #     print(name)
     import glob
     file_paths = glob.glob('output/rwkv-adapter*.pth')
     # file_paths = glob.glob('output/rwkv*.pth')
@@ -508,7 +508,7 @@ if __name__ == "__main__":
         inputs = None
         
         for i in range(data['turns']):
-            audio_vect = se(data["speech_messages"][i]['content'])
+            audio_vect = se(data["speech_messages"][i]['content']).to('cuda')
             
             if(i != data['turns']-1):
                 strr = "$"+data["respond_messages"][i]['content']+"<s>"
@@ -521,7 +521,7 @@ if __name__ == "__main__":
                 )
                 strr = strr.input_ids
                 # print(strr.shape)
-                respond_vect = model(idx=strr.to("cuda"))
+                respond_vect = model(idx=strr.to("cuda")).to('cuda')
                 audio_vect = torch.cat([audio_vect, respond_vect], 0)
             
             if(inputs == None):
