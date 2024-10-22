@@ -380,16 +380,7 @@ class SLAM_ASR(pl.LightningModule):
                 yield
 
     def _prepare_input_tensor(self, tensors, transcriptions):
-        for i in range(len(tensors)):
-            print(f"tensor{i}:{len(tensors[i])}")
             
-            
-        print(transcriptions)    
-        print(f"transcriptions:{len(transcriptions)}")
-        for i in range(len(transcriptions)):
-            print(f"transcriptions{i}:{len(transcriptions[i])}")
-            
-        exit(0)
         #######################################建立prompt_embed
         
         tensor_musk = [np.zeros((tensor.shape[0],), dtype=int) for tensor in tensors]
@@ -406,6 +397,9 @@ class SLAM_ASR(pl.LightningModule):
                 add_special_tokens=False,
             ).to(self.device)
         
+        print(f"transcriptions_with_eoa_token.input_ids {len(transcriptions_with_eoa_token.input_ids)}:{type(transcriptions_with_eoa_token.input_ids)}")
+        print(f"transcriptions_with_eoa_token.input_ids[0] {len(transcriptions_with_eoa_token.input_ids[0])}:{type(transcriptions_with_eoa_token.input_ids[0])}")
+        exit(0)
         with torch.no_grad():
             transcriptions_with_eoa_embed = self.language_model.embed(transcriptions_with_eoa_token.input_ids)
             padding_embed = self.language_model.embed(torch.tensor([[-100]]))[0] # padding embedding
@@ -469,7 +463,7 @@ class SLAM_ASR(pl.LightningModule):
         
         
         # print(transcriptions)
-        print(f"in forward:{type(transcriptions)}")
+        # print(f"in forward:{type(transcriptions)}")
         prompt_embed, prompt_mask, true_labels = self._prepare_input_tensor(
             tensors, transcriptions
         )
@@ -533,10 +527,10 @@ class SLAM_ASR(pl.LightningModule):
                 
                 ##改动
                 # idx, transcription = batch
-                print(f"batch length:{len(batch)}")
-                print(f"batch item:{len(batch[0])}")
-                print(f"batch item[0]:{len(batch[0][0])}:{type(batch[0][0])}")
-                print(f"batch item[1]:{len(batch[0][1])}:{type(batch[0][1])}")
+                # print(f"batch length:{len(batch)}")
+                # print(f"batch item:{len(batch[0])}")
+                # print(f"batch item[0]:{len(batch[0][0])}:{type(batch[0][0])}")
+                # print(f"batch item[1]:{len(batch[0][1])}:{type(batch[0][1])}")
                 idx = [item[0] for item in batch]
                 transcription = [item[1] for item in batch]
                 
