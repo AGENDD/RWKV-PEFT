@@ -35,7 +35,7 @@ class MyDataset(Dataset):
                 idx = idx+1
         
         
-        if('turns' in sample.key()):
+        if('turns' in sample.keys()):
             return None. sample["inputs"], sample["respond"]
         
         elif('split_name' in sample.keys()):
