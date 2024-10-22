@@ -381,11 +381,11 @@ class SLAM_ASR(pl.LightningModule):
 
     def _prepare_input_tensor(self, tensors, transcriptions):
         print(f"tensor:{len(tensors)}")
-        for i in tensors:
+        for i in range(len(tensors)):
             print(f"tensor{i}:{len(tensors[i])}")
             
         print(f"transcriptions:{len(transcriptions)}")
-        for i in transcriptions:
+        for i in range(len(transcriptions)):
             print(f"transcriptions{i}:{len(transcriptions[i])}")
             
         exit(0)
