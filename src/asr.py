@@ -380,10 +380,11 @@ class SLAM_ASR(pl.LightningModule):
                 yield
 
     def _prepare_input_tensor(self, tensors, transcriptions):
-        print(f"tensor:{len(tensors)}")
         for i in range(len(tensors)):
             print(f"tensor{i}:{len(tensors[i])}")
             
+            
+        print(transcriptions)    
         print(f"transcriptions:{len(transcriptions)}")
         for i in range(len(transcriptions)):
             print(f"transcriptions{i}:{len(transcriptions[i])}")
@@ -446,8 +447,6 @@ class SLAM_ASR(pl.LightningModule):
         
 
     def forward(self, audios: List[str] = None, tensors = None, transcriptions: List[str] = None):
-        
-        print(f"audio:{audios}")
         
         if(audios[0] != None):
             prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
