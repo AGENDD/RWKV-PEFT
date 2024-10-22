@@ -534,7 +534,7 @@ if __name__ == "__main__":
                 inputs = torch.cat([inputs, audio_vect], 1)
         
         return {"inputs": inputs.squeeze(0),
-                "respond": data["speech_messages"][-1]['content']}
+                "respond": data["respond_messages"][-1]['content']}
     
     with torch.no_grad():
         dataset = dataset.map(mapp)
