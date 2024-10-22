@@ -533,6 +533,8 @@ class SLAM_ASR(pl.LightningModule):
                 
                 ##改动
                 # idx, transcription = batch
+                print(batch)
+                exit(0)
                 idx = [item[0] for item in batch]
                 transcription = [item[1] for item in batch]
                 
