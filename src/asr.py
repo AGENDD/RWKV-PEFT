@@ -383,6 +383,9 @@ class SLAM_ASR(pl.LightningModule):
             
         #######################################建立prompt_embed
         
+        for i in range(len(tensors)):
+            tensors[i] = torch.tensor(tensors[i])
+        
         tensor_musk = [np.zeros((tensor.shape[0],), dtype=int) for tensor in tensors]
 
         transcriptions_with_eoa = []
