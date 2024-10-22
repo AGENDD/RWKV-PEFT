@@ -533,8 +533,10 @@ class SLAM_ASR(pl.LightningModule):
                 
                 ##改动
                 # idx, transcription = batch
-                print(batch)
-                exit(0)
+                print(f"batch length:{len(batch)}")
+                print(f"batch item:{len(batch[0])}")
+                print(f"batch item[0]:{len(batch[0][0])}:{type(batch[0][0])}")
+                print(f"batch item[1]:{len(batch[0][1])}:{type(batch[0][1])}")
                 idx = [item[0] for item in batch]
                 transcription = [item[1] for item in batch]
                 
