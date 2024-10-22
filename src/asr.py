@@ -379,13 +379,85 @@ class SLAM_ASR(pl.LightningModule):
             with redirect_stdout(devnull), redirect_stderr(devnull):
                 yield
 
-    def forward(self, audios: List[str], transcriptions: List[str] = None):
+    def _prepare_input_tensor(self, tensors, transcriptions):
+        print(f"tensor:{len(tensors)}")
+        for i in tensors:
+            print(f"tensor{i}:{len(tensors[i])}")
+            
+        print(f"transcriptions:{len(transcriptions)}")
+        for i in transcriptions:
+            print(f"transcriptions{i}:{len(transcriptions[i])}")
+            
+        exit(0)
+        #######################################建立prompt_embed
         
-        
-        prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
-            audios, transcriptions
-        )
+        tensor_musk = [np.zeros((tensor.shape[0],), dtype=int) for tensor in tensors]
 
+        transcriptions_with_eoa = []
+        for i in range(len(transcriptions)):
+            transcriptions_with_eoa.append('#' + transcriptions[i])
+        
+        transcriptions_with_eoa_token = self.language_tokenizer(
+                transcriptions_with_eoa,
+                return_tensors="pt",
+                padding=False,
+                truncation=True,
+                add_special_tokens=False,
+            ).to(self.device)
+        
+        with torch.no_grad():
+            transcriptions_with_eoa_embed = self.language_model.embed(transcriptions_with_eoa_token.input_ids)
+            padding_embed = self.language_model.embed(torch.tensor([[-100]]))[0] # padding embedding
+        
+        prompt_embed = []
+        
+        for i in range(len(transcriptions)):
+            prompt_embed.append(torch.cat([tensors[i] , transcriptions_with_eoa_embed[i]], 0))
+        
+        max_length = max([len(tensor) for tensor in prompt_embed])
+        
+        for i in range(len(transcriptions)):
+            while(len(prompt_embed[i]) < max_length):
+                prompt_embed[i] = torch.cat([prompt_embed[i], padding_embed], 0)
+        
+        prompt_embed = torch.stack(prompt_embed)
+        
+        #############################################建立label
+        
+        
+        transcriptions_with_eos = []
+        for i in range(len(transcriptions)):
+            transcriptions_with_eos.append(transcriptions[i] + "<s>")
+        
+        transcriptions_with_eos_token = self.language_tokenizer(
+                transcriptions_with_eos,
+                return_tensors="pt",
+                padding=True,
+                truncation=True,
+                add_special_tokens=False,
+            ).to(self.device)
+        
+        max_length = len(prompt_embed[0])
+        
+        true_labels = transcriptions_with_eos_token.input_ids
+        for i in range(len(transcriptions)):
+            while(len(true_labels[i]) < max_length):
+                true_labels[i] = [-100] + true_labels[i]
+        
+
+    def forward(self, audios: List[str] = None, tensors = None, transcriptions: List[str] = None):
+        
+        print(f"audio:{audios}")
+        
+        if(audios != None):
+            prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
+                audios, transcriptions
+            )
+        elif(tensors != None):
+            prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
+                tensors, transcriptions
+            )
+            
 
         self.T_vector = time.time()
         outputs = self.language_model(inputs_embeds=prompt_embed)

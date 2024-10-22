@@ -33,8 +33,12 @@ class MyDataset(Dataset):
                 break
             except:
                 idx = idx+1
-              
-        if('split_name' in sample.keys()):
+        
+        
+        if('turns' in sample.key()):
+            return None. sample["inputs"], sample["respond"]
+        
+        elif('split_name' in sample.keys()):
             #Voice assistant
             answer = sample['answer']
             # words = answer.split()
