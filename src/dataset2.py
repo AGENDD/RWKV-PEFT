@@ -36,8 +36,8 @@ class MyDataset(Dataset):
         
         
         if('turns' in sample.keys()):
-            # print(sample["respond"])
-            print(type(sample["respond"]))
+            
+            print(f"in dataloader:{type(sample["respond"])}")
             return sample["inputs"], sample["respond"]
         
         elif('split_name' in sample.keys()):

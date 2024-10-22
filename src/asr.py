@@ -468,8 +468,8 @@ class SLAM_ASR(pl.LightningModule):
     def forward(self, tensors, transcriptions: List[str] = None):
         
         
-        print(transcriptions)
-        print(type(transcriptions))
+        # print(transcriptions)
+        print(f"in forward:{type(transcriptions)}")
         prompt_embed, prompt_mask, true_labels = self._prepare_input_tensor(
             tensors, transcriptions
         )
