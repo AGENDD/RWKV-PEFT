@@ -449,11 +449,11 @@ class SLAM_ASR(pl.LightningModule):
         
         print(f"audio:{audios}")
         
-        if(audios != None):
+        if(audios[0] != None):
             prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
                 audios, transcriptions
             )
-        elif(tensors != None):
+        elif(tensors[0] != None):
             prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
                 tensors, transcriptions
             )
