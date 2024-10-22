@@ -446,16 +446,33 @@ class SLAM_ASR(pl.LightningModule):
                 true_labels[i] = [-100] + true_labels[i]
         
 
-    def forward(self, audios: List[str] = None, tensors = None, transcriptions: List[str] = None):
+    # def forward(self, audios: List[str], transcriptions: List[str] = None):
         
-        if(audios[0] != None):
-            prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
-                audios, transcriptions
-            )
-        elif(tensors[0] != None):
-            prompt_embed, prompt_mask, true_labels = self._prepare_input_tensor(
-                tensors, transcriptions
-            )
+        
+
+    #     prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
+    #         audios, transcriptions
+    #     )
+            
+
+    #     self.T_vector = time.time()
+    #     outputs = self.language_model(inputs_embeds=prompt_embed)
+    #     self.T_rwkv = time.time()
+        
+    #     # print(f"outputs:{outputs['loss']}")
+    #     # print(f"logits:\t{outputs.shape}")
+        
+    #     return outputs, true_labels, prompt_mask
+    
+    
+    def forward(self, tensors, transcriptions: List[str] = None):
+        
+        
+        print(transcriptions)
+        print(type(transcriptions))
+        prompt_embed, prompt_mask, true_labels = self._prepare_input_tensor(
+            tensors, transcriptions
+        )
             
 
         self.T_vector = time.time()

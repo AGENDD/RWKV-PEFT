@@ -36,8 +36,9 @@ class MyDataset(Dataset):
         
         
         if('turns' in sample.keys()):
-            print(sample["respond"])
-            return None, sample["inputs"], sample["respond"]
+            # print(sample["respond"])
+            print(type(sample["respond"]))
+            return sample["inputs"], sample["respond"]
         
         elif('split_name' in sample.keys()):
             #Voice assistant
