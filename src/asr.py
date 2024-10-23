@@ -385,7 +385,7 @@ class SLAM_ASR(pl.LightningModule):
         #######################################建立prompt_embed
         
         for i in range(len(tensors)):
-            tensors[i] = torch.tensor(tensors[i])
+            tensors[i] = torch.tensor(tensors[i]).to("cuda")
         
         tensor_musk = [np.zeros((tensor.shape[0],), dtype=int) for tensor in tensors]
 
@@ -417,7 +417,10 @@ class SLAM_ASR(pl.LightningModule):
         prompt_embed = []
         #拼接：audio tensor + transcript tensor
         for i in range(len(transcriptions)):
-            prompt_embed.append(torch.cat([tensors[i].to("cuda") , transcriptions_with_eoa_embed[i]], 0))
+            print(i)
+            print(tensors[i].dtype, transcriptions_with_eoa_embed[i].dtype)
+            print(tensors[i].shape, transcriptions_with_eoa_embed[i].shape)
+            prompt_embed.append(torch.cat([tensors[i] , transcriptions_with_eoa_embed[i]], 0))
         
         
         #在右侧填充padding tensor
@@ -425,6 +428,7 @@ class SLAM_ASR(pl.LightningModule):
         
         for i in range(len(transcriptions)):
             while(len(prompt_embed[i]) < max_length):
+                
                 prompt_embed[i] = torch.cat([prompt_embed[i], padding_embed], 0)
         
         prompt_embed = torch.stack(prompt_embed).to("cuda")
