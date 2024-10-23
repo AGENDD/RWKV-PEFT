@@ -416,23 +416,13 @@ class SLAM_ASR(pl.LightningModule):
             padding_embed = self.language_model.embed(padding_token)[0].to(torch.bfloat16) # padding embedding
         
         # print(f"padding_embed: {padding_embed.shape}")
-        
-        print("test")
-        tensors_i = torch.randn(894, 2560).to("cuda", torch.bfloat16)
-        transcriptions_with_eoa_embed_i = torch.randn(322, 2560).to("cuda", torch.bfloat16)
-        print(tensors_i.dtype, transcriptions_with_eoa_embed_i.dtype)
-        print(tensors_i.shape, transcriptions_with_eoa_embed_i.shape)
-        result = torch.cat([tensors_i, transcriptions_with_eoa_embed_i], dim=0)
-        print(result.shape) 
-        
-        
-        
+   
         prompt_embed = []
         #拼接：audio tensor + transcript tensor
         for i in range(len(transcriptions)):
-            print(i)
-            print(tensors[i].dtype, transcriptions_with_eoa_embed[i].dtype)
-            print(tensors[i].shape, transcriptions_with_eoa_embed[i].shape)
+            # print(i)
+            # print(tensors[i].dtype, transcriptions_with_eoa_embed[i].dtype)
+            # print(tensors[i].shape, transcriptions_with_eoa_embed[i].shape)
             prompt_embed.append(torch.cat([tensors[i] , transcriptions_with_eoa_embed[i]], dim=0))
         
         
@@ -448,10 +438,8 @@ class SLAM_ASR(pl.LightningModule):
         
         print(f"prompt_embed: {prompt_embed.shape}")
         
-        for i in range(len(transcriptions)):
-            print(f"data{i}: {len(tensors[i])} + {len(transcriptions_with_eoa_embed[i])} = {prompt_embed[i].shape}")
-        
-        exit(0)
+        # for i in range(len(transcriptions)):
+        #     print(f"data{i}: {len(tensors[i])} + {len(transcriptions_with_eoa_embed[i])} = {prompt_embed[i].shape}")
         #############################################建立label
         
         
@@ -467,12 +455,28 @@ class SLAM_ASR(pl.LightningModule):
                 add_special_tokens=False,
             ).to(self.device)
         
-        max_length = len(prompt_embed[0])
+        true_labels = []
+        for input_id, mask in zip(transcriptions_with_eos_token.input_ids, transcriptions_with_eos_token.attention_mask):
+            true_labels.append(input_id[mask.bool()])
         
-        true_labels = transcriptions_with_eos_token.input_ids
-        for i in range(len(transcriptions)):
-            while(len(true_labels[i]) < max_length):
-                true_labels[i] = [-100] + true_labels[i]
+        for i in range(len(filtered_tokens)):
+            true_labels[i] = torch.cat([tensor_musk[i], true_labels[i]], dim = 0)
+        
+        max_length = max([len(tensor) for tensor in true_labels])
+        
+        for i in range(len(true_labels)):
+            while(len(true_labels) < max_length):
+                true_labels[i] = torch.cat([true_labels, torch.tensor([0]).to("cuda")], dim = 0)
+        
+        true_labels = torch.stack(true_labels).to("cuda")
+        
+        print(f"true_labels: {true_labels.shape}")
+        
+        #################################################prompt_mask
+        
+        
+        
+        
         
 
     # def forward(self, audios: List[str], transcriptions: List[str] = None):
