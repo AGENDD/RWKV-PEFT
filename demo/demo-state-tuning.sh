@@ -14,7 +14,7 @@ n_embd=2560
 micro_bsz=4
 epoch_save=1
 epoch_steps=28691
-ctx_len=1024
+ctx_len=4096
 epoch_count=100
 
 OP=1

@@ -435,7 +435,7 @@ class SLAM_ASR(pl.LightningModule):
             batch_first=True
         ).to("cuda")
         
-        print(f"prompt_embed: {prompt_embed.shape}")
+        # print(f"prompt_embed: {prompt_embed.shape}")
         
         # for i in range(len(transcriptions)):
         #     print(f"data{i}: {len(tensors[i])} + {len(transcriptions_with_eoa_embed[i])} = {prompt_embed[i].shape}")
@@ -472,7 +472,7 @@ class SLAM_ASR(pl.LightningModule):
         ).to("cuda")
         
         
-        print(f"true_labels: {true_labels.shape}")
+        # print(f"true_labels: {true_labels.shape}")
         #################################################prompt_mask
         
         attention_mask = transcriptions_with_eos_token.attention_mask
@@ -493,7 +493,7 @@ class SLAM_ASR(pl.LightningModule):
             batch_first=True
         )
 
-        print(f"tensor_musk: {tensor_musk.shape}")
+        # print(f"tensor_musk: {tensor_musk.shape}")
         
         
         return prompt_embed, prompt_mask, true_labels
