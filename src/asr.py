@@ -389,7 +389,7 @@ class SLAM_ASR(pl.LightningModule):
             tensors[i] = torch.tensor(tensors[i]).to("cuda", torch.bfloat16)
         
         tensor_musk = [np.zeros((tensor.shape[0],), dtype=int) for tensor in tensors]
-        tensor_musk = [torch.tensor(arr) for arr in tensor_musk]
+        tensor_musk = [torch.tensor(arr).to("cuda") for arr in tensor_musk]
         
         #将 "#+transcirpt"处理成token
         transcriptions_with_eoa = []
@@ -481,12 +481,17 @@ class SLAM_ASR(pl.LightningModule):
         prompt_mask = []
         for i in range(len(tensor_musk)):
             prompt_mask.append(torch.cat([tensor_musk[i], attention_mask[i]]))
-            
+        
+        max_length = max([len(tensor) for tensor in prompt_mask])
+        
+        for i in range(len(tensor_musk)):
+            while(len(tensor_musk[i]) < max_length):
+                tensor_musk[i] = torch.cat([tensor_musk[i], torch.zeros(1)], dim=0)
         
         
-        
-        
-        
+        tensor_musk = torch.stack(tensor_musk).to("cuda")
+        print(f"tensor_musk: {tensor_musk.shape}")
+        return prompt_embed, prompt_mask, true_labels
         
 
     # def forward(self, audios: List[str], transcriptions: List[str] = None):
