@@ -404,7 +404,7 @@ class SLAM_ASR(pl.LightningModule):
         
         filtered_tokens = []
         for input_id, mask in zip(transcriptions_with_eoa_token.input_ids, transcriptions_with_eoa_token.attention_mask):
-            filtered_tokens.append(input_id[mask.bool()].tolist())
+            filtered_tokens.append(input_id[mask.bool()])
         
         #将token处理成tensor
         transcriptions_with_eoa_embed = []
