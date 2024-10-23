@@ -412,7 +412,7 @@ class SLAM_ASR(pl.LightningModule):
         with torch.no_grad():
             for i in range(len(filtered_tokens)):                
                 transcriptions_with_eoa_embed.append(self.language_model.embed(filtered_tokens[i].unsqueeze(0)).squeeze(0))
-            padding_embed = self.language_model.embed(torch.tensor([[-100]]).to("cuda",torch.bfloat16))[0] # padding embedding
+            padding_embed = self.language_model.embed(torch.tensor([[-100]]).to("cuda"))[0].to(torch.bfloat16) # padding embedding
         
         # print(f"padding_embed: {padding_embed.shape}")
         
