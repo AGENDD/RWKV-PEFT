@@ -389,7 +389,8 @@ class SLAM_ASR(pl.LightningModule):
             tensors[i] = torch.tensor(tensors[i]).to("cuda", torch.bfloat16)
         
         tensor_musk = [np.zeros((tensor.shape[0],), dtype=int) for tensor in tensors]
-
+        tensor_musk = torch.tensor(tensor_musk)
+        
         #将 "#+transcirpt"处理成token
         transcriptions_with_eoa = []
         for i in range(len(transcriptions)):
@@ -458,12 +459,13 @@ class SLAM_ASR(pl.LightningModule):
         true_labels = []
         for input_id, mask in zip(transcriptions_with_eos_token.input_ids, transcriptions_with_eos_token.attention_mask):
             true_labels.append(input_id[mask.bool()])
-        
+        #label左边填充audio tensor长度的0
         for i in range(len(filtered_tokens)):
             true_labels[i] = torch.cat([tensor_musk[i], true_labels[i]], dim = 0)
         
         max_length = max([len(tensor) for tensor in true_labels])
         
+        #右边填充0使其对齐
         for i in range(len(true_labels)):
             while(len(true_labels) < max_length):
                 true_labels[i] = torch.cat([true_labels, torch.tensor([0]).to("cuda")], dim = 0)
