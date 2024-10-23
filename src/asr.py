@@ -38,7 +38,8 @@ import numpy as np
 import sys
 from contextlib import contextmanager, redirect_stdout, redirect_stderr
 np.set_printoptions(threshold=np.inf)
-
+import os
+os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 
 
 class L2Wrap(torch.autograd.Function):
@@ -411,9 +412,9 @@ class SLAM_ASR(pl.LightningModule):
         with torch.no_grad():
             for i in range(len(filtered_tokens)):                
                 transcriptions_with_eoa_embed.append(self.language_model.embed(filtered_tokens[i].unsqueeze(0)).squeeze(0))
-            padding_embed = self.language_model.embed(torch.tensor([[-100]]).to("cuda"))[0] # padding embedding
+            padding_embed = self.language_model.embed(torch.tensor([[-100]]).to("cuda",torch.bfloat16))[0] # padding embedding
         
-        print(f"padding_embed: {padding_embed.shape}")
+        # print(f"padding_embed: {padding_embed.shape}")
         prompt_embed = []
         #拼接：audio tensor + transcript tensor
         for i in range(len(transcriptions)):
@@ -429,7 +430,7 @@ class SLAM_ASR(pl.LightningModule):
         for i in range(len(transcriptions)):
             while(len(prompt_embed[i]) < max_length):
                 
-                prompt_embed[i] = torch.cat([prompt_embed[i], padding_embed], 0)
+                prompt_embed[i] = torch.cat([prompt_embed[i], padding_embed], dim=0)
         
         prompt_embed = torch.stack(prompt_embed).to("cuda")
         
