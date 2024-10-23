@@ -478,7 +478,7 @@ class SLAM_ASR(pl.LightningModule):
         attention_mask = transcriptions_with_eos_token.attention_mask
         attention_mask = [mask[:mask.nonzero()[-1] + 1] for mask in attention_mask]
         
-        print(attention_mask)
+        # print(attention_mask)
         
         
         prompt_mask = []
@@ -488,7 +488,7 @@ class SLAM_ASR(pl.LightningModule):
         max_length = max(len(tensor) for tensor in prompt_mask)
 
         # 使用 pad_sequence 进行填充
-        max_length = pad_sequence(
+        tensor_musk = pad_sequence(
             [torch.cat([tensor, torch.zeros(max_length - len(tensor)).to("cuda")], dim=0) for tensor in tensor_musk],
             batch_first=True
         )
