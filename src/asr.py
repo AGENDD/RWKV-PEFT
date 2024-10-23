@@ -253,6 +253,7 @@ class SLAM_ASR(pl.LightningModule):
                 truncation=True,
                 add_special_tokens=False,
             ).to(self.device)
+            
             with torch.no_grad():
                 # labels_embeds = self.language_model.rwkv.get_input_embeddings()(_labels.input_ids)
                 labels_embeds = self.language_model.embed(_labels.input_ids)
@@ -388,6 +389,7 @@ class SLAM_ASR(pl.LightningModule):
         
         tensor_musk = [np.zeros((tensor.shape[0],), dtype=int) for tensor in tensors]
 
+        #将 "#+transcirpt"处理成token
         transcriptions_with_eoa = []
         for i in range(len(transcriptions)):
             transcriptions_with_eoa.append('#' + transcriptions[i])
@@ -395,23 +397,29 @@ class SLAM_ASR(pl.LightningModule):
         transcriptions_with_eoa_token = self.language_tokenizer(
                 transcriptions_with_eoa,
                 return_tensors="pt",
-                padding=False,
+                padding=True,
                 truncation=True,
                 add_special_tokens=False,
             ).to(self.device)
         
-        print(f"transcriptions_with_eoa_token.input_ids {len(transcriptions_with_eoa_token.input_ids)}:{type(transcriptions_with_eoa_token.input_ids)}")
-        print(f"transcriptions_with_eoa_token.input_ids[0] {len(transcriptions_with_eoa_token.input_ids[0])}:{type(transcriptions_with_eoa_token.input_ids[0])}")
-        exit(0)
+        filtered_tokens = []
+        for input_id, mask in zip(transcriptions_with_eoa_token.input_ids, transcriptions_with_eoa_token.attention_mask):
+            filtered_tokens.append(input_id[mask.bool()].tolist())
+        
+        #将token处理成tensor
+        transcriptions_with_eoa_embed = []
         with torch.no_grad():
-            transcriptions_with_eoa_embed = self.language_model.embed(transcriptions_with_eoa_token.input_ids)
+            for i in range(len(filtered_tokens)):                
+                transcriptions_with_eoa_embed.append(self.language_model.embed([filtered_tokens[i]]))
             padding_embed = self.language_model.embed(torch.tensor([[-100]]))[0] # padding embedding
         
         prompt_embed = []
-        
+        #拼接：audio tensor + transcript tensor
         for i in range(len(transcriptions)):
             prompt_embed.append(torch.cat([tensors[i] , transcriptions_with_eoa_embed[i]], 0))
         
+        
+        #在右侧填充padding tensor
         max_length = max([len(tensor) for tensor in prompt_embed])
         
         for i in range(len(transcriptions)):
@@ -420,6 +428,12 @@ class SLAM_ASR(pl.LightningModule):
         
         prompt_embed = torch.stack(prompt_embed)
         
+        print(f"prompt_embed: {prompt_embed.shape}")
+        
+        for i in range(len(transcriptions)):
+            print(f"data{i}: {len(tensors[i])} + {len(transcriptions_with_eoa_embed[i])} = {prompt_embed[i].shape}")
+        
+        exit(0)
         #############################################建立label
         
         
