@@ -467,13 +467,13 @@ class SLAM_ASR(pl.LightningModule):
         
         #右边填充0使其对齐
         for i in range(len(true_labels)):
-            while(len(true_labels) < max_length):
+            while(len(true_labels[i]) < max_length):
                 true_labels[i] = torch.cat([true_labels[i], torch.tensor([0]).to("cuda")], dim = 0)
         
         true_labels = torch.stack(true_labels).to("cuda")
         
         print(f"true_labels: {true_labels.shape}")
-        exit(0)
+
         #################################################prompt_mask
         
         attention_mask = transcriptions_with_eos_token.attention_mask
@@ -491,6 +491,8 @@ class SLAM_ASR(pl.LightningModule):
         
         tensor_musk = torch.stack(tensor_musk).to("cuda")
         print(f"tensor_musk: {tensor_musk.shape}")
+        
+        
         return prompt_embed, prompt_mask, true_labels
         
 
