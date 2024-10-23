@@ -473,7 +473,7 @@ class SLAM_ASR(pl.LightningModule):
         true_labels = torch.stack(true_labels).to("cuda")
         
         print(f"true_labels: {true_labels.shape}")
-        
+        exit(0)
         #################################################prompt_mask
         
         
