@@ -613,7 +613,7 @@ class SLAM_ASR(pl.LightningModule):
                     loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), reduction='none')
                     # loss_raw = loss
                     loss = torch.sum(loss * mask) / sum_mask
-
+                    print(loss)
                     # torch.set_printoptions(threshold=10000)
                     # if True: #self.global_rank == 1:
                     #     tmp = ''
