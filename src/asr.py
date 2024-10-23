@@ -523,18 +523,19 @@ class SLAM_ASR(pl.LightningModule):
         
         # print(transcriptions)
         # print(f"in forward:{type(transcriptions)}")
+        print("preprocessing")
         prompt_embed, prompt_mask, true_labels = self._prepare_input_tensor(
             tensors, transcriptions
         )
             
-
+        print("lm processing")
         self.T_vector = time.time()
         outputs = self.language_model(inputs_embeds=prompt_embed)
         self.T_rwkv = time.time()
         
         # print(f"outputs:{outputs['loss']}")
         # print(f"logits:\t{outputs.shape}")
-        
+        print("return")
         return outputs, true_labels, prompt_mask
     
 
