@@ -489,7 +489,7 @@ class SLAM_ASR(pl.LightningModule):
 
         # 使用 pad_sequence 进行填充
         max_length = pad_sequence(
-            [torch.cat([tensor, torch.zeros(max_length - len(tensor))], dim=0) for tensor in tensor_musk],
+            [torch.cat([tensor, torch.zeros(max_length - len(tensor)).to("cuda")], dim=0) for tensor in tensor_musk],
             batch_first=True
         )
 
