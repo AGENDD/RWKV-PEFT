@@ -389,7 +389,7 @@ class SLAM_ASR(pl.LightningModule):
             tensors[i] = torch.tensor(tensors[i]).to("cuda", torch.bfloat16)
         
         tensor_musk = [np.zeros((tensor.shape[0],), dtype=int) for tensor in tensors]
-        tensor_musk = torch.tensor(tensor_musk)
+        tensor_musk = [torch.tensor(arr) for arr in tensor_musk]
         
         #将 "#+transcirpt"处理成token
         transcriptions_with_eoa = []
@@ -475,6 +475,14 @@ class SLAM_ASR(pl.LightningModule):
         print(f"true_labels: {true_labels.shape}")
         exit(0)
         #################################################prompt_mask
+        
+        attention_mask = transcriptions_with_eos_token.attention_mask
+        attention_mask = torch.stack([mask[:mask.nonzero()[-1] + 1] for mask in attention_mask])
+        prompt_mask = []
+        for i in range(len(tensor_musk)):
+            prompt_mask.append(torch.cat([tensor_musk[i], attention_mask[i]]))
+            
+        
         
         
         
