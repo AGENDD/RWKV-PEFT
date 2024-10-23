@@ -9,6 +9,7 @@ import torch
 import torch.nn as nn
 from transformers import LlamaForCausalLM, LlamaTokenizer
 from typing import List
+from torch.nn.utils.rnn import pad_sequence
 
 try:
     from .speech_encoder import SpeechEncoder
@@ -427,15 +428,22 @@ class SLAM_ASR(pl.LightningModule):
             prompt_embed.append(torch.cat([tensors[i] , transcriptions_with_eoa_embed[i]], dim=0))
         
         
-        #在右侧填充padding tensor
-        max_length = max([len(tensor) for tensor in prompt_embed])
+        # #在右侧填充padding tensor
+        # max_length = max([len(tensor) for tensor in prompt_embed])
         
-        for i in range(len(transcriptions)):
-            while(len(prompt_embed[i]) < max_length):
+        # for i in range(len(transcriptions)):
+        #     while(len(prompt_embed[i]) < max_length):
                 
-                prompt_embed[i] = torch.cat([prompt_embed[i], padding_embed], dim=0)
+        #         prompt_embed[i] = torch.cat([prompt_embed[i], padding_embed], dim=0)
         
-        prompt_embed = torch.stack(prompt_embed).to("cuda")
+        max_length = max(len(tensor) for tensor in prompt_embed)
+
+        # 使用 pad_sequence 进行填充
+        prompt_embed = pad_sequence(
+            [torch.cat([tensor, padding_embed[:max_length - len(tensor)]], dim=0) for tensor in prompt_embed],
+            batch_first=True
+        ).to("cuda")
+        # prompt_embed = torch.stack(prompt_embed).to("cuda")
         
         print(f"prompt_embed: {prompt_embed.shape}")
         
@@ -465,15 +473,24 @@ class SLAM_ASR(pl.LightningModule):
         
         max_length = max([len(tensor) for tensor in true_labels])
         
-        #右边填充0使其对齐
-        for i in range(len(true_labels)):
-            while(len(true_labels[i]) < max_length):
-                true_labels[i] = torch.cat([true_labels[i], torch.tensor([0]).to("cuda")], dim = 0)
+        # #右边填充0使其对齐
+        # for i in range(len(true_labels)):
+        #     while(len(true_labels[i]) < max_length):
+        #         true_labels[i] = torch.cat([true_labels[i], torch.tensor([0]).to("cuda")], dim = 0)
         
-        true_labels = torch.stack(true_labels).to("cuda")
+        # true_labels = torch.stack(true_labels).to("cuda")
+        
+        max_length = max(len(tensor) for tensor in true_labels)
+
+        # 使用 pad_sequence 进行填充
+        true_labels = pad_sequence(
+            [torch.cat([tensor, torch.zeros(max_length - len(tensor)).to(tensor.device)], dim=0) for tensor in true_labels],
+            batch_first=True
+        ).to("cuda")
+        
         
         print(f"true_labels: {true_labels.shape}")
-
+        exit(0)
         #################################################prompt_mask
         
         attention_mask = transcriptions_with_eos_token.attention_mask
