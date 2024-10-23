@@ -411,8 +411,9 @@ class SLAM_ASR(pl.LightningModule):
         with torch.no_grad():
             for i in range(len(filtered_tokens)):                
                 transcriptions_with_eoa_embed.append(self.language_model.embed(filtered_tokens[i].unsqueeze(0)).squeeze(0))
-            padding_embed = self.language_model.embed(torch.tensor([[-100]]))[0] # padding embedding
+            padding_embed = self.language_model.embed(torch.tensor([[-100]]).to("cuda"))[0] # padding embedding
         
+        print(f"padding_embed: {padding_embed.shape}")
         prompt_embed = []
         #拼接：audio tensor + transcript tensor
         for i in range(len(transcriptions)):
