@@ -468,7 +468,7 @@ class SLAM_ASR(pl.LightningModule):
         #右边填充0使其对齐
         for i in range(len(true_labels)):
             while(len(true_labels) < max_length):
-                true_labels[i] = torch.cat([true_labels, torch.tensor([0]).to("cuda")], dim = 0)
+                true_labels[i] = torch.cat([true_labels[i], torch.tensor([0]).to("cuda")], dim = 0)
         
         true_labels = torch.stack(true_labels).to("cuda")
         
