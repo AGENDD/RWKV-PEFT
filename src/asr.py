@@ -496,7 +496,7 @@ class SLAM_ASR(pl.LightningModule):
         # print(f"tensor_musk: {tensor_musk.shape}")
         
         
-        return prompt_embed, prompt_mask, true_labels
+        return prompt_embed, prompt_mask, true_labels.long()
         
 
     # def forward(self, audios: List[str], transcriptions: List[str] = None):
