@@ -420,7 +420,7 @@ class SLAM_ASR(pl.LightningModule):
             print(i)
             print(tensors[i].dtype, transcriptions_with_eoa_embed[i].dtype)
             print(tensors[i].shape, transcriptions_with_eoa_embed[i].shape)
-            prompt_embed.append(torch.cat([tensors[i] , transcriptions_with_eoa_embed[i]], 0))
+            prompt_embed.append(torch.cat([tensors[i] , transcriptions_with_eoa_embed[i]], dim=0))
         
         
         #在右侧填充padding tensor
