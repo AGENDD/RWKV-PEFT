@@ -141,7 +141,7 @@ class train_callback(pl.Callback):
         #         print(f"{name} 的梯度: {param.grad}")
         
         self.step += 1
-        if(self.step % 200 == 0 and trainer.is_global_zero):
+        if(self.step % 50 == 0 and trainer.is_global_zero):
             print("saving...")
             # to_save_dict = pl_module.state_dict()
             filtered_state_dict = {}
