@@ -134,11 +134,11 @@ class train_callback(pl.Callback):
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
         args = self.args
         
-        param_name = {"speech_encoder.adapter.0.weight", "speech_encoder.adapter.0.bias", "speech_encoder.adapter.2.weight", "speech_encoder.adapter.2.bias"}
+        # param_name = {"speech_encoder.adapter.0.weight", "speech_encoder.adapter.0.bias", "speech_encoder.adapter.2.weight", "speech_encoder.adapter.2.bias"}
         
-        for name, param in pl_module.named_parameters():
-            if name in param_name:
-                print(f"{name} 的梯度: {param.grad}")
+        # for name, param in pl_module.named_parameters():
+        #     if name in param_name:
+        #         print(f"{name} 的梯度: {param.grad}")
         
         self.step += 1
         if(self.step % 200 == 0 and trainer.is_global_zero):
