@@ -531,6 +531,34 @@ class SLAM_ASR(pl.LightningModule):
         prompt_mask = prompt_mask[:, :500].long()
         true_labels = prompt_mask[:, :500].long()
         
+        print(f"prompt_embed:{prompt_embed.shape}")
+        print(f"prompt_mask:{prompt_mask.shape}")
+        print(f"true_labels:{true_labels.shape}")
+        
+        def count_consecutive(tensor):
+            result = []
+            for row in tensor:
+                counts = []
+                current_count = 1
+                for i in range(1, len(row)):
+                    if row[i] == row[i - 1]:
+                        current_count += 1
+                    else:
+                        counts.append(current_count)
+                        current_count = 1
+                counts.append(current_count)  # 添加最后一个连续段的计数
+                result.append(''.join(map(str, counts)))
+            return result
+        
+        
+        consecutive_counts = count_consecutive(prompt_mask)
+        for count in consecutive_counts:
+            print(count)
+        print()
+        consecutive_counts = count_consecutive(true_labels)
+        for count in consecutive_counts:
+            print(true_labels)
+        
         
         print("lm processing")
         self.T_vector = time.time()
