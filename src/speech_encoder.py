@@ -61,7 +61,7 @@ class SpeechEncoder(nn.Module):
             for param in self.model.parameters():
                 param.requires_grad = False
             for param in self.adapter.parameters():
-                param.requires_grad = False
+                param.requires_grad = True
         else:
             for param in self.model.parameters():
                 param.requires_grad = True
