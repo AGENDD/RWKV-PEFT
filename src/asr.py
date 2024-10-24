@@ -383,120 +383,84 @@ class SLAM_ASR(pl.LightningModule):
                 yield
 
     def _prepare_input_tensor(self, tensors, transcriptions):
-            
-        #######################################建立prompt_embed
-        
+    ####################################### 建立 prompt_embed
         for i in range(len(tensors)):
             tensors[i] = torch.tensor(tensors[i]).to("cuda", torch.bfloat16)
         
-        tensor_musk = [np.zeros((tensor.shape[0],), dtype=int) for tensor in tensors]
-        tensor_musk = [torch.tensor(arr).to("cuda") for arr in tensor_musk]
+        tensor_mask = [torch.zeros((tensor.shape[0],), dtype=int).to("cuda") for tensor in tensors]
         
-        #将 "#+transcirpt"处理成token
-        transcriptions_with_eoa = []
-        for i in range(len(transcriptions)):
-            transcriptions_with_eoa.append('#' + transcriptions[i])
+        # 将 "#+transcription" 处理成 token
+        transcriptions_with_eoa = ['#' + transcription for transcription in transcriptions]
         
         transcriptions_with_eoa_token = self.language_tokenizer(
-                transcriptions_with_eoa,
-                return_tensors="pt",
-                padding=True,
-                truncation=True,
-                add_special_tokens=False,
-            ).to(self.device)
+            transcriptions_with_eoa,
+            return_tensors="pt",
+            padding=True,
+            truncation=True,
+            add_special_tokens=False,
+        ).to(self.device)
         
-        filtered_tokens = []
-        for input_id, mask in zip(transcriptions_with_eoa_token.input_ids, transcriptions_with_eoa_token.attention_mask):
-            filtered_tokens.append(input_id[mask.bool()])
+        filtered_tokens = [input_id[mask.bool()] for input_id, mask in zip(transcriptions_with_eoa_token.input_ids, transcriptions_with_eoa_token.attention_mask)]
         
-        #将token处理成tensor
+        # 将 token 处理成 tensor
         transcriptions_with_eoa_embed = []
         with torch.no_grad():
-            for i in range(len(filtered_tokens)):                
-                transcriptions_with_eoa_embed.append(self.language_model.embed(filtered_tokens[i].unsqueeze(0)).squeeze(0))
-            padding_token = torch.tensor([[0]]).to("cuda")
-            padding_embed = self.language_model.embed(padding_token)[0].to(torch.bfloat16) # padding embedding
+            for tokens in filtered_tokens:
+                transcriptions_with_eoa_embed.append(self.language_model.embed(tokens.unsqueeze(0)).squeeze(0))
+            padding_embed = self.language_model.embed(torch.zeros((1, 1), dtype=torch.long).to("cuda"))[0].to(torch.bfloat16)
         
-        # print(f"padding_embed: {padding_embed.shape}")
-   
-        prompt_embed = []
-        #拼接：audio tensor + transcript tensor
-        for i in range(len(transcriptions)):
-            # print(i)
-            # print(tensors[i].dtype, transcriptions_with_eoa_embed[i].dtype)
-            # print(tensors[i].shape, transcriptions_with_eoa_embed[i].shape)
-            prompt_embed.append(torch.cat([tensors[i] , transcriptions_with_eoa_embed[i]], dim=0))
+        # 拼接：audio tensor + transcript tensor
+        prompt_embed = [torch.cat([tensors[i], transcriptions_with_eoa_embed[i]], dim=0) for i in range(len(transcriptions))]
         
         max_length = max(len(tensor) for tensor in prompt_embed)
-
+        
         # 使用 pad_sequence 进行填充
         prompt_embed = pad_sequence(
             [torch.cat([tensor, padding_embed[:max_length - len(tensor)]], dim=0) for tensor in prompt_embed],
             batch_first=True
         ).to("cuda")
         
-        # print(f"prompt_embed: {prompt_embed.shape}")
-        
-        # for i in range(len(transcriptions)):
-        #     print(f"data{i}: {len(tensors[i])} + {len(transcriptions_with_eoa_embed[i])} = {prompt_embed[i].shape}")
-        #############################################建立label
-        
-        
-        transcriptions_with_eos = []
-        for i in range(len(transcriptions)):
-            transcriptions_with_eos.append(transcriptions[i] + "<s>")
+        ############################################# 建立 label
+        transcriptions_with_eos = [transcription + "<s>" for transcription in transcriptions]
         
         transcriptions_with_eos_token = self.language_tokenizer(
-                transcriptions_with_eos,
-                return_tensors="pt",
-                padding=True,
-                truncation=True,
-                add_special_tokens=False,
-            ).to(self.device)
+            transcriptions_with_eos,
+            return_tensors="pt",
+            padding=True,
+            truncation=True,
+            add_special_tokens=False,
+        ).to(self.device)
         
-        true_labels = []
-        for input_id, mask in zip(transcriptions_with_eos_token.input_ids, transcriptions_with_eos_token.attention_mask):
-            true_labels.append(input_id[mask.bool()])
-        #label左边填充audio tensor长度的0
+        true_labels = [input_id[mask.bool()] for input_id, mask in zip(transcriptions_with_eos_token.input_ids, transcriptions_with_eos_token.attention_mask)]
+        
+        # label 左边填充 audio tensor 长度的 0
         for i in range(len(filtered_tokens)):
-            true_labels[i] = torch.cat([tensor_musk[i], true_labels[i]], dim = 0)
-        
-        max_length = max([len(tensor) for tensor in true_labels])
+            true_labels[i] = torch.cat([tensor_mask[i], true_labels[i]], dim=0)
         
         max_length = max(len(tensor) for tensor in true_labels)
-
+        
         # 使用 pad_sequence 进行填充
         true_labels = pad_sequence(
             [torch.cat([tensor, torch.zeros(max_length - len(tensor)).to(tensor.device)], dim=0) for tensor in true_labels],
             batch_first=True
         ).to("cuda")
         
-        
-        # print(f"true_labels: {true_labels.shape}")
-        #################################################prompt_mask
-        
+        ################################################# prompt_mask
         attention_mask = transcriptions_with_eos_token.attention_mask
         attention_mask = [mask[:mask.nonzero()[-1] + 1] for mask in attention_mask]
         
-        # print(attention_mask)
-        
-        
-        prompt_mask = []
-        for i in range(len(tensor_musk)):
-            prompt_mask.append(torch.cat([tensor_musk[i], attention_mask[i]]))
+        prompt_mask = [torch.cat([tensor_mask[i], attention_mask[i]]) for i in range(len(tensor_mask))]
         
         max_length = max(len(tensor) for tensor in prompt_mask)
-
+        
         # 使用 pad_sequence 进行填充
         prompt_mask = pad_sequence(
             [torch.cat([tensor, torch.zeros(max_length - len(tensor)).to("cuda")], dim=0) for tensor in prompt_mask],
             batch_first=True
         )
-
-        # print(f"tensor_musk: {tensor_musk.shape}")
-        
         
         return prompt_embed, prompt_mask, true_labels.long()
+
         
 
     # def forward(self, audios: List[str], transcriptions: List[str] = None):
@@ -534,30 +498,6 @@ class SLAM_ASR(pl.LightningModule):
         print(f"prompt_embed:{prompt_embed.shape}")
         print(f"prompt_mask:{prompt_mask.shape}")
         print(f"true_labels:{true_labels.shape}")
-        
-        def count_consecutive(tensor):
-            result = []
-            for row in tensor:
-                counts = []
-                current_count = 1
-                for i in range(1, len(row)):
-                    if row[i] == row[i - 1]:
-                        current_count += 1
-                    else:
-                        counts.append(current_count)
-                        current_count = 1
-                counts.append(current_count)  # 添加最后一个连续段的计数
-                result.append(''.join(map(str, counts)))
-            return result
-        
-        
-        consecutive_counts = count_consecutive(prompt_mask)
-        for count in consecutive_counts:
-            print(count)
-        print()
-        consecutive_counts = count_consecutive(true_labels)
-        for count in consecutive_counts:
-            print(true_labels)
         
         
         print("lm processing")
@@ -648,8 +588,10 @@ class SLAM_ASR(pl.LightningModule):
                     
                     loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), targets.reshape(-1), reduction='none')
                     # loss_raw = loss
-                    loss = torch.sum(loss * mask) / sum_mask
-                    print(loss)
+                    loss = torch.sum(loss * mask) / (sum_mask+1)
+                    print(f"sum mask: {sum_mask}")
+                    print(f"total loss: {torch.sum(loss * mask)}")
+                    print(f"loss: {loss}")
                     # torch.set_printoptions(threshold=10000)
                     # if True: #self.global_rank == 1:
                     #     tmp = ''
