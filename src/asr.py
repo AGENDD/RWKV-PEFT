@@ -599,7 +599,9 @@ class SLAM_ASR(pl.LightningModule):
                 transcription = [item[1] for item in batch]
                 
                 logits, targets, mask = self(idx, transcription)
-                mask = mask.view(-1)
+                # mask = mask.view(-1)
+                mask = mask.reshape(-1)
+                
                 sum_mask = torch.sum(mask).item()
                 ######
                 
@@ -614,7 +616,9 @@ class SLAM_ASR(pl.LightningModule):
                     loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1))
                     # print('rank', self.global_rank, 'loss', loss.item())
                 else:
-                    loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), reduction='none')
+                    # loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), reduction='none')
+                    
+                    loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), targets.reshape(-1), reduction='none')
                     # loss_raw = loss
                     loss = torch.sum(loss * mask) / sum_mask
                     print(loss)
