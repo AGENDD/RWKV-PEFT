@@ -528,8 +528,8 @@ class SLAM_ASR(pl.LightningModule):
             tensors, transcriptions
         )
         prompt_embed = prompt_embed[:, :500, :]
-        prompt_mask = prompt_mask[:, :500]
-        true_labels = prompt_mask[:, :500]
+        prompt_mask = prompt_mask[:, :500].long()
+        true_labels = prompt_mask[:, :500].long()
         
         
         print("lm processing")
