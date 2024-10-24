@@ -527,7 +527,11 @@ class SLAM_ASR(pl.LightningModule):
         prompt_embed, prompt_mask, true_labels = self._prepare_input_tensor(
             tensors, transcriptions
         )
-            
+        prompt_embed = prompt_embed[:, :500, :]
+        prompt_mask = prompt_mask[:, :500, :]
+        true_labels = prompt_mask[:, :500, :]
+        
+        
         print("lm processing")
         self.T_vector = time.time()
         outputs = self.language_model(inputs_embeds=prompt_embed)
