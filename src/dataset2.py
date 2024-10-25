@@ -36,6 +36,11 @@ class MyDataset(Dataset):
         
         
         if('turns' in sample.keys()):
+            
+            while(sample['keys'] > 5):
+                idx = idx + 1
+                sample = self.hf_dataset[idx]
+            
             temp = sample["respond"]
             # print(f"in dataloader {idx}:{type(temp)}")
             return sample["inputs"], sample["respond"]
