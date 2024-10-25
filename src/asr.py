@@ -595,7 +595,7 @@ class SLAM_ASR(pl.LightningModule):
                         # loss_raw = loss
                         loss = torch.sum(loss * mask) / sum_mask
                     except:
-                        return None
+                        loss = torch.tensor(0.0, device=logits.device)  
                     # print(f"sum mask: {sum_mask}")
                     # print(f"total loss: {torch.sum(loss * mask)}")
                     # print(f"loss: {loss}")
