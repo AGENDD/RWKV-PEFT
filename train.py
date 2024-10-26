@@ -564,7 +564,7 @@ if __name__ == "__main__":
         
         # dataset = load_from_disk("temp_datasets/VoiceAssistant").shuffle()  #459067
         
-        dataset = load_from_disk("temp_datasets/ultrachat_tensor_10000")
+        dataset = load_from_disk("temp_datasets/ultrachat_tensor_10000").shuffle()
         
         # print(len(con_dataset))#29060
         # dataset, transcipt = aishell() # 120098
