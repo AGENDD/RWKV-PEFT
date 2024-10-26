@@ -37,7 +37,7 @@ class MyDataset(Dataset):
         
         if('turns' in sample.keys()):
             
-            while(sample['turns'] > 4):
+            while(len(sample['inputs']) > 4096):
                 idx = idx + 1
                 sample = self.hf_dataset[idx]
             
