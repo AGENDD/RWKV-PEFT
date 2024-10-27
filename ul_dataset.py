@@ -14,5 +14,11 @@ login(token)
 dataset_dict = DatasetDict({'train': dataset})
 
 # 上传数据集
-dataset_dict.push_to_hub('ultrachat_tensor_10k')
+while(True):
+    try:
+        dataset_dict.push_to_hub('ultrachat_tensor_10k')
+        break
+    except Exception as e:
+        print(e)
+        
 print("finish")
