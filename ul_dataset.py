@@ -8,7 +8,7 @@ token = "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"
 from huggingface_hub import login
 
 # 登录 Hugging Face
-login('your_huggingface_api_token')
+login(token)
 
 # 创建 DatasetDict 对象
 dataset_dict = DatasetDict({'train': dataset})
