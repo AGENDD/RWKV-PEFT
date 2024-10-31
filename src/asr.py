@@ -31,12 +31,7 @@ if importlib.util.find_spec('deepspeed'):
     import deepspeed
     from deepspeed.ops.adam import DeepSpeedCPUAdam, FusedAdam
 import time
-from melo.api import TTS
-import io
-import soundfile as sf
-import resampy
 import numpy as np
-import sys
 from contextlib import contextmanager, redirect_stdout, redirect_stderr
 np.set_printoptions(threshold=np.inf)
 import os
@@ -89,7 +84,7 @@ class SLAM_ASR(pl.LightningModule):
 
         """
 
-        self.language_tokenizer = AutoTokenizer.from_pretrained("RWKV/rwkv-6-world-1b6",trust_remote_code=True)
+        self.language_tokenizer = AutoTokenizer.from_pretrained("RWKV/rwkv-6-world-1b6",trust_remote_code=True, cache_dir="temp_models")
 
 
         self.language_model = language_model
