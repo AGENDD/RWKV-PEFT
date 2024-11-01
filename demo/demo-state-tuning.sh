@@ -21,6 +21,7 @@ OP=1
 
 
 QUANT='nf4' 
+export CUDA_VISIBLE_DEVICES=4,5,6,7
 export HF_ENDPOINT=https://hf-mirror.com
 python -u JR_train.py --load_model $load_model --devices 4 --OP $OP \
 --proj_dir $proj_dir --data_file $data_file \
