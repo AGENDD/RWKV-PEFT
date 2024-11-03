@@ -528,8 +528,6 @@ class SLAM_ASR(pl.LightningModule):
             #     print(f"end of audio:\n{end_of_audio}")
             
             # print(f"Speech output:\n{speech_output}")
-            print(f"prompt_embeds:{prompt_embed.shape}")
-            print(f"end_of_audio:{end_of_audio.shape}")
             prompt_embed = torch.cat((prompt_embed, end_of_audio), dim= 1)
             
             
