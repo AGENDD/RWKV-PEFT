@@ -591,9 +591,9 @@ if __name__ == "__main__":
             answer = data['respond']
 
             for i in range(data['turns']):
-                print(f"question {i}: {data['speech_messages'][i]['transcript'][:500]}...")
+                print(f"question {i}: {data['speech_messages'][i]['transcript']}...")
             print(f"true answer:\n{answer[:500]}...")
-            
+            print()
             print("predict:")
             output= Total_model.generate(tensor = inputs,endding='<s>', dy = True)
             # output = ''.join(output)
