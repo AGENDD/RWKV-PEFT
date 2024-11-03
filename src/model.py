@@ -1251,10 +1251,10 @@ class RWKV(pl.LightningModule):
 
             return x
 
-        def generate(self, tokenizer, idx=None, inputs_embeds=None,endding = '<s>', dy = False):
+        def generate(self, tokenizer, LENGTH = 500, idx=None, inputs_embeds=None,endding = '<s>', dy = False):
             
             # inputs_embeds: [1, T, H]
-            MAX_LENGTH = 100
+            MAX_LENGTH = LENGTH
             output_seq = self(idx,inputs_embeds)#调用模型
             temp = output_seq.clone()
             true_output = []

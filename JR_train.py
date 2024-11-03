@@ -595,7 +595,7 @@ if __name__ == "__main__":
             print(f"true answer:\n{answer[:500]}...")
             print()
             print("predict:")
-            output= Total_model.generate(tensor = inputs,endding='<s>', dy = True)
+            output= Total_model.generate(tensor = inputs, dy = True, length=50)
             # output = ''.join(output)
             print("\n\n")
 
