@@ -577,58 +577,25 @@ if __name__ == "__main__":
         
     elif(args.OP == 2):#自回归
         
-        # dataset = load_dataset("mozilla-foundation/common_voice_13_0", "zh-CN", split="test",token = token)
-        # dataset = dataset.select(range(100))
-        # dataset = dataset3.select(range(100))
-        # dataset = load_from_disk("temp_datasets/en-final") #libri 960
-        # dataset = dataset.select(range(len(dataset) - 100, len(dataset)))
+        # con_dataset = load_from_disk("temp_datasets/VoiceAssistant")
         
-        # dataset, transcipt = aishell()
+        con_dataset = load_from_disk("temp_datasets/ultrachat_tensor_10000")
         
-        
-        # dataset = load_dataset('covost2','zh-CN_en',data_dir = 'temp_datasets/covost-zhCN_en')['test'].select(range(10))
-        # dataset2 = load_dataset('covost2','ja_en',data_dir = 'temp_datasets/covost-ja_en')['test'].select(range(10))
-        # dataset3 = load_dataset('covost2','de_en',data_dir = 'temp_datasets/covost-de_en')['test'].select(range(10))
-        # dataset4 = load_dataset('covost2','fr_en',data_dir = 'temp_datasets/covost-fr_en')['test'].select(range(10))
-        # dataset5 = load_dataset('covost2','mn_en',data_dir = 'temp_datasets/covost-mn_en')['test'].select(range(10))
-        # dataset6 = load_dataset('covost2','ar_en',data_dir = 'temp_datasets/covost-ar_en')['test'].select(range(10))
-        # dataset = concatenate_datasets([dataset, dataset2, dataset3, dataset4, dataset5, dataset6]).shuffle()
-        
-        # arr = ['dutch','french','german','italian','polish','portuguese','spanish']
-        # con_dataset = None
-        # for i in arr:
-        #     dataset1 = load_dataset("facebook/multilingual_librispeech", i, split="9_hours").select(range(10))
-        #     if(con_dataset == None):
-        #         con_dataset = dataset1
-        #     else:
-        #         con_dataset = concatenate_datasets([con_dataset, dataset1])
-        # con_dataset = con_dataset.shuffle()
-        
-        # con_dataset = load_from_disk("temp_datasets/ultrachat_speech")#55464
-        con_dataset = load_from_disk("temp_datasets/VoiceAssistant")
         tokenizer = Total_model.return_tokenizer()
         # Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
         Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
         print("start")
         for data in con_dataset:
             
-            # path = 'temp_datasets/aishell/data_aishell/wav/train/'
-            # sr, audio = wav.read(path+data+".wav")
-            # audio = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
+            inputs = torch.tensor(data['inputs']).to("cuda", torch.bfloat16)
+            answer = data['respond']
+
+            for i in range(data['turns']):
+                print(f"question {i}: {data['speech_messages'][i]['transcript'][:20]}...")
+            print(f"true answer:\n{answer[:20]}...")
             
-            # output= Total_model.generate(resampy.resample(data['audio']['array'], 48000, 16000))
-            # audio = data['audio']['array']
-            origin = data['question'].lower()
-            print(f"question:\n{origin}")
-            
-            audio = data['question_audio']['array']
-            audio = resampy.resample(audio, 22050, 16000)
-            output= Total_model.generate(audios = audio,endding='<s>')
-            # print(output)
+            output= Total_model.generate(tensor = inputs,endding='<s>', dy = True)
             output = ''.join(output)
-            print(f"generated:\n{output}")
-            # print(f"answer:\n{data['sentence'].lower()}")
-            # print(f"answer:\n{data['sentence'].lower()+'$'+ data['translation'].lower()}")
             print("\n\n")
 
     elif(args.OP == 3):

@@ -484,34 +484,18 @@ class SLAM_ASR(pl.LightningModule):
     
     def forward(self, tensors, transcriptions: List[str] = None):
         
-        
-        # print(transcriptions)
-        # print(f"in forward:{type(transcriptions)}")
-        # print("preprocessing")
         prompt_embed, prompt_mask, true_labels = self._prepare_input_tensor(
             tensors, transcriptions
         )
-        # prompt_embed = prompt_embed[:, :500, :]
-        # prompt_mask = prompt_mask[:, :500].long()
-        # true_labels = prompt_mask[:, :500].long()
-        
-        # print(f"prompt_embed:{prompt_embed.shape}")
-        # print(f"prompt_mask:{prompt_mask.shape}")
-        # print(f"true_labels:{true_labels.shape}")
-        
-        
-        # print("lm processing")
+
         self.T_vector = time.time()
         outputs = self.language_model(inputs_embeds=prompt_embed)
         self.T_rwkv = time.time()
-        
-        # print(f"outputs:{outputs['loss']}")
-        # print(f"logits:\t{outputs.shape}")
-        # print("return")
+
         return outputs, true_labels, prompt_mask
     
 
-    def generate(self,prompts: List[str] = None, audios: List[float] = None, endding='<s>'):
+    def generate(self,prompts: List[str] = None, audios: List[float] = None, tensors = None, endding='<s>', dy = False):
         """
         Generate the transcription
         """
@@ -531,9 +515,13 @@ class SLAM_ASR(pl.LightningModule):
                 # labels_embeds = self.language_model.rwkv.get_input_embeddings()(_labels.input_ids)
                 prompt_embed = self.language_model.embed(prompts_tokens.input_ids)
                 prompt_mask = prompts_tokens.attention_mask
-
+        elif(tensors != None):
+            prompt_embed = tensors.unsqueeze(0)
+            
+            
+            
         self.language_model.to(self._device, dtype=torch.bfloat16)
-        outputs = self.language_model.generate(tokenizer= self.language_tokenizer,inputs_embeds=prompt_embed, endding=endding)
+        outputs = self.language_model.generate(tokenizer= self.language_tokenizer,inputs_embeds=prompt_embed, endding=endding, dy = dy)
         
         return outputs
 
