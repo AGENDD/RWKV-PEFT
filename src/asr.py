@@ -495,7 +495,7 @@ class SLAM_ASR(pl.LightningModule):
         return outputs, true_labels, prompt_mask
     
 
-    def generate(self,prompts: List[str] = None, audios: List[float] = None, tensors = None, endding='<s>', dy = False):
+    def generate(self,prompts: List[str] = None, audios: List[float] = None, tensor = None, endding='<s>', dy = False):
         """
         Generate the transcription
         """
@@ -515,8 +515,8 @@ class SLAM_ASR(pl.LightningModule):
                 # labels_embeds = self.language_model.rwkv.get_input_embeddings()(_labels.input_ids)
                 prompt_embed = self.language_model.embed(prompts_tokens.input_ids)
                 prompt_mask = prompts_tokens.attention_mask
-        elif(tensors != None):
-            prompt_embed = tensors.unsqueeze(0)
+        elif(tensor != None):
+            prompt_embed = tensor.unsqueeze(0)
             
             
             

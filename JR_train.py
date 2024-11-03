@@ -584,15 +584,15 @@ if __name__ == "__main__":
         tokenizer = Total_model.return_tokenizer()
         # Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
         Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
-        print("start")
+        print("start prediction...")
         for data in con_dataset:
             
             inputs = torch.tensor(data['inputs']).to("cuda", torch.bfloat16)
             answer = data['respond']
 
             for i in range(data['turns']):
-                print(f"question {i}: {data['speech_messages'][i]['transcript'][:20]}...")
-            print(f"true answer:\n{answer[:20]}...")
+                print(f"question {i}: {data['speech_messages'][i]['transcript'][500]}...")
+            print(f"true answer:\n{answer[:500]}...")
             
             output= Total_model.generate(tensor = inputs,endding='<s>', dy = True)
             output = ''.join(output)
