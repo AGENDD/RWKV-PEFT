@@ -579,7 +579,7 @@ if __name__ == "__main__":
         
         # con_dataset = load_from_disk("temp_datasets/VoiceAssistant")
         
-        con_dataset = load_from_disk("temp_datasets/ultrachat_tensor_10000")
+        con_dataset = load_from_disk("temp_datasets/ultrachat_tensor_10000").shuffle()
         
         tokenizer = Total_model.return_tokenizer()
         # Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
