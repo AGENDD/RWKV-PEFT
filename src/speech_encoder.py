@@ -36,7 +36,8 @@ class SpeechEncoder(nn.Module):
             self.processor.feature_extractor.sampling_rate / 50
         )
         self.padding_length = 320
-        self.model = AutoModel.from_pretrained(model_id, cache_dir="temp_models").to(self.device,dtype=torch.bfloat16)
+        # self.model = AutoModel.from_pretrained(model_id, cache_dir="temp_models").to(self.device,dtype=torch.bfloat16)
+        self.model = AutoModel.from_pretrained(model_id).to(self.device,dtype=torch.bfloat16)
         self.model.eval()
         self.model_output_dim = self.model.config.hidden_size
         self.downsample_K = downsample_K
