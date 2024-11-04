@@ -84,8 +84,8 @@ class SLAM_ASR(pl.LightningModule):
 
         """
 
-        # self.language_tokenizer = AutoTokenizer.from_pretrained("RWKV/rwkv-6-world-1b6",trust_remote_code=True, cache_dir="temp_models")
-        self.language_tokenizer = AutoTokenizer.from_pretrained("RWKV/rwkv-6-world-1b6",trust_remote_code=True)
+        self.language_tokenizer = AutoTokenizer.from_pretrained("RWKV/rwkv-6-world-1b6",trust_remote_code=True, cache_dir="temp_models")
+        # self.language_tokenizer = AutoTokenizer.from_pretrained("RWKV/rwkv-6-world-1b6",trust_remote_code=True)
 
         self.language_model = language_model
         
