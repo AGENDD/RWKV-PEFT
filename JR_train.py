@@ -579,12 +579,13 @@ if __name__ == "__main__":
         
         # con_dataset = load_from_disk("temp_datasets/VoiceAssistant")
         
-        con_dataset = load_from_disk("temp_datasets/ultrachat_tensor_10000").shuffle()
+        con_dataset = load_from_disk("temp_datasets/ultrachat_tensor_10000").select(range(100))
         
         tokenizer = Total_model.return_tokenizer()
         # Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
         Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
         print("start prediction...")
+        
         for data in con_dataset:
             
             inputs = torch.tensor(data['inputs']).to("cuda", torch.bfloat16)
@@ -595,7 +596,11 @@ if __name__ == "__main__":
             print(f"true answer:\n{answer[:500]}")
             print()
             print("predict:")
-            output= Total_model.generate(tensor = inputs, dy = True, length=50)
+            output= Total_model.generate(tensor = inputs, dy = True, endding = '<s>')
+            
+        
+            
+            
             # output = ''.join(output)
             print("\n\n")
 
