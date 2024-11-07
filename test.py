@@ -79,7 +79,6 @@ dataset = dataset.map(fun,remove_columns=dataset.column_names)
 
 def fil(example):
     if(example['speech'] == None):
-        print(example['prompt'])
         return False
     else:
         return True
