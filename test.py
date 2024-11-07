@@ -69,6 +69,7 @@ def fun(example):
             wave = resampled_audio.squeeze(0).numpy()
         example['speech'] = wave
     except:
+        print(example['instruction'])
         example['speech'] = None
     
     example['answer'] = example['response']
