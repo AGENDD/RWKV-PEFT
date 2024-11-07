@@ -41,49 +41,54 @@ from tqdm import tqdm
 # filtered_ds.save_to_disk("temp_datasets/VoiceAssistant")
 
 ###############################################################################################################
-# @contextmanager
-# def suppress_stdout(*args, **kwargs):
-#     with open(os.devnull, 'w') as devnull:
-#         with redirect_stdout(devnull), redirect_stderr(devnull):
-#             yield
+@contextmanager
+def suppress_stdout(*args, **kwargs):
+    with open(os.devnull, 'w') as devnull:
+        with redirect_stdout(devnull), redirect_stderr(devnull):
+            yield
 
 
 # dataset = load_from_disk("temp_datasets/ultrachat")
+dataset = load_dataset("Magpie-Align/Magpie-Qwen2-Pro-200K-Chinese")
+TTS = TTS(language='ZH', device='cuda')
+speaker_ids = TTS.hps.data.spk2id
 
-# TTS = TTS(language='EN', device='auto')
-# speaker_ids = TTS.hps.data.spk2id
 
+def fun(example):
+    try:
+        with suppress_stdout():
+            if(int(example['instruction_length']) > 50):
+                raise ValueError
 
-# def fun(example):
-#     try:
-#         with suppress_stdout():
-#             transcript = example['prompt']
+            transcript = example['instruction']
 
-#             wave = TTS.tts_to_file(transcript, speaker_ids['EN-US'], None, speed=1.0)
-#             wave = torch.tensor(wave).unsqueeze(0)
-#             resample = Resample(44100, 16000)
-#             resampled_audio = resample(wave[0])
-#             wave = resampled_audio.squeeze(0).numpy()
-#         example['speech'] = wave
-#     except:
-#         example['speech'] = None
-#     return example
-
-# dataset = dataset.map(fun,remove_columns=["prompt_id"])
-
-# def fil(example):
-#     if(example['speech'] == None):
-#         print(example['prompt'])
-#         return False
-#     else:
-#         return True
+            wave = TTS.tts_to_file(transcript, speaker_ids['ZH'], None, speed=1.0)
+            wave = torch.tensor(wave).unsqueeze(0)
+            resample = Resample(44100, 16000)
+            resampled_audio = resample(wave[0])
+            wave = resampled_audio.squeeze(0).numpy()
+        example['speech'] = wave
+    except:
+        example['speech'] = None
     
-# dataset = dataset.filter(fil,num_proc=32)
+    example['answer'] = example['response']
+    return example
+
+dataset = dataset.map(fun,remove_columns=dataset.column_names)
+
+def fil(example):
+    if(example['speech'] == None):
+        print(example['prompt'])
+        return False
+    else:
+        return True
+    
+dataset = dataset.filter(fil,num_proc=32)
 
 
-# print(len(dataset))
+print(len(dataset))
 
-# dataset.save_to_disk("temp_datasets/ultrachat_speech")
+dataset.save_to_disk("temp_datasets/chinese_speech")
 
 
 #############################################################################################################
