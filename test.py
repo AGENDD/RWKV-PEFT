@@ -71,7 +71,7 @@ def fun(example):
     except:
         print(example['instruction'])
         example['speech'] = None
-    
+    example['trascript'] = example['instruction']
     example['answer'] = example['response']
     return example
 print("start")
