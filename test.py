@@ -73,7 +73,7 @@ def fun(example):
     
     example['answer'] = example['response']
     return example
-
+print("start")
 dataset = dataset.map(fun,remove_columns=dataset.column_names)
 
 def fil(example):
