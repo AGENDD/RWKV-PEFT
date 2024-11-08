@@ -77,6 +77,8 @@ def fun(example):
 print("start")
 dataset = dataset.map(fun,remove_columns=dataset.column_names)
 
+dataset.save_to_disk("temp_datasets/chinese_speechQA_unfiltered")
+
 def fil(example):
     if(example['speech'] == None):
         return False
