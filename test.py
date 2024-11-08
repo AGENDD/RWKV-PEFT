@@ -49,7 +49,7 @@ def suppress_stdout(*args, **kwargs):
 
 
 # dataset = load_from_disk("temp_datasets/ultrachat")
-dataset = load_dataset("Magpie-Align/Magpie-Qwen2-Pro-200K-Chinese")['train'].select(range(100))
+dataset = load_dataset("Magpie-Align/Magpie-Qwen2-Pro-200K-Chinese")['train']
 TTS = TTS(language='ZH', device='cuda')
 speaker_ids = TTS.hps.data.spk2id
 
@@ -76,9 +76,11 @@ def fun(example):
     return example
 print("start")
 dataset = dataset.map(fun,remove_columns=dataset.column_names)
-
-dataset.save_to_disk("temp_datasets/chinese_speechQA_unfiltered")
-
+try:
+    dataset.save_to_disk("temp_datasets/chinese_speechQA_unfiltered")
+except:
+    print("cannot save unfiltered")
+    
 def fil(example):
     if(example['speech'] == None):
         return False
