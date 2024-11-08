@@ -49,7 +49,7 @@ def suppress_stdout(*args, **kwargs):
 
 
 # dataset = load_from_disk("temp_datasets/ultrachat")
-dataset = load_dataset("Magpie-Align/Magpie-Qwen2-Pro-200K-Chinese")['train']
+dataset = load_dataset("Magpie-Align/Magpie-Qwen2-Pro-200K-Chinese")['train'].select(range(100))
 TTS = TTS(language='ZH', device='cuda')
 speaker_ids = TTS.hps.data.spk2id
 
@@ -85,7 +85,7 @@ def fil(example):
     else:
         return True
     
-dataset = dataset.filter(fil,num_proc=32)
+dataset = dataset.filter(fil)
 
 
 print(len(dataset))
