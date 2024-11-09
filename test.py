@@ -45,14 +45,11 @@ ds2 = ds2.map(mapp,remove_columns=arr)
 
 # 定义一致的特征
 features = Features({
-    'answer': Value('string'),
     'speech': Sequence(feature=Value('float32')),
-    'transcript': Value('string')
+    'transcript': Value('string'),
+    'answer': Value('string')
 })
 
-# 将数据集转换为一致的特征
-ds1 = ds1.cast(features)
-ds2 = ds2.cast(features)
 
 
 print(type(ds1[0]['speech']))
@@ -63,6 +60,17 @@ print(type(ds2[0]['speech'][0]))
 
 print(ds1)
 print(ds2)
+
+# 获取 ds1 的列顺序
+ds1_columns = ds1.column_names
+
+# 重新排列 ds2 的列顺序
+ds2 = ds2.map(lambda example: {col: example[col] for col in ds1_columns})
+
+# 将数据集转换为一致的特征
+ds1 = ds1.cast(features)
+ds2 = ds2.cast(features)
+
 ds = concatenate_datasets([ds1,ds2])
 
 # ds.save_to_disk("temp_datasets/ZHEN_mixed")
