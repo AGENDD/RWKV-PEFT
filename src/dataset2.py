@@ -30,7 +30,7 @@ class MyDataset(Dataset):
         while(True):
             try:
                 sample = self.hf_dataset[idx]
-                if(len(sample['speech'])/16000 > 15.0):
+                if(len(sample['speech'])/16000 > 15.0 or len(sample['answer']) > 2000):
                     raise ValueError
                 break
             except:

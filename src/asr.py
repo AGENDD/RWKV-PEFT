@@ -464,25 +464,19 @@ class SLAM_ASR(pl.LightningModule):
         
 
     def forward(self, audios: List[str], transcriptions: List[str] = None):
-        for i in range(len(audios)):
-                print(f"{len(audios[i])/16000}:{len(transcriptions[i])}")
-        try:
-            prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
-                audios, transcriptions
-            )
-                
+        # for i in range(len(audios)):
+        #         print(f"{len(audios[i])/16000}:{len(transcriptions[i])}")
 
-            self.T_vector = time.time()
-            outputs = self.language_model(inputs_embeds=prompt_embed)
-            self.T_rwkv = time.time()
+        prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
+            audios, transcriptions
+        )
             
-            # print(f"outputs:{outputs['loss']}")
-            # print(f"logits:\t{outputs.shape}")
-        except Exception as e:
-            for i in range(len(audios)):
-                print(f"{len(audios[i])}:{len(transcriptions[i])}")
-            print(e)
-            exit(0)
+
+        self.T_vector = time.time()
+        outputs = self.language_model(inputs_embeds=prompt_embed)
+        self.T_rwkv = time.time()
+            
+
         return outputs, true_labels, prompt_mask
     
     
