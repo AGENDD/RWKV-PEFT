@@ -34,7 +34,7 @@ arr.remove('answer')
 ds2 = ds2.map(mapp,remove_columns=arr)
 
 
-ds = concatenate_datasets(ds1,ds2)
+ds = concatenate_datasets([ds1,ds2])
 
 ds.save_to_disk("ZHEN_mixed")
 #########################################################################################################
