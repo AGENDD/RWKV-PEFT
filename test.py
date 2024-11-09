@@ -16,14 +16,14 @@ from tqdm import tqdm
 
 
 
-ds = load_from_disk("temp_datasets/ZHEN_mixed")
+ds = load_from_disk("temp_datasets/ZHEN_mixed_filtered")
 
 def mapp(example):
-    if(len(example['speech']) / 16000 > 20.0):
+    if(len(example['speech']) / 16000 > 15.0):
         example['speech'] = None
 
 
-ds.map(mapp, num_proc=32)
+ds = ds.map(mapp, num_proc=32)
 
 def fill(example):
     if(example['speech'] == None):
@@ -31,9 +31,9 @@ def fill(example):
     
     return True
 
-ds.filter(fill, num_proc=32)
-
-ds.save_to_disk("temp_datasets/ZHEN_mixed_filtered")
+ds = ds.filter(fill, num_proc=32)
+print(ds)
+ds.save_to_disk("temp_datasets/ZHEN_mixed_filteredd")
 
 #########################################################################################################
 
