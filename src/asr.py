@@ -463,36 +463,36 @@ class SLAM_ASR(pl.LightningModule):
 
         
 
-    # def forward(self, audios: List[str], transcriptions: List[str] = None):
+    def forward(self, audios: List[str], transcriptions: List[str] = None):
         
         
 
-    #     prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
-    #         audios, transcriptions
-    #     )
-            
-
-    #     self.T_vector = time.time()
-    #     outputs = self.language_model(inputs_embeds=prompt_embed)
-    #     self.T_rwkv = time.time()
-        
-    #     # print(f"outputs:{outputs['loss']}")
-    #     # print(f"logits:\t{outputs.shape}")
-        
-    #     return outputs, true_labels, prompt_mask
-    
-    
-    def forward(self, tensors, transcriptions: List[str] = None):
-        
-        prompt_embed, prompt_mask, true_labels = self._prepare_input_tensor(
-            tensors, transcriptions
+        prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
+            audios, transcriptions
         )
+            
 
         self.T_vector = time.time()
         outputs = self.language_model(inputs_embeds=prompt_embed)
         self.T_rwkv = time.time()
-
+        
+        # print(f"outputs:{outputs['loss']}")
+        # print(f"logits:\t{outputs.shape}")
+        
         return outputs, true_labels, prompt_mask
+    
+    
+    # def forward(self, tensors, transcriptions: List[str] = None):
+        
+    #     prompt_embed, prompt_mask, true_labels = self._prepare_input_tensor(
+    #         tensors, transcriptions
+    #     )
+
+    #     self.T_vector = time.time()
+    #     outputs = self.language_model(inputs_embeds=prompt_embed)
+    #     self.T_rwkv = time.time()
+
+    #     return outputs, true_labels, prompt_mask
     
 
     def generate(self,prompts: List[str] = None, audios: List[float] = None, tensor = None, endding='<s>', dy = False, length = 500):
@@ -500,9 +500,9 @@ class SLAM_ASR(pl.LightningModule):
         Generate the transcription
         """
         
-        if(audios is not None): 
+        if(audios is not None): #音频输入
             prompt_embed, prompt_mask, _ = self._prepare_input_embeds([audios])
-        elif(prompts is not None):
+        elif(prompts is not None): #文本输入
             prompts_tokens = self.language_tokenizer(
                 [prompts],
                 return_tensors="pt",
@@ -515,7 +515,7 @@ class SLAM_ASR(pl.LightningModule):
                 # labels_embeds = self.language_model.rwkv.get_input_embeddings()(_labels.input_ids)
                 prompt_embed = self.language_model.embed(prompts_tokens.input_ids)
                 prompt_mask = prompts_tokens.attention_mask
-        elif(tensor != None):
+        elif(tensor != None): #向量输入
             
             prompt_embed = tensor.unsqueeze(0)
             

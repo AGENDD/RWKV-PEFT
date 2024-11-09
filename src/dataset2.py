@@ -34,8 +34,10 @@ class MyDataset(Dataset):
             except:
                 idx = idx+1
         
-        
-        if('turns' in sample.keys()):
+        if('speech' in sample.keys()):
+            answer = sample['answer']
+            audio = sample['speech']
+        elif('turns' in sample.keys()):
             
             while(len(sample['inputs']) > 4096):
                 idx = idx + 1
