@@ -20,10 +20,10 @@ ds1 = load_from_disk("temp_datasets/chinese_speech").select(range(10))
 ds2 = load_from_disk("temp_datasets/VoiceAssistant").select(range(10))
 
 print(type(ds1[0]['speech']))
-print(type(ds2[0]['speech']))
+print(type(ds2[0]['question_audio']['array']))
 
 print(type(ds1[0]['speech'][0]))
-print(type(ds2[0]['speech'][0]))
+print(type(ds2[0]['question_audio']['array'][0]))
 
 
 def mapp(sample):
