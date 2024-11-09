@@ -14,68 +14,27 @@ from torchaudio.transforms import Resample
 from torchaudio import load, save
 from tqdm import tqdm
 
-ds1 = load_from_disk("temp_datasets/chinese_speech")
-# 修正 ds1 的拼写错误
-ds1 = ds1.rename_column('trascript', 'transcript')
-
-ds2 = load_from_disk("temp_datasets/VoiceAssistant").select(range(123433))
-# ds2 = load_from_disk("temp_datasets/VoiceAssistant").select(range(10))
-
-print(type(ds1[0]['speech']))
-print(type(ds2[0]['question_audio']['array']))
-
-print(type(ds1[0]['speech'][0]))
-print(type(ds2[0]['question_audio']['array'][0]))
 
 
-def mapp(sample):
+ds = load_from_disk("temp_datasets/ZHEN_mixed")
 
-    audio = sample['question_audio']['array'].astype(np.float32)
-    sample['speech'] = resampy.resample(audio, 22050, 16000).tolist()
-    sample['transcript'] = sample['question']
+def mapp(example):
+    if(len(example['speech']) / 16000 > 20.0):
+        example['speech'] = None
+
+
+ds.map(mapp, num_proc=32)
+
+def fill(example):
+    if(example['speech'] == None):
+        return False
     
-    
-    return sample
+    return True
 
-arr = ds2.column_names
+ds.filter(fill, num_proc=32)
 
-arr.remove('answer')
+ds.save_to_disk("temp_datasets/ZHEN_mixed_filtered")
 
-ds2 = ds2.map(mapp,remove_columns=arr,num_proc=16)
-
-
-
-# 定义一致的特征
-features = Features({
-    'speech': Sequence(feature=Value('float32')),
-    'transcript': Value('string'),
-    'answer': Value('string')
-})
-
-
-
-print(type(ds1[0]['speech']))
-print(type(ds2[0]['speech']))
-
-print(type(ds1[0]['speech'][0]))
-print(type(ds2[0]['speech'][0]))
-
-print(ds1)
-print(ds2)
-
-# 获取 ds1 的列顺序
-ds1_columns = ds1.column_names
-
-# 重新排列 ds2 的列顺序
-ds2 = ds2.map(lambda example: {col: example[col] for col in ds1_columns}, num_proc=32)
-
-# 将数据集转换为一致的特征
-ds1 = ds1.cast(features)
-ds2 = ds2.cast(features)
-
-ds = concatenate_datasets([ds1,ds2])
-
-ds.save_to_disk("temp_datasets/ZHEN_mixed")
 #########################################################################################################
 
 # # 加载数据集
