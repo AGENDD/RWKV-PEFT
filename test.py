@@ -21,7 +21,7 @@ ds2 = load_from_disk("temp_datasets/VoiceAssistant").select(range(10))
 
 def mapp(sample):
     
-    audio = sample['question_audio']['array']
+    audio = sample['question_audio']['array'].astype(np.float32)
     sample['speech'] = resampy.resample(audio, 22050, 16000).tolist()
     sample['transcript'] = sample['question']
     
