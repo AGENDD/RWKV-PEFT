@@ -13,7 +13,7 @@ n_embd=2560
 
 micro_bsz=4
 epoch_save=1
-epoch_steps=625
+epoch_steps=15429
 ctx_len=8000
 epoch_count=100
 
@@ -21,7 +21,7 @@ OP=1
 
 
 QUANT='nf4' 
-export CUDA_VISIBLE_DEVICES=4,5,6,7
+# export CUDA_VISIBLE_DEVICES=4,5,6,7
 export HF_ENDPOINT=https://hf-mirror.com
 python -u JR_train.py --load_model $load_model --devices 4 --OP $OP \
 --proj_dir $proj_dir --data_file $data_file \
