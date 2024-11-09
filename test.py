@@ -16,24 +16,31 @@ from tqdm import tqdm
 
 
 
-ds = load_from_disk("temp_datasets/ZHEN_mixed_filtered")
+ds = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle().select(range(10))
 
-def mapp(example):
-    if(len(example['speech']) / 16000 > 15.0):
-        example['speech'] = None
-
-
-ds = ds.map(mapp, num_proc=32)
-
-def fill(example):
-    if(example['speech'] == None):
-        return False
+i = 0
+for data in ds:
+    audio = data['speech']
+    i+=1
+    sf.write(f'output{i}.wav', audio, 16000)
     
-    return True
 
-ds = ds.filter(fill, num_proc=32)
-print(ds)
-ds.save_to_disk("temp_datasets/ZHEN_mixed_filteredd")
+# def mapp(example):
+#     if(len(example['speech']) / 16000 > 15.0):
+#         example['speech'] = None
+
+
+# ds = ds.map(mapp, num_proc=32)
+
+# def fill(example):
+#     if(example['speech'] == None):
+#         return False
+    
+#     return True
+
+# ds = ds.filter(fill, num_proc=32)
+# print(ds)
+# ds.save_to_disk("temp_datasets/ZHEN_mixed_filteredd")
 
 #########################################################################################################
 
