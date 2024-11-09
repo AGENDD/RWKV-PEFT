@@ -18,8 +18,8 @@ ds1 = load_from_disk("temp_datasets/chinese_speech").select(range(10))
 # 修正 ds1 的拼写错误
 ds1 = ds1.rename_column('trascript', 'transcript')
 
-# ds2 = load_from_disk("temp_datasets/VoiceAssistant").select(range(123433))
-ds2 = load_from_disk("temp_datasets/VoiceAssistant").select(range(10))
+ds2 = load_from_disk("temp_datasets/VoiceAssistant").select(range(123433))
+# ds2 = load_from_disk("temp_datasets/VoiceAssistant").select(range(10))
 
 print(type(ds1[0]['speech']))
 print(type(ds2[0]['question_audio']['array']))
@@ -41,7 +41,7 @@ arr = ds2.column_names
 
 arr.remove('answer')
 
-ds2 = ds2.map(mapp,remove_columns=arr)
+ds2 = ds2.map(mapp,remove_columns=arr,num_proc=16)
 
 
 
@@ -75,7 +75,7 @@ ds2 = ds2.cast(features)
 
 ds = concatenate_datasets([ds1,ds2])
 
-# ds.save_to_disk("temp_datasets/ZHEN_mixed")
+ds.save_to_disk("temp_datasets/ZHEN_mixed")
 #########################################################################################################
 
 # # 加载数据集
