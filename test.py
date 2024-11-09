@@ -16,7 +16,7 @@ from tqdm import tqdm
 
 
 
-ds = load_from_disk("temp_datasets/ZHEN_mixed_filteredd").shuffle().select(range(10))
+ds = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle().select(range(10))
 
 i = 0
 for data in ds:
