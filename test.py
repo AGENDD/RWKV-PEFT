@@ -14,7 +14,7 @@ from torchaudio.transforms import Resample
 from torchaudio import load, save
 from tqdm import tqdm
 
-ds1 = load_from_disk("temp_datasets/chinese_speech").select(range(10))
+ds1 = load_from_disk("temp_datasets/chinese_speech")
 # 修正 ds1 的拼写错误
 ds1 = ds1.rename_column('trascript', 'transcript')
 
@@ -67,7 +67,7 @@ print(ds2)
 ds1_columns = ds1.column_names
 
 # 重新排列 ds2 的列顺序
-ds2 = ds2.map(lambda example: {col: example[col] for col in ds1_columns})
+ds2 = ds2.map(lambda example: {col: example[col] for col in ds1_columns}, num_proc=32)
 
 # 将数据集转换为一致的特征
 ds1 = ds1.cast(features)
