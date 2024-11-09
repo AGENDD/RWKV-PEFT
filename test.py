@@ -16,7 +16,7 @@ from tqdm import tqdm
 
 ds1 = load_from_disk("temp_datasets/chinese_speech")
 
-ds2 = load_from_disk("tesmp_datasets/VoiceAssistance").select(range(123433))
+ds2 = load_from_disk("tesmp_datasets/VoiceAssistanr").select(range(123433))
 
 def mapp(sample):
     
