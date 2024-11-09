@@ -19,8 +19,15 @@ ds1 = load_from_disk("temp_datasets/chinese_speech").select(range(10))
 # ds2 = load_from_disk("temp_datasets/VoiceAssistant").select(range(123433))
 ds2 = load_from_disk("temp_datasets/VoiceAssistant").select(range(10))
 
+print(type(ds1[0]['speech']))
+print(type(ds2[0]['speech']))
+
+print(type(ds1[0]['speech'][0]))
+print(type(ds2[0]['speech'][0]))
+
+
 def mapp(sample):
-    
+
     audio = sample['question_audio']['array'].astype(np.float32)
     sample['speech'] = resampy.resample(audio, 22050, 16000).tolist()
     sample['transcript'] = sample['question']
