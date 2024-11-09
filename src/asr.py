@@ -464,7 +464,8 @@ class SLAM_ASR(pl.LightningModule):
         
 
     def forward(self, audios: List[str], transcriptions: List[str] = None):
-        
+        for i in range(len(audios)):
+                print(f"{len(audios[i])/16000}:{len(transcriptions[i])}")
         try:
             prompt_embed, prompt_mask, true_labels = self._prepare_input_embeds(
                 audios, transcriptions
