@@ -318,7 +318,7 @@ class SLAM_ASR(pl.LightningModule):
             # 为transcription 结尾添加 end of sentence：<s>
             transcriptions_eos = []
             for starr in transcriptions:
-                # starr = starr + "<s>"
+                starr = starr + "<s>"
                 transcriptions_eos.append(starr)
             _labels = self.language_tokenizer(
                 transcriptions_eos,
