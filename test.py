@@ -1,4 +1,4 @@
-from datasets import load_dataset,load_from_disk, concatenate_datasets
+from datasets import load_dataset,load_from_disk, concatenate_datasets,Features, Sequence, Value
 import torchaudio
 import torch
 from melo.api import TTS
@@ -40,6 +40,20 @@ arr = ds2.column_names
 arr.remove('answer')
 
 ds2 = ds2.map(mapp,remove_columns=arr)
+
+
+
+# 定义一致的特征
+features = Features({
+    'answer': Value('string'),
+    'speech': Sequence(feature=Value('float32')),
+    'transcript': Value('string')
+})
+
+# 将数据集转换为一致的特征
+ds1 = ds1.cast(features)
+ds2 = ds2.cast(features)
+
 
 print(type(ds1[0]['speech']))
 print(type(ds2[0]['speech']))
