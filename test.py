@@ -40,7 +40,8 @@ print(type(ds2[0]['speech']))
 print(type(ds1[0]['speech'][0]))
 print(type(ds2[0]['speech'][0]))
 
-
+print(ds1)
+print(ds2)
 ds = concatenate_datasets([ds1,ds2])
 
 # ds.save_to_disk("temp_datasets/ZHEN_mixed")
