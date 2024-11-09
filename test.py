@@ -14,15 +14,16 @@ from torchaudio.transforms import Resample
 from torchaudio import load, save
 from tqdm import tqdm
 
-ds1 = load_from_disk("temp_datasets/chinese_speech")
+ds1 = load_from_disk("temp_datasets/chinese_speech").select(range(10))
 
-ds2 = load_from_disk("temp_datasets/VoiceAssistant").select(range(123433))
+# ds2 = load_from_disk("temp_datasets/VoiceAssistant").select(range(123433))
+ds2 = load_from_disk("temp_datasets/VoiceAssistant").select(range(10))
 
 def mapp(sample):
     
     audio = sample['question_audio']['array']
     sample['speech'] = resampy.resample(audio, 22050, 16000)
-    sample['transcript'] = sample['question']
+    sample['transcript'] = sample['question'].tolist()
     
     
     return sample
@@ -36,7 +37,7 @@ ds2 = ds2.map(mapp,remove_columns=arr)
 
 ds = concatenate_datasets([ds1,ds2])
 
-ds.save_to_disk("ZHEN_mixed")
+# ds.save_to_disk("temp_datasets/ZHEN_mixed")
 #########################################################################################################
 
 # # 加载数据集
