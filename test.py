@@ -15,6 +15,8 @@ from torchaudio import load, save
 from tqdm import tqdm
 
 ds1 = load_from_disk("temp_datasets/chinese_speech").select(range(10))
+# 修正 ds1 的拼写错误
+ds1 = ds1.rename_column('trascript', 'transcript')
 
 # ds2 = load_from_disk("temp_datasets/VoiceAssistant").select(range(123433))
 ds2 = load_from_disk("temp_datasets/VoiceAssistant").select(range(10))
