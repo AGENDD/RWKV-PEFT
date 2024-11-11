@@ -144,7 +144,7 @@ class train_callback(pl.Callback):
         if(self.step != 0 and self.step % 100 == 0 and trainer.is_global_zero):
             print("saving...")
             # to_save_dict = pl_module.state_dict()
-            names = ['layers.22', 'layers.23']
+            names = ['layers.22', 'layers.23','layers.21','layers.20']
             filtered_state_dict = {}
             for key in pl_module.state_dict().keys():
                 # Check if the key matches any of the commented weights
