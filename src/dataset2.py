@@ -30,10 +30,10 @@ class MyDataset(Dataset):
         while(True):
             try:
                 sample = self.hf_dataset[idx]
-                # if(len(sample['speech'])/16000 > 15.0 or len(sample['answer']) > 1500):
-                #     print("skip data")
-                #     idx = idx+1
-                #     continue    
+                if(len(sample['speech'])/16000 > 15.0 or len(sample['answer']) > 1500):
+                    print("skip data")
+                    idx = idx+1
+                    continue    
                 break
             except:
                 idx = idx+1
