@@ -14,33 +14,52 @@ from torchaudio.transforms import Resample
 from torchaudio import load, save
 from tqdm import tqdm
 
+import torch
+import glob
+
+# 查找以“rwkv”开头的文件
+file_list = glob.glob('output/rwkv*.pth')
+
+# 确保找到文件
+if file_list:
+    file_path = file_list[0]  # 假设只有一个匹配的文件
+    print(f"Loading file: {file_path}")
+
+    # 加载模型参数
+    model_state_dict = torch.load(file_path)
+
+    # 打印所有参数的名字
+    for name, param in model_state_dict.items():
+        print(name)
+else:
+    print("No file starting with 'rwkv' found.")
 
 
-ds = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()
+# ds = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()
 
-# i = 0
-# for data in ds:
-#     audio = data['speech']
-#     i+=1
-#     sf.write(f'temp_audios/output{i}.wav', audio, 16000)
+# # i = 0
+# # for data in ds:
+# #     audio = data['speech']
+# #     i+=1
+# #     sf.write(f'temp_audios/output{i}.wav', audio, 16000)
     
 
-def mapp(example):
-    if(len(example['speech']) / 16000 > 15.0 or len(example['answer']) > 1000):
-        example['speech'] = None
+# def mapp(example):
+#     if(len(example['speech']) / 16000 > 15.0 or len(example['answer']) > 1000):
+#         example['speech'] = None
 
 
-ds = ds.map(mapp, num_proc=32)
+# ds = ds.map(mapp, num_proc=32)
 
-def fill(example):
-    if(example['speech'] == None):
-        return False
+# def fill(example):
+#     if(example['speech'] == None):
+#         return False
     
-    return True
+#     return True
 
-ds = ds.filter(fill, num_proc=32)
-print(ds)
-ds.save_to_disk("temp_datasets/ZHEN_mixed_filteredd")
+# ds = ds.filter(fill, num_proc=32)
+# print(ds)
+# ds.save_to_disk("temp_datasets/ZHEN_mixed_filteredd")
 
 #########################################################################################################
 
