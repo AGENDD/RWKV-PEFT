@@ -598,8 +598,6 @@ if __name__ == "__main__":
                 # inputs = torch.tensor(data['speech']).to("cuda", torch.bfloat16)
                 
                 inputs = data['speech']
-                
-                
                 answer = data['answer']
                 print(f"questions:\n{data['transcript']}")
                 print(f"true answer:\n{answer[:500]}")
@@ -608,13 +606,13 @@ if __name__ == "__main__":
                 output= Total_model.generate(audios = inputs, dy = True, endding = '<s>',length=100)
                 output = "".join(output)
                 sf.write(f'output{count}.wav', inputs, 16000)
-                f.write(f"questions:\n{data['transcript']}\n")
-                f.write(f"true answer:\n{answer}\n")
-                f.write(f"predict:\n{output}\n")
+                f.write(f"questions {count}:\n{data['transcript']}\n")
+                f.write(f"true answer:\n{answer[:200]}\n")
+                f.write(f"predict:\n{output[:100]}\n")
                 f.write(f"\n\n")
                 # output = ''.join(output)
                 print("\n\n")
-
+                count+=1
     elif(args.OP == 3):
         from datasets import load_from_disk
         dataset = load_from_disk("temp_datasets/en-final").select(range(100))
