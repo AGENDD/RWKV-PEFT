@@ -598,7 +598,7 @@ if __name__ == "__main__":
             print(f"true answer:\n{answer[:500]}")
             print()
             print("predict:")
-            output= Total_model.generate(audios = inputs, dy = True, endding = '<s>')
+            output= Total_model.generate(audios = inputs, dy = True, endding = '<s>',length=100)
             
         
             
