@@ -37,6 +37,8 @@ class SpeechEncoder(nn.Module):
         )
         self.padding_length = 320
         self.model = AutoModel.from_pretrained(model_id).to(self.device,dtype=torch.bfloat16)
+        # self.model = AutoModel.from_pretrained("microsoft/wavlm-large")
+        
         # self.model = AutoModel.from_pretrained(model_id).to(self.device,dtype=torch.bfloat16)
         self.model.eval()
         self.model_output_dim = self.model.config.hidden_size
@@ -63,6 +65,13 @@ class SpeechEncoder(nn.Module):
                 param.requires_grad = False
             for param in self.adapter.parameters():
                 param.requires_grad = True
+            
+            names = ['layers.22', 'layers.23']
+            for name,param in self.model.named_parameters():
+                for n in names:
+                    if(n in name):
+                        param.requires_grad = True
+            
         else:
             for param in self.model.parameters():
                 param.requires_grad = True

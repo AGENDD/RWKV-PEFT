@@ -144,6 +144,7 @@ class train_callback(pl.Callback):
         if(self.step % 100 == 0 and trainer.is_global_zero):
             print("saving...")
             # to_save_dict = pl_module.state_dict()
+            names = ['layers.22', 'layers.23']
             filtered_state_dict = {}
             for key in pl_module.state_dict().keys():
                 # Check if the key matches any of the commented weights
@@ -152,6 +153,9 @@ class train_callback(pl.Callback):
                     filtered_state_dict[key] = pl_module.state_dict()[key]
                 elif key.startswith('speech_encoder.adapter.'):
                     filtered_state_dict[key] = pl_module.state_dict()[key]
+                for n in names:
+                    if(n in key):
+                        filtered_state_dict[key] = pl_module.state_dict()[key]
                 # elif 
             
             try:
