@@ -581,7 +581,7 @@ if __name__ == "__main__":
         trainer.fit(Total_model, data_loader)
         
     elif(args.OP == 2):#自回归
-        
+        import soundfile as sf
         # con_dataset = load_from_disk("temp_datasets/VoiceAssistant")
         
         con_dataset = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()
@@ -590,26 +590,30 @@ if __name__ == "__main__":
         # Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
         Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
         print("start prediction...")
+        count = 0
         
-        for data in con_dataset:
-            
-            # inputs = torch.tensor(data['speech']).to("cuda", torch.bfloat16)
-            
-            inputs = data['speech']
-            
-            
-            answer = data['answer']
-            print(f"questions:\n{data['transcript']}")
-            print(f"true answer:\n{answer[:500]}")
-            print()
-            print("predict:")
-            output= Total_model.generate(audios = inputs, dy = True, endding = '<s>',length=100)
-            
-        
-            
-            
-            # output = ''.join(output)
-            print("\n\n")
+        with open("temp_audios/text.txt",'w') as f:
+            for data in con_dataset:
+                
+                # inputs = torch.tensor(data['speech']).to("cuda", torch.bfloat16)
+                
+                inputs = data['speech']
+                
+                
+                answer = data['answer']
+                print(f"questions:\n{data['transcript']}")
+                print(f"true answer:\n{answer[:500]}")
+                print()
+                print("predict:")
+                output= Total_model.generate(audios = inputs, dy = True, endding = '<s>',length=100)
+                output = "".join(output)
+                sf.write(f'output{count}.wav', inputs, 16000)
+                f.write(f"questions:\n{data['transcript']}\n")
+                f.write(f"true answer:\n{answer}\n")
+                f.write(f"predict:\n{output}\n")
+                f.write(f"\n\n")
+                # output = ''.join(output)
+                print("\n\n")
 
     elif(args.OP == 3):
         from datasets import load_from_disk
