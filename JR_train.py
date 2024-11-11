@@ -588,7 +588,11 @@ if __name__ == "__main__":
         
         for data in con_dataset:
             
-            inputs = torch.tensor(data['speech']).to("cuda", torch.bfloat16)
+            # inputs = torch.tensor(data['speech']).to("cuda", torch.bfloat16)
+            
+            inputs = data['speech']
+            
+            
             answer = data['answer']
             print(f"questions:\n{data['transcript']}")
             print(f"true answer:\n{answer[:500]}")
