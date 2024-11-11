@@ -579,7 +579,7 @@ if __name__ == "__main__":
         
         # con_dataset = load_from_disk("temp_datasets/VoiceAssistant")
         
-        con_dataset = load_from_disk("temp_datasets/ultrachat_tensor_10000").select(range(100))
+        con_dataset = load_from_disk("temp_datasets/ZHEN_mixed_filteredd").shuffle()
         
         tokenizer = Total_model.return_tokenizer()
         # Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
@@ -588,15 +588,13 @@ if __name__ == "__main__":
         
         for data in con_dataset:
             
-            inputs = torch.tensor(data['inputs']).to("cuda", torch.bfloat16)
-            answer = data['respond']
-
-            for i in range(data['turns']):
-                print(f"question {i}: {data['speech_messages'][i]['transcript']}")
+            inputs = torch.tensor(data['speech']).to("cuda", torch.bfloat16)
+            answer = data['answer']
+            print(f"questions:\n{data['transcript']}")
             print(f"true answer:\n{answer[:500]}")
             print()
             print("predict:")
-            output= Total_model.generate(tensor = inputs, dy = True, endding = '<s>')
+            output= Total_model.generate(audios = inputs, dy = True, endding = '<s>')
             
         
             
