@@ -564,13 +564,14 @@ if __name__ == "__main__":
         
         # dataset = load_from_disk("temp_datasets/VoiceAssistant").shuffle()  #459067
         dataset = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()  #246866
+        # dataset = load_from_disk("temp_datasets/ZHEN_mixed_filteredd").shuffle()  #246866
         # dataset = load_dataset("JerryAGENDD/ultrachat_tensor_10k", cache_dir="temp_datasets").shuffle()
         # dataset = load_from_disk("temp_datasets/ultrachat_tensor_10000").shuffle()
         # print(len(con_dataset))#29060
         # dataset, transcipt = aishell() # 120098
         
         dataset = MyDataset(args, dataset)
-        data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=4, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
+        data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=16, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
         print("train starting...")
         # with torch.cuda.amp.autocast():
         trainer.fit(Total_model, data_loader)
