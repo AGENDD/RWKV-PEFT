@@ -1304,6 +1304,7 @@ class RWKV(pl.LightningModule):
                 #     print('idx', idx)
                 #     exit(0)
             else:
+                
                 idx, targets, mask = batch
                 mask = mask.view(-1)
                 sum_mask = torch.sum(mask).item()

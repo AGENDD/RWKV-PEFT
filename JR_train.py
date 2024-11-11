@@ -605,7 +605,7 @@ if __name__ == "__main__":
                 print("predict:")
                 output= Total_model.generate(audios = inputs, dy = True, endding = '<s>',length=100)
                 output = "".join(output)
-                sf.write(f'output{count}.wav', inputs, 16000)
+                sf.write(f'temp_audios/output{count}.wav', inputs, 16000)
                 f.write(f"questions {count}:\n{data['transcript']}\n")
                 f.write(f"true answer:\n{answer[:200]}\n")
                 f.write(f"predict:\n{output[:100]}\n")

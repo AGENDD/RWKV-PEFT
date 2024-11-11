@@ -535,6 +535,7 @@ class SLAM_ASR(pl.LightningModule):
         return outputs
 
     def training_step(self, batch, batch_idx):
+            print("test0")
             args = self.args
             if args.loss_mask:
                 idx, targets, mask = batch
@@ -562,8 +563,9 @@ class SLAM_ASR(pl.LightningModule):
                 # print(f"batch item[1]:{len(batch[0][1])}:{type(batch[0][1])}")
                 idx = [item[0] for item in batch]
                 transcription = [item[1] for item in batch]
-                
+                print("test1")
                 logits, targets, mask = self(idx, transcription)
+                print("test2")
                 # mask = mask.view(-1)
                 mask = mask.reshape(-1)
                 
@@ -603,6 +605,7 @@ class SLAM_ASR(pl.LightningModule):
                     #             ccc += 1
                     #     print('rank', self.global_rank, 'loss', loss.item(), 'lavg', sss / ccc)#, 'tmp', tmp, 'input', idx)
                 # print("loss calculated")
+            print("test3")
             return L2Wrap.apply(loss, logits)
     
     def configure_optimizers(self):

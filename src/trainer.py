@@ -46,6 +46,7 @@ class train_callback(pl.Callback):
         self.loss_queue = Queue(100)
         
     def on_train_batch_start(self, trainer, pl_module, batch, batch_idx):
+        print('test4')
         args = self.args
         # if args.cuda_cleanup > 0:
         #     torch.cuda.empty_cache()
@@ -133,7 +134,7 @@ class train_callback(pl.Callback):
 
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
         args = self.args
-        
+        print('test5')
         # param_name = {"speech_encoder.adapter.0.weight", "speech_encoder.adapter.0.bias", "speech_encoder.adapter.2.weight", "speech_encoder.adapter.2.bias"}
         
         # for name, param in pl_module.named_parameters():
@@ -255,6 +256,7 @@ class train_callback(pl.Callback):
                 
 
     def on_train_epoch_start(self, trainer, pl_module):
+        print("test6")
         args = self.args
         if pl.__version__[0]=='2':
             dataset = trainer.train_dataloader.dataset
@@ -267,6 +269,7 @@ class train_callback(pl.Callback):
         # print(f'########## world_size {dataset.world_size} global_rank {dataset.global_rank} real_epoch {dataset.real_epoch} ##########')
 
     def on_train_epoch_end(self, trainer, pl_module):
+        print("test7")
         args = self.args
         to_save_dict = {}
         if (trainer.is_global_zero) or ('deepspeed_stage_3' in args.strategy):  # save pth
