@@ -481,8 +481,12 @@ if __name__ == "__main__":
     # 检查是否找到了文件
     if file_paths:
         file_path = file_paths[0]
-        Total_model.load_state_dict(torch.load(file_path), strict=False)
+        model_state_dict = torch.load(file_path)
+        Total_model.load_state_dict(model_state_dict, strict=False)
         print(f"Loaded model from {file_path}")
+        # 打印所有加载的参数名
+        for name, param in model_state_dict.items():
+            print("\t"+name)
     else:
         print("No files found. Loading origin model.")
     
