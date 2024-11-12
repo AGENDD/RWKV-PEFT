@@ -64,7 +64,7 @@ class SpeechEncoder(nn.Module):
             for param in self.model.parameters():
                 param.requires_grad = False
             for param in self.adapter.parameters():
-                param.requires_grad = False
+                param.requires_grad = True
             
             # names = ['layers.22', 'layers.23','layers.21','layers.20']
             # # names = ['layers.23']
