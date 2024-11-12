@@ -585,8 +585,8 @@ if __name__ == "__main__":
         import soundfile as sf
         # con_dataset = load_from_disk("temp_datasets/VoiceAssistant")
         
-        con_dataset = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()
-        
+        # con_dataset = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()
+        con_dataset = load_from_disk("temp_datasets/chinese_speech").shuffle()
         tokenizer = Total_model.return_tokenizer()
         # Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
         Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
