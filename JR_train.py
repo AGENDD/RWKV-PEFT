@@ -600,7 +600,7 @@ if __name__ == "__main__":
             
             inputs = data['speech']
             answer = data['answer']
-            print(f"questions:\n{data['transcript']}")
+            print(f"questions:\n{data['trascript']}")
             print(f"true answer:\n{answer[:500]}")
             print()
             print("predict:")
