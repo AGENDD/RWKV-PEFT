@@ -609,15 +609,15 @@ class SLAM_ASR(pl.LightningModule):
                     #             ccc += 1
                     #     print('rank', self.global_rank, 'loss', loss.item(), 'lavg', sss / ccc)#, 'tmp', tmp, 'input', idx)
                 # print("loss calculated")
-                    flag = 0
-                    while(flag < 3):
-                        print(f"logits:{logits.shape}")
-                        print(f"targets:{targets.shape}")
-                        print(f"mask:{mask.shape}")
-                        print(f"sum_mask:{sum_mask}")
-                        print(f"sum_mask:{loss*sum_mask}")
-                        print(f"loss:{loss}")
-                        flag += 1
+                    # flag = 0
+                    # while(flag < 3):
+                    #     print(f"logits:{logits.shape}")
+                    #     print(f"targets:{targets.shape}")
+                    #     print(f"mask:{mask.shape}")
+                    #     print(f"sum_mask:{sum_mask}")
+                    #     print(f"sum_mask:{loss*sum_mask}")
+                    #     print(f"loss:{loss}")
+                    #     flag += 1
             return L2Wrap.apply(loss, logits)
     
     def configure_optimizers(self):
