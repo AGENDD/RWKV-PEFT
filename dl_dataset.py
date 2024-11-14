@@ -7,7 +7,11 @@ import os
 
 
 # token = "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"
-
-ds = load_dataset("carlot/AIShell", cache_dir='temp_datasets')
+while(True):
+    try:
+        ds = load_dataset("carlot/AIShell", cache_dir='temp_datasets')
+        break
+    except Exception as e:
+        print(e)
 
 print(ds)
