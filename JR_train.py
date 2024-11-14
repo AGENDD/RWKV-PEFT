@@ -586,8 +586,11 @@ if __name__ == "__main__":
         import soundfile as sf
         # con_dataset = load_from_disk("temp_datasets/VoiceAssistant")
         
-        con_dataset = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()
+        # con_dataset = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()
         # con_dataset = load_from_disk("temp_datasets/chinese_speech").shuffle()
+        con_dataset, transcipt = aishell()
+        
+        
         tokenizer = Total_model.return_tokenizer()
         # Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
         Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
@@ -598,11 +601,15 @@ if __name__ == "__main__":
         for data in con_dataset:
             
             # inputs = torch.tensor(data['speech']).to("cuda", torch.bfloat16)
-            
-            inputs = data['speech']
-            answer = data['answer']
-            print(f"questions:\n{data['transcript']}")
-            print(f"true answer:\n{answer[:500]}")
+            path = 'temp_datasets/aishell/data_aishell/wav/train/'
+            sr, audio = wav.read(path+data+".wav")
+            inputs = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
+            answer = transcipt[data]
+            answer = answer.replace(" ","")
+            # inputs = data['speech']
+            # answer = data['answer']
+            # print(f"questions:\n{data['transcript']}")
+            print(f"true answer:\n{answer[]}")
             print()
             print("predict:")
             output= Total_model.generate(audios = inputs, dy = True, endding = '<s>',length=100)

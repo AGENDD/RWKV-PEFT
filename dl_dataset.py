@@ -8,6 +8,6 @@ import os
 
 # token = "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"
 
-ds = load_dataset("Magpie-Align/Magpie-Qwen2-Pro-200K-Chinese")
+ds = load_dataset("carlot/AIShell")
 
 print(ds)
