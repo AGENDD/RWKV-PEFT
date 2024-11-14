@@ -11,7 +11,7 @@ data_file='temp_datasets'
 n_layer=32
 n_embd=4096
 
-micro_bsz=4
+micro_bsz=3
 epoch_save=1
 epoch_steps=7506
 ctx_len=8000

@@ -152,9 +152,9 @@ class train_callback(pl.Callback):
                     filtered_state_dict[key] = pl_module.state_dict()[key]
                 elif key.startswith('speech_encoder.adapter.'):
                     filtered_state_dict[key] = pl_module.state_dict()[key]
-                for n in names:
-                    if(n in key):
-                        filtered_state_dict[key] = pl_module.state_dict()[key]
+                # for n in names:
+                #     if(n in key):
+                #         filtered_state_dict[key] = pl_module.state_dict()[key]
                 # elif 
             
             try:
