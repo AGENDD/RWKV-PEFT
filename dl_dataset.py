@@ -8,6 +8,6 @@ import os
 
 # token = "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"
 
-ds = load_dataset("carlot/AIShell")
+ds = load_dataset("carlot/AIShell", cache_dir='temp_datasets')
 
 print(ds)

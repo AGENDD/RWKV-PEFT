@@ -609,7 +609,7 @@ if __name__ == "__main__":
             # inputs = data['speech']
             # answer = data['answer']
             # print(f"questions:\n{data['transcript']}")
-            print(f"true answer:\n{answer[]}")
+            print(f"true answer:\n{answer}")
             print()
             print("predict:")
             output= Total_model.generate(audios = inputs, dy = True, endding = '<s>',length=100)
