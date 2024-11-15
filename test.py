@@ -13,26 +13,52 @@ import librosa
 from torchaudio.transforms import Resample
 from torchaudio import load, save
 from tqdm import tqdm
-
+import re
 import torch
 import glob
 
-# 查找以“rwkv”开头的文件
-file_list = glob.glob('output/rwkv*.pth')
+ds = load_from_disk('temp_datasets/chinese_speech')
+def mapp(example):
+    transcript = example['trascript']
+    
+    pattern = re.compile(r'[a-zA-Z+=-]')
+    # 搜索字符串中是否包含这些字符
+    if pattern.search(transcript):
+        example['transcript'] = None
+    else:
+        example['transcript'] = transcript
+    
+    return example
 
-# 确保找到文件
-if file_list:
-    file_path = file_list[0]  # 假设只有一个匹配的文件
-    print(f"Loading file: {file_path}")
+ds = ds.map(mapp,num_proc=32,remove_columns=['trascript'])
 
-    # 加载模型参数
-    model_state_dict = torch.load(file_path)
+def fill(example):
+    if(example['transcript'] == None):
+        return False
+    
+    return True
 
-    # 打印所有参数的名字
-    for name, param in model_state_dict.items():
-        print(name)
-else:
-    print("No file starting with 'rwkv' found.")
+ds = ds.filter(fill, num_proc=32)
+
+ds.save_to_disk('temp_datasets/chinese_speech_only')
+
+
+# # 查找以“rwkv”开头的文件
+# file_list = glob.glob('output/rwkv*.pth')
+
+# # 确保找到文件
+# if file_list:
+#     file_path = file_list[0]  # 假设只有一个匹配的文件
+#     print(f"Loading file: {file_path}")
+
+#     # 加载模型参数
+#     model_state_dict = torch.load(file_path)
+
+#     # 打印所有参数的名字
+#     for name, param in model_state_dict.items():
+#         print(name)
+# else:
+#     print("No file starting with 'rwkv' found.")
 
 
 # ds = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()
