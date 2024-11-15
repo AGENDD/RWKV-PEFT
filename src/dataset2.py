@@ -13,6 +13,7 @@ from rwkv.utils import PIPELINE
 import librosa
 import resampy
 import scipy.io.wavfile as wav
+import re
 pipeline = PIPELINE('rwkv6', "rwkv_vocab_v20230424")
 
 class MyDataset(Dataset):
@@ -30,10 +31,16 @@ class MyDataset(Dataset):
         while(True):
             try:
                 sample = self.hf_dataset[idx]
+                pattern = re.compile(r'[a-zA-Z+=-]')
+
                 if(len(sample['speech'])/16000 > 10.0 or len(sample['answer']) > 1500):
                     # print("skip data")
                     idx = idx+1
-                    continue    
+                    continue
+                elif(pattern.search(sample['trascript'])):
+                        # 搜索字符串中是否包含这些字符
+                    idx = idx+1
+                    continue
                 break
             except:
                 idx = idx+1
