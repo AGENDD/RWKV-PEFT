@@ -40,6 +40,7 @@ def fill(example):
 
 ds = ds.filter(fill, num_proc=32)
 
+print(ds)
 ds.save_to_disk('temp_datasets/chinese_speech_only')
 
 
