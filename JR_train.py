@@ -543,7 +543,7 @@ if __name__ == "__main__":
     import librosa
     import resampy
     import scipy.io.wavfile as wav
-    
+    import re
     
     if(args.OP == 1):
         # dataset = load_dataset('covost2','zh-CN_en',data_dir = 'temp_datasets/covost-zhCN_en')['train']
