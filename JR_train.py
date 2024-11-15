@@ -588,7 +588,7 @@ if __name__ == "__main__":
         
         # con_dataset = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()
         # con_dataset = load_from_disk("temp_datasets/chinese_speech").shuffle()
-        con_dataset, transcipt = aishell()
+        con_dataset, transcipt = aishell('test')
         
         
         tokenizer = Total_model.return_tokenizer()
