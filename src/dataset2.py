@@ -31,23 +31,23 @@ class MyDataset(Dataset):
         while(True):
             try:
                 sample = self.hf_dataset[idx]
-                pattern = re.compile(r'[a-zA-Z+=-]')
+                # pattern = re.compile(r'[a-zA-Z+=-]')
 
-                if(len(sample['speech'])/16000 > 10.0 or len(sample['answer']) > 1500):
-                    # print("skip data")
-                    idx = idx+1
-                    continue
-                elif(pattern.search(sample['trascript'])):
-                        # 搜索字符串中是否包含这些字符
-                    idx = idx+1
-                    continue
+                # if(len(sample['speech'])/16000 > 10.0 or len(sample['answer']) > 1500):
+                #     # print("skip data")
+                #     idx = idx+1
+                #     continue
+                # elif(pattern.search(sample['trascript'])):
+                #         # 搜索字符串中是否包含这些字符
+                #     idx = idx+1
+                #     continue
                 break
             except:
                 idx = idx+1
         
-        if('speech' in sample.keys()):
-            answer = sample['answer']
-            audio = sample['speech']
+        # if('speech' in sample.keys()):
+        #     answer = sample['answer']
+        #     audio = sample['speech']
         
         # elif('split_name' in sample.keys()):
         #     #Voice assistant
@@ -59,7 +59,7 @@ class MyDataset(Dataset):
         #     audio = sample['question_audio']['array']
         #     audio = resampy.resample(audio, 22050, 16000)
             
-        elif(self.aishell_transcipt):
+        if(self.aishell_transcipt):
             #aishell
             path = 'temp_datasets/aishell/data_aishell/wav/train/'
             sr, audio = wav.read(path+sample+".wav")
