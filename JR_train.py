@@ -587,8 +587,8 @@ if __name__ == "__main__":
         # con_dataset = load_from_disk("temp_datasets/VoiceAssistant")
         
         # con_dataset = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()
-        con_dataset = load_from_disk("temp_datasets/chinese_speech").shuffle()
-        # con_dataset, transcipt = aishell('test')
+        # con_dataset = load_from_disk("temp_datasets/chinese_speech").shuffle()
+        con_dataset, transcipt = aishell('test')
         
         
         tokenizer = Total_model.return_tokenizer()
@@ -599,19 +599,21 @@ if __name__ == "__main__":
         
         # with open("temp_audios/text.txt",'w') as f:
         for data in con_dataset:
-            pattern = re.compile(r'[a-zA-Z+=-]')
-            if(pattern.search(data['trascript'])):
-                continue
+            # pattern = re.compile(r'[a-zA-Z+=-]')
+            # if(pattern.search(data['trascript'])):
+            #     continue
             # inputs = torch.tensor(data['speech']).to("cuda", torch.bfloat16)
             # path = 'temp_datasets/aishell/data_aishell/wav/train/'
-            # path = 'temp_datasets/aishell/data_aishell/wav/test/'
-            # sr, audio = wav.read(path+data+".wav")
-            # inputs = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
-            # answer = transcipt[data]
-            # answer = answer.replace(" ","")
-            inputs = data['speech']
-            answer = data['answer']
-            print(f"questions:\n{data['trascript']}")
+            path = 'temp_datasets/aishell/data_aishell/wav/test/'
+            sr, audio = wav.read(path+data+".wav")
+            inputs = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
+            answer = transcipt[data]
+            answer = answer.replace(" ","")
+            # inputs = data['speech']
+            # answer = data['answer']
+            
+            
+            # print(f"questions:\n{data['trascript']}")
             print(f"true answer:\n{answer[:100]}...")
             print()
             print("predict:")
