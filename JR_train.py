@@ -594,6 +594,7 @@ if __name__ == "__main__":
         tokenizer = Total_model.return_tokenizer()
         # Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
         Total_model = Total_model.to("cuda", dtype=torch.bfloat16)
+        Total_model.eval()
         print("start prediction...")
         count = 0
         
@@ -613,7 +614,7 @@ if __name__ == "__main__":
             answer = data['answer']
             
             
-            # print(f"questions:\n{data['trascript']}")
+            print(f"questions:\n{data['trascript']}")
             print(f"true answer:\n{answer[:100]}...")
             print()
             print("predict:")
