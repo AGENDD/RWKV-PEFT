@@ -37,10 +37,10 @@ class MyDataset(Dataset):
                     # print("skip data")
                     idx = idx+1
                     continue
-                elif(pattern.search(sample['trascript'])):
-                        # 搜索字符串中是否包含这些字符
-                    idx = idx+1
-                    continue
+                # elif(pattern.search(sample['trascript'])):
+                #         # 搜索字符串中是否包含这些字符
+                #     idx = idx+1
+                #     continue
                 break
             except:
                 idx = idx+1
