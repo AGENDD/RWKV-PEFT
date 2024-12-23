@@ -143,15 +143,21 @@ class train_callback(pl.Callback):
         if(self.step != 0 and self.step % 200 == 0 and trainer.is_global_zero):
             print("saving...")
             # to_save_dict = pl_module.state_dict()
-            names = ['layers.22', 'layers.23','layers.21','layers.20']
+            # names = ['layers.22', 'layers.23','layers.21','layers.20']
             filtered_state_dict = {}
-            for key in pl_module.state_dict().keys():
-                # Check if the key matches any of the commented weights
-                if key.startswith('language_model.blocks.') and "att.time_state" in key:
-                    # Add the key and value to the filtered state dict
-                    filtered_state_dict[key] = pl_module.state_dict()[key]
-                elif key.startswith('speech_encoder.adapter.'):
-                    filtered_state_dict[key] = pl_module.state_dict()[key]
+            for key, param in pl_module.named_parameters():
+                # 检查参数是否需要梯度
+                if param.requires_grad:
+                    # 添加需要梯度的参数到 filtered_state_dict
+                    filtered_state_dict[key] = param.data
+            
+            # for key in pl_module.state_dict().keys():
+            #     # Check if the key matches any of the commented weights
+            #     if key.startswith('language_model.blocks.') and "att.time_state" in key:
+            #         # Add the key and value to the filtered state dict
+            #         filtered_state_dict[key] = pl_module.state_dict()[key]
+            #     elif key.startswith('speech_encoder.adapter.'):
+            #         filtered_state_dict[key] = pl_module.state_dict()[key]
                 # for n in names:
                 #     if(n in key):
                 #         filtered_state_dict[key] = pl_module.state_dict()[key]
