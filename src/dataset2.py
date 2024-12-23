@@ -33,7 +33,7 @@ class MyDataset(Dataset):
                 sample = self.hf_dataset[idx]
                 pattern = re.compile(r'[a-zA-Z+=-]')
 
-                if(len(sample['speech'])/16000 > 10.0 or len(sample['answer']) > 1000):
+                if(len(sample['speech'])/16000 > 10.0 or len(sample['answer']) > 800):
                     # print("skip data")
                     idx = idx+1
                     continue
