@@ -50,7 +50,7 @@ class MyDataset(Dataset):
             answer = sample['transcription']
             answer = answer.replace(" ","")
         elif('speech' in sample.keys()):
-            answer = sample['transcript']+"$"+sample['answer']
+            answer = sample['trascript']+"$"+sample['answer']
             audio = sample['speech']
         
         # elif('split_name' in sample.keys()):
