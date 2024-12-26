@@ -11,9 +11,9 @@ n_embd=2560
 # n_layer=32
 # n_embd=4096
 
-micro_bsz=4
+micro_bsz=2
 epoch_save=1
-epoch_steps=7714
+epoch_steps=15429
 ctx_len=8000
 epoch_count=100
 
