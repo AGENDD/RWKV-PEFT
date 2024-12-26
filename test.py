@@ -30,7 +30,7 @@ def mapp(example):
     
     return example
 
-ds = ds.map(mapp,num_proc=32,remove_columns=['trascript'])
+ds = ds.map(mapp,num_proc=32,remove_columns=['trascript'],cache_file_name="cache/file.arrow")
 
 def fill(example):
     if(example['transcript'] == None):
@@ -43,7 +43,7 @@ ds = ds.filter(fill, num_proc=32)
 print(ds)
 ds.save_to_disk('temp_datasets/chinese_speech_only')
 
-
+exit(0)
 # # 查找以“rwkv”开头的文件
 # file_list = glob.glob('output/rwkv*.pth')
 
@@ -195,4 +195,21 @@ ds.save_to_disk('temp_datasets/chinese_speech_only')
 
     
 #     break
-            
+
+
+# from cosyvoice.cli.cosyvoice import CosyVoice, CosyVoice2
+# from cosyvoice.utils.file_utils import load_wav
+# import torchaudio
+# import random
+# from datasets import 
+
+
+# cosyvoice = CosyVoice2('pretrained_models/CosyVoice2-0.5B', load_jit=True, load_onnx=False, load_trt=False)
+
+# random_number = random.randint(0, 99)
+# prompt_speech_16k = load_wav(f'temp_audios/audio{random_number}.wav', 16000)
+
+# for i, j in enumerate(cosyvoice.inference_instruct2('收到好友从远方寄来的生日礼物，那份意外的惊喜与深深的祝福让我心中充满了甜蜜的快乐，笑容如花儿般绽放。', '', prompt_speech_16k, stream=False)):
+    
+    
+#     torchaudio.save('instruct_{}.wav'.format(i), j['tts_speech'], cosyvoice.sample_rate)
