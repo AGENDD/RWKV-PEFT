@@ -18,6 +18,7 @@ import torch
 import glob
 
 ds = load_from_disk('temp_datasets/chinese_speech')
+print(ds)
 def mapp(example):
     transcript = example['trascript']
     
