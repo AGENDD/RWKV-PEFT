@@ -592,6 +592,7 @@ if __name__ == "__main__":
         
         # con_dataset = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()
         con_dataset = load_from_disk("temp_datasets/chinese_speech").shuffle()
+        con_dataset = load_from_disk("temp_datasets/chinese_speech_only_cosy").shuffle()
         # con_dataset = load_dataset("carlot/AIShell",split="test").shuffle()
         # con_dataset, transcipt = aishell('test')
         
@@ -615,7 +616,7 @@ if __name__ == "__main__":
             # inputs = librosa.resample(audio.astype(float), orig_sr=sr, target_sr=16000)
             # answer = transcipt[data]
             # answer = answer.replace(" ","")
-            inputs = data['speech']
+            inputs = data['speech_cosy'][0]
             answer = data['answer']
             # answer = answer.replace(" ", "")
             
