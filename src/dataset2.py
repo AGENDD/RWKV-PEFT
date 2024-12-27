@@ -51,7 +51,7 @@ class MyDataset(Dataset):
             answer = answer.replace(" ","")
         elif('speech' in sample.keys()):
             answer = sample['trascript']+"$"+sample['answer']
-            audio = sample['speech']
+            audio = sample['speech_cosy']
         
         # elif('split_name' in sample.keys()):
         #     #Voice assistant
