@@ -19,10 +19,18 @@ import glob
 
 ds = load_from_disk('temp_datasets/chinese_speech_only_cosy')
 
-def is_float_list(obj):
-    return isinstance(obj, list) and all(isinstance(item, float) for item in obj)
+def check_float_list(obj):
+    if isinstance(obj, list):
+        for item in obj:
+            if not isinstance(item, float):
+                print(f"元素 {item} 的类型是 {type(item)}")
+        return all(isinstance(item, float) for item in obj)
+    else:
+        print("对象不是列表")
+        return False
+    
 for data in ds:
-    result = is_float_list(data['speech_cosy'])
+    result = check_float_list(data['speech_cosy'])
     if(result != True):
         print(f"find {type(data['speech_cosy'])} or elements fault")
 
