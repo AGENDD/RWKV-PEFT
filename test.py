@@ -17,32 +17,39 @@ import re
 import torch
 import glob
 
-ds = load_from_disk('temp_datasets/chinese_speech')
-print(ds)
-def mapp(example):
-    transcript = example['trascript']
+ds = load_from_disk('temp_datasets/chinese_speech_only_cosy')
+
+for data in ds:
+    print(type(data['speech_cosy']))
     
-    pattern = re.compile(r'[a-zA-Z+=-]')
-    # 搜索字符串中是否包含这些字符
-    if pattern.search(transcript):
-        example['transcript'] = None
-    else:
-        example['transcript'] = transcript
+
+
+
+# print(ds)
+# def mapp(example):
+#     transcript = example['trascript']
     
-    return example
-
-ds = ds.map(mapp,num_proc=32,remove_columns=['trascript'],cache_file_name="cache/file.arrow")
-
-def fill(example):
-    if(example['transcript'] == None):
-        return False
+#     pattern = re.compile(r'[a-zA-Z+=-]')
+#     # 搜索字符串中是否包含这些字符
+#     if pattern.search(transcript):
+#         example['transcript'] = None
+#     else:
+#         example['transcript'] = transcript
     
-    return True
+#     return example
 
-ds = ds.filter(fill, num_proc=32)
+# ds = ds.map(mapp,num_proc=32,remove_columns=['trascript'],cache_file_name="cache/file.arrow")
 
-print(ds)
-ds.save_to_disk('temp_datasets/chinese_speech_only')
+# def fill(example):
+#     if(example['transcript'] == None):
+#         return False
+    
+#     return True
+
+# ds = ds.filter(fill, num_proc=32)
+
+# print(ds)
+# ds.save_to_disk('temp_datasets/chinese_speech_only')
 
 exit(0)
 # # 查找以“rwkv”开头的文件
