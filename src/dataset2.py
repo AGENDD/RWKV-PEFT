@@ -33,7 +33,7 @@ class MyDataset(Dataset):
                 sample = self.hf_dataset[idx]
                 # pattern = re.compile(r'[a-zA-Z+=-]')
                 assert type(sample["speech"]) == type(sample["speech_cosy"])
-                if(len(sample['speech_cosy'])/16000 > 13.0 or len(sample['answer']) > 1200):
+                if(len(sample['speech_cosy'][0])/16000 > 13.0 or len(sample['answer']) > 1200):
                     print("skip data")
                     idx = idx+1
                     continue
@@ -51,7 +51,7 @@ class MyDataset(Dataset):
             answer = answer.replace(" ","")
         elif('speech' in sample.keys()):
             answer = sample['transcript']+"$"+sample['answer']
-            audio = sample['speech_cosy']
+            audio = sample['speech_cosy'][0]
         
         # elif('split_name' in sample.keys()):
         #     #Voice assistant

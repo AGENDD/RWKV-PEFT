@@ -92,9 +92,6 @@ class SpeechEncoder(nn.Module):
         return mask
 
     def forward(self, x):
-        print(len(x))
-        for a in x:
-            print(f"type:{type(a)}, len:{len(a)}")
         input_dict = self.processor(
             x, return_tensors="pt", padding=True, sampling_rate=16000
         ).to(self.device,dtype=torch.bfloat16)
