@@ -33,10 +33,10 @@ class MyDataset(Dataset):
                 sample = self.hf_dataset[idx]
                 # pattern = re.compile(r'[a-zA-Z+=-]')
 
-                # if(len(sample['speech'])/16000 > 10.0 or len(sample['answer']) > 800):
-                #     # print("skip data")
-                #     idx = idx+1
-                #     continue
+                if(len(sample['speech'])/16000 > 10.0 or len(sample['answer']) > 800):
+                    print("skip data")
+                    idx = idx+1
+                    continue
                 # elif(pattern.search(sample['trascript'])):
                 #         # 搜索字符串中是否包含这些字符
                 #     idx = idx+1
