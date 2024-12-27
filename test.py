@@ -19,9 +19,12 @@ import glob
 
 ds = load_from_disk('temp_datasets/chinese_speech_only_cosy')
 
+def is_float_list(obj):
+    return isinstance(obj, list) and all(isinstance(item, float) for item in obj)
 for data in ds:
-    print(type(data['speech_cosy']))
-    
+    result = is_float_list(data['speech_cosy'])
+    if(result != True):
+        print(f"find {type(data['speech_cosy'])} or elements fault")
 
 
 
