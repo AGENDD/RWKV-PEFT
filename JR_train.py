@@ -607,7 +607,7 @@ if __name__ == "__main__":
         # with open("temp_audios/text.txt",'w') as f:
         for data in con_dataset:
             pattern = re.compile(r'[a-zA-Z+=-]')
-            if(pattern.search(data['trascript'])):
+            if(pattern.search(data['transcript'])):
                 continue
             # inputs = torch.tensor(data['speech']).to("cuda", torch.bfloat16)
             # path = 'temp_datasets/aishell/data_aishell/wav/train/'
@@ -620,7 +620,7 @@ if __name__ == "__main__":
             answer = data['answer']
             # answer = answer.replace(" ", "")
             
-            print(f"questions:\n{data['trascript']}")
+            print(f"questions:\n{data['transcript']}")
             print(f"true answer:\n{answer[:100]}...")
             print()
             print("predict:")
