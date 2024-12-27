@@ -37,7 +37,7 @@ class MyDataset(Dataset):
                     print("skip data audio too long")
                     idx = idx+1
                     continue
-                elif(len(sample['answer']) > 1500):
+                elif(len(sample['answer']) > 1700):
                     print("skip data answer too long")
                     idx = idx+1
                     continue
