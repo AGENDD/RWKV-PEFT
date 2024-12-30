@@ -508,6 +508,10 @@ if __name__ == "__main__":
         return model
     
     replace_linear_with_lora(model)
+    
+    print(model)
+    exit(0)
+    
     ###########################################################################
     
     from src.asr import SLAM_ASR
@@ -521,8 +525,6 @@ if __name__ == "__main__":
         model,
         # downsample_K=1,
     )
-    print(Total_model)
-    exit(0)
     print("loading weights...")
     import glob
     file_paths = glob.glob('output/rwkv-adapter*.pth')
