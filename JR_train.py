@@ -503,7 +503,7 @@ if __name__ == "__main__":
                     lora_layer = LoRALayer(in_features, out_features, r)
                     lora_layer.linear.weight = module.weight
                     lora_layer.linear.bias = module.bias
-                    setattr(model, name, lora_layer)
+                    setattr(module, name, lora_layer)
         
         blocks = model.get_submodule("blocks")
         for name, module in blocks.named_children():
