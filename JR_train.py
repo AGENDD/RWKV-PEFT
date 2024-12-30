@@ -490,12 +490,12 @@ if __name__ == "__main__":
         def forward(self, x):
             return self.linear(x) + (x @ self.lora_A @ self.lora_B)
     
-    def replace_linear_with_lora(model, r=64):
+    def replace_linear_with_lora(model, r=64, flag = False):
         
         print("Change to LORA:")
         for name, module in model.named_children():
             print(name)
-            if ('0' in name or '1' in name or '2' in name) and isinstance(module, nn.Linear):
+            if flag and isinstance(module, nn.Linear):
                 # print(name)
                 in_features = module.in_features
                 out_features = module.out_features
@@ -503,8 +503,10 @@ if __name__ == "__main__":
                 lora_layer.linear.weight = module.weight
                 lora_layer.linear.bias = module.bias
                 setattr(model, name, lora_layer)
+            elif ('0' in name or '1' in name or '2' in name):
+                replace_linear_with_lora(module, r,flag = True)
             else:
-                replace_linear_with_lora(module, r)
+                replace_linear_with_lora(module, r,flag = flag)
         return model
     
     replace_linear_with_lora(model)
