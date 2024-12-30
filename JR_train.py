@@ -497,7 +497,7 @@ if __name__ == "__main__":
         def change(model_):
             for name, module in model_.named_children():
                 if isinstance(module, nn.Linear):
-                    # print(name)
+                    print(f"\t{name}")
                     in_features = module.in_features
                     out_features = module.out_features
                     lora_layer = LoRALayer(in_features, out_features, r)
@@ -517,7 +517,7 @@ if __name__ == "__main__":
         return model
     
     print("Change to LORA:")
-    replace_linear_with_lora(model)
+    model = replace_linear_with_lora(model)
     
     print(model)
     print("Paramter that require grad:")
