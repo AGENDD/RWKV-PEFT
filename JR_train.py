@@ -507,8 +507,9 @@ if __name__ == "__main__":
         
         blocks = model.get_submodule("blocks")
         for name, module in blocks.named_children():
-            print(name)
+            
             if ('0' in name or '1' in name or '2' in name):
+                print(name)
                 att = module.get_submodule("att")
                 ffn = module.get_submodule("ffn")
                 change(att)
