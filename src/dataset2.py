@@ -31,17 +31,19 @@ class MyDataset(Dataset):
         while(True):
             try:
                 sample = self.hf_dataset[idx]
+                
+                # assert type(sample["speech"]) == type(sample["speech_cosy"])
+                # if(len(sample['speech_cosy'][0])/16000 > 15.0):
+                #     print("skip data audio too long")
+                #     idx = idx+1
+                #     continue
+                # elif(len(sample['answer']) > 1700):
+                #     print("skip data answer too long")
+                #     idx = idx+1
+                #     continue
+                
                 # pattern = re.compile(r'[a-zA-Z+=-]')
-                assert type(sample["speech"]) == type(sample["speech_cosy"])
-                if(len(sample['speech_cosy'][0])/16000 > 15.0):
-                    print("skip data audio too long")
-                    idx = idx+1
-                    continue
-                elif(len(sample['answer']) > 1700):
-                    print("skip data answer too long")
-                    idx = idx+1
-                    continue
-                # elif(pattern.search(sample['trascript'])):
+                # if(pattern.search(sample['trascript'])):
                 #         # 搜索字符串中是否包含这些字符
                 #     idx = idx+1
                 #     continue
