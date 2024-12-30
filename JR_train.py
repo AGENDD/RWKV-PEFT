@@ -490,7 +490,7 @@ if __name__ == "__main__":
         def forward(self, x):
             return self.linear(x) + (x @ self.lora_A @ self.lora_B)
     
-    def replace_linear_with_lora(model, r=4):
+    def replace_linear_with_lora(model, r=64):
         
         print("Change to LORA:")
         for name, module in model.named_children():
@@ -506,7 +506,7 @@ if __name__ == "__main__":
                 replace_linear_with_lora(module, r)
         return model
     
-    
+    replace_linear_with_lora(model)
     ###########################################################################
     
     from src.asr import SLAM_ASR
