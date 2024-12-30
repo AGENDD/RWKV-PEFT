@@ -240,15 +240,25 @@ def mapp(sample):
     random_number = random.randint(0, 99)
     prompt_speech_16k = load_wav(f'temp_audios/audio{random_number}.wav', 16000)
 
-    with suppress_stdout():
-        for i, j in enumerate(cosyvoice.inference_instruct2(sample['transcript'], '', prompt_speech_16k, stream=False)):
-            # torchaudio.save('instruct_{}.wav'.format(i), j['tts_speech'], cosyvoice.sample_rate)
-            cosy = librosa.resample(np.array(j['tts_speech']), orig_sr=cosyvoice.sample_rate, target_sr=16000)
-    sample['speech_cosy'] = cosy
+    try:
+        with suppress_stdout():
+            for i, j in enumerate(cosyvoice.inference_instruct2(sample['transcript'], '', prompt_speech_16k, stream=False)):
+                # torchaudio.save('instruct_{}.wav'.format(i), j['tts_speech'], cosyvoice.sample_rate)
+                cosy = librosa.resample(np.array(j['tts_speech']), orig_sr=cosyvoice.sample_rate, target_sr=16000)
+        sample['speech_cosy'] = cosy
+    except:
+        sample['speech_cosy'] = None
 
     return sample
 
 ds = ds.map(mapp,cache_file_name="cache/file.arrow")
+
+def fill(sample):
+    if(sample['speech_cosy'] == None):
+        return False
+    return True
+
+ds = ds.filter(fill, num_proc=32)
 
 print(ds)
 

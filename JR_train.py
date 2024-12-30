@@ -466,6 +466,11 @@ if __name__ == "__main__":
     
     
     print(model)
+    
+    # 或者只打印参数名称和形状
+    for name, param in model.named_parameters():
+        print(f"Parameter name: {name}, Parameter shape: {param.shape}")
+    
     exit(0)
     #########################LORA#############################################
     
@@ -476,12 +481,14 @@ if __name__ == "__main__":
         def __init__(self, in_features, out_features, r=4):
             super(LoRALayer, self).__init__()
             self.linear = nn.Linear(in_features, out_features)
-            self.lora = nn.Linear(in_features, out_features, bias=False)
-            self.lora.weight.requires_grad = True
+            self.lora_A = nn.Parameter(torch.randn(in_features, r))
+            self.lora_B = nn.Parameter(torch.randn(r, out_features))
+            self.lora_A.weight.requires_grad = True
+            self.lora_B.weight.requires_grad = True
             self.r = r
 
         def forward(self, x):
-            return self.linear(x) + self.lora(x) / self.r
+            return self.linear(x) + (x @ self.lora_A @ self.lora_B)
     
     def replace_linear_with_lora(model, r=4):
         for name, module in model.named_children():
