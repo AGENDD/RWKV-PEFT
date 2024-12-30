@@ -478,13 +478,15 @@ if __name__ == "__main__":
     import torch.nn as nn
 
     class LoRALayer(nn.Module):
-        def __init__(self, in_features, out_features, r=4):
+        def __init__(self, in_features, out_features, r=64):
             super(LoRALayer, self).__init__()
             self.linear = nn.Linear(in_features, out_features)
             self.lora_A = nn.Parameter(torch.randn(in_features, r))
             self.lora_B = nn.Parameter(torch.randn(r, out_features))
-            self.lora_A.weight.requires_grad = True
-            self.lora_B.weight.requires_grad = True
+            self.linear.weight.requires_grad = False
+            self.linear.bias.requires_grad = False
+            self.lora_A.requires_grad = True
+            self.lora_B.requires_grad = True
             self.r = r
 
         def forward(self, x):
