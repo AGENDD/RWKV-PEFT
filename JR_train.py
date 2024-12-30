@@ -494,8 +494,9 @@ if __name__ == "__main__":
         
         print("Change to LORA:")
         for name, module in model.named_children():
+            print(name)
             if ('0' in name or '1' in name or '2' in name) and isinstance(module, nn.Linear):
-                print(name)
+                # print(name)
                 in_features = module.in_features
                 out_features = module.out_features
                 lora_layer = LoRALayer(in_features, out_features, r)
