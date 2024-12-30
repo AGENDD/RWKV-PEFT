@@ -636,7 +636,7 @@ if __name__ == "__main__":
         dataset = load_from_disk("temp_datasets/chinese_speech_only_cosy")
         dataset2 = load_from_disk("temp_datasets/chinese_speech_only_cosy2")
         dataset3 = load_from_disk("temp_datasets/chinese_speech_only_cosy3")
-        dataset = concatenate_datasets([dataset, dataset2,dataset3])#30000
+        dataset = concatenate_datasets([dataset, dataset2,dataset3]).shuffle()#30000
         
         # dataset = load_dataset("carlot/AIShell",split="train")
         # dataset2 = load_dataset("carlot/AIShell",split="validation")
