@@ -492,7 +492,7 @@ if __name__ == "__main__":
     
     def replace_linear_with_lora(model, r=64, flag = False):
         
-        print("Change to LORA:")
+        
         for name, module in model.named_children():
             print(name)
             if flag and isinstance(module, nn.Linear):
@@ -509,9 +509,14 @@ if __name__ == "__main__":
                 replace_linear_with_lora(module, r,flag = flag)
         return model
     
+    print("Change to LORA:")
     replace_linear_with_lora(model)
     
     print(model)
+    print("Paramter that require grad:")
+    for name, param in model.named_parameters():
+        if param.requires_grad:
+            print(f"Parameter name: {name}, Parameter shape: {param.shape}")
     exit(0)
     
     ###########################################################################
