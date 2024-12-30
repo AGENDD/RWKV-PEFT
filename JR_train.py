@@ -504,16 +504,16 @@ if __name__ == "__main__":
                     lora_layer.linear.weight = module.weight
                     lora_layer.linear.bias = module.bias
                     setattr(model, name, lora_layer)
-                change(module)
-        for name_, module_ in model.named_children():
-            if(name_ != 'blocks'):
-                continue     
-            for name, module in module_.named_children():
-                print(name)
-                
-                if ('0' in name or '1' in name or '2' in name):
-                    change(module)    
-            return model
+        
+        blocks = model.get_submodule("blocks")
+        for name, module in blocks.named_children():
+            print(name)
+            if ('0' in name or '1' in name or '2' in name):
+                att = module.get_submodule("att")
+                ffn = module.get_submodule("ffn")
+                change(att)
+                change(ffn)
+        return model
     
     print("Change to LORA:")
     replace_linear_with_lora(model)
