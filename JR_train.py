@@ -463,6 +463,41 @@ if __name__ == "__main__":
     # must set shuffle=False, persistent_workers=False (because worker is in another thread)
     # data_loader = DataLoader(train_data, shuffle=False, pin_memory=True, batch_size=args.micro_bsz, num_workers=1, persistent_workers=False, drop_last=True)
     # model = model.to(dtype=torch.bfloat16)
+    
+    
+    print(model)
+    exit(0)
+    #########################LORA#############################################
+    
+    import torch
+    import torch.nn as nn
+
+    class LoRALayer(nn.Module):
+        def __init__(self, in_features, out_features, r=4):
+            super(LoRALayer, self).__init__()
+            self.linear = nn.Linear(in_features, out_features)
+            self.lora = nn.Linear(in_features, out_features, bias=False)
+            self.lora.weight.requires_grad = True
+            self.r = r
+
+        def forward(self, x):
+            return self.linear(x) + self.lora(x) / self.r
+    
+    def replace_linear_with_lora(model, r=4):
+        for name, module in model.named_children():
+            if isinstance(module, nn.Linear):
+                in_features = module.in_features
+                out_features = module.out_features
+                lora_layer = LoRALayer(in_features, out_features, r)
+                lora_layer.linear.weight = module.weight
+                lora_layer.linear.bias = module.bias
+                setattr(model, name, lora_layer)
+            else:
+                replace_linear_with_lora(module, r)
+        return model
+    
+    ###########################################################################
+    
     from src.asr import SLAM_ASR
     Total_model = SLAM_ASR(
         args,

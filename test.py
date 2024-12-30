@@ -215,42 +215,42 @@ exit(0)
     
 #     break
 
-# from contextlib import contextmanager, redirect_stdout, redirect_stderr
-# from cosyvoice.cli.cosyvoice import CosyVoice, CosyVoice2
-# from cosyvoice.utils.file_utils import load_wav
-# import torchaudio
-# import random
-# from datasets import load_from_disk
-# import librosa
-# import os
-# import numpy as np
+from contextlib import contextmanager, redirect_stdout, redirect_stderr
+from cosyvoice.cli.cosyvoice import CosyVoice, CosyVoice2
+from cosyvoice.utils.file_utils import load_wav
+import torchaudio
+import random
+from datasets import load_from_disk
+import librosa
+import os
+import numpy as np
 
-# @contextmanager
-# def suppress_stdout(*args, **kwargs):
-#     with open(os.devnull, 'w') as devnull:
-#         with redirect_stdout(devnull), redirect_stderr(devnull):
-#             yield
+@contextmanager
+def suppress_stdout(*args, **kwargs):
+    with open(os.devnull, 'w') as devnull:
+        with redirect_stdout(devnull), redirect_stderr(devnull):
+            yield
 
 
-# ds = load_from_disk("~/JRwork/RWKV-PEFT/temp_datasets/chinese_speech_only").select(range(10000))
-# cosyvoice = CosyVoice2('pretrained_models/CosyVoice2-0.5B', load_jit=True, load_onnx=False, load_trt=False)
+ds = load_from_disk("~/JRwork/RWKV-PEFT/temp_datasets/chinese_speech_only").select(range(30000,40000))
+cosyvoice = CosyVoice2('pretrained_models/CosyVoice2-0.5B', load_jit=True, load_onnx=False, load_trt=False)
 
-# print(ds)
-# def mapp(sample):
-#     random_number = random.randint(0, 99)
-#     prompt_speech_16k = load_wav(f'temp_audios/audio{random_number}.wav', 16000)
+print(ds)
+def mapp(sample):
+    random_number = random.randint(0, 99)
+    prompt_speech_16k = load_wav(f'temp_audios/audio{random_number}.wav', 16000)
 
-#     with suppress_stdout():
-#         for i, j in enumerate(cosyvoice.inference_instruct2(sample['transcript'], '', prompt_speech_16k, stream=False)):
-#             # torchaudio.save('instruct_{}.wav'.format(i), j['tts_speech'], cosyvoice.sample_rate)
-#             cosy = librosa.resample(np.array(j['tts_speech']), orig_sr=cosyvoice.sample_rate, target_sr=16000)
-#     sample['speech_cosy'] = cosy
+    with suppress_stdout():
+        for i, j in enumerate(cosyvoice.inference_instruct2(sample['transcript'], '', prompt_speech_16k, stream=False)):
+            # torchaudio.save('instruct_{}.wav'.format(i), j['tts_speech'], cosyvoice.sample_rate)
+            cosy = librosa.resample(np.array(j['tts_speech']), orig_sr=cosyvoice.sample_rate, target_sr=16000)
+    sample['speech_cosy'] = cosy
 
-#     return sample
+    return sample
 
-# ds = ds.map(mapp,cache_file_name="cache/file.arrow")
+ds = ds.map(mapp,cache_file_name="cache/file.arrow")
 
-# print(ds)
+print(ds)
 
-# ds.save_to_disk("~/JRwork/RWKV-PEFT/temp_datasets/chinese_speech_only_cosy")
+ds.save_to_disk("~/JRwork/RWKV-PEFT/temp_datasets/chinese_speech_only_cosy4")
 
