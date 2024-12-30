@@ -465,13 +465,13 @@ if __name__ == "__main__":
     # model = model.to(dtype=torch.bfloat16)
     
     
-    print(model)
+    # print(model)
     
-    # 或者只打印参数名称和形状
-    for name, param in model.named_parameters():
-        print(f"Parameter name: {name}, Parameter shape: {param.shape}")
+    # # 或者只打印参数名称和形状
+    # for name, param in model.named_parameters():
+    #     print(f"Parameter name: {name}, Parameter shape: {param.shape}")
     
-    exit(0)
+
     #########################LORA#############################################
     
     import torch
@@ -491,8 +491,11 @@ if __name__ == "__main__":
             return self.linear(x) + (x @ self.lora_A @ self.lora_B)
     
     def replace_linear_with_lora(model, r=4):
+        
+        print("Change to LORA:")
         for name, module in model.named_children():
-            if isinstance(module, nn.Linear):
+            if ('0' in name or '1' in name or '2' in name) and isinstance(module, nn.Linear):
+                print(name)
                 in_features = module.in_features
                 out_features = module.out_features
                 lora_layer = LoRALayer(in_features, out_features, r)
@@ -502,6 +505,7 @@ if __name__ == "__main__":
             else:
                 replace_linear_with_lora(module, r)
         return model
+    
     
     ###########################################################################
     
@@ -516,7 +520,8 @@ if __name__ == "__main__":
         model,
         # downsample_K=1,
     )
-    
+    print(Total_model)
+    exit(0)
     print("loading weights...")
     import glob
     file_paths = glob.glob('output/rwkv-adapter*.pth')
