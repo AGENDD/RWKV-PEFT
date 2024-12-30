@@ -673,13 +673,14 @@ if __name__ == "__main__":
             # if(pattern.search(data['transcript'])):
             #     continue
 
-
+                #cosy
             # inputs = data['speech_cosy'][0]
             # answer = data['answer']
             
+                #aishell
             inputs = data['audio']['array']
             answer = data['transcription']
-            
+            answer = answer.replace(" ","")
             # print(f"questions:\n{data['transcript']}")
             print(f"true answer:\n{answer[:100]}...")
             print()
