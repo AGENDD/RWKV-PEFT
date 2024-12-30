@@ -150,6 +150,8 @@ class train_callback(pl.Callback):
                 if param.requires_grad:
                     # 添加需要梯度的参数到 filtered_state_dict
                     filtered_state_dict[key] = param.data
+                elif('state' in key):
+                    filtered_state_dict[key] = param.data
             
             # for key in pl_module.state_dict().keys():
             #     # Check if the key matches any of the commented weights

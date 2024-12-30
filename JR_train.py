@@ -519,6 +519,9 @@ if __name__ == "__main__":
     print("Change to LORA:")
     model = replace_linear_with_lora(model, r=256)
     
+    for name, param in model.named_parameters():
+        if 'state' in name:
+            param.requires_grad = False
     # print(model)
     # print("Paramter that require grad:")
     # for name, param in model.named_parameters():
