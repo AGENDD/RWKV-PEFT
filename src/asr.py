@@ -63,7 +63,7 @@ class SLAM_ASR(pl.LightningModule):
         downsample_K=5,
         hidden_dim=2048,
         # hidden_dim=4096,
-        train_mode="adapter",
+        train_mode="full",
         device="cuda",
         token = "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",
     ):
