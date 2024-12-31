@@ -509,7 +509,7 @@ if __name__ == "__main__":
         for name, module in blocks.named_children():
             
             # if (name == '0' or name == '1' or name == '2'):
-            if(True):
+            if(int(name) < 16):
                 print(name)
                 att = module.get_submodule("att")
                 ffn = module.get_submodule("ffn")
