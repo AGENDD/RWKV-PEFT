@@ -517,8 +517,8 @@ if __name__ == "__main__":
                 change(ffn)
         return model
     
-    print("Change to LORA:")
-    model = replace_linear_with_lora(model, r=256)
+    # print("Change to LORA:")
+    # model = replace_linear_with_lora(model, r=256)
     
     # for name, param in model.named_parameters():
     #     if 'state' in name:
