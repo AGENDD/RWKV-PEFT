@@ -508,7 +508,6 @@ if __name__ == "__main__":
         blocks = model.get_submodule("blocks")
         for name, module in blocks.named_children():
             
-            # if (name == '0' or name == '1' or name == '2'):
             if(int(name) < 3):
                 print(name)
                 att = module.get_submodule("att")
@@ -517,8 +516,8 @@ if __name__ == "__main__":
                 change(ffn)
         return model
     
-    # print("Change to LORA:")
-    # model = replace_linear_with_lora(model, r=256)
+    print("Change to LORA:")
+    model = replace_linear_with_lora(model, r=256)
     
     # for name, param in model.named_parameters():
     #     if 'state' in name:
