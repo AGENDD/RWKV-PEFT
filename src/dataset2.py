@@ -33,10 +33,10 @@ class MyDataset(Dataset):
                 sample = self.hf_dataset[idx]
                 
                 # assert type(sample["speech"]) == type(sample["speech_cosy"])
-                # if(len(sample['speech_cosy'][0])/16000 > 15.0):
-                #     print("skip data audio too long")
-                #     idx = idx+1
-                #     continue
+                if(len(sample['speech_cosy'][0])/16000 > 15.0):
+                    print("skip data audio too long")
+                    idx = idx+1
+                    continue
                 # elif(len(sample['answer']) > 1700):
                 #     print("skip data answer too long")
                 #     idx = idx+1
