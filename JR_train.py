@@ -509,7 +509,7 @@ if __name__ == "__main__":
         for name, module in blocks.named_children():
             
             # if (name == '0' or name == '1' or name == '2'):
-            if(int(name) < 16):
+            if(int(name) < 3):
                 print(name)
                 att = module.get_submodule("att")
                 ffn = module.get_submodule("ffn")
@@ -517,8 +517,8 @@ if __name__ == "__main__":
                 change(ffn)
         return model
     
-    # print("Change to LORA:")
-    # model = replace_linear_with_lora(model, r=128)
+    print("Change to LORA:")
+    model = replace_linear_with_lora(model, r=256)
     
     # for name, param in model.named_parameters():
     #     if 'state' in name:
@@ -633,7 +633,8 @@ if __name__ == "__main__":
         dataset2 = load_from_disk("temp_datasets/chinese_speech_only_cosy2")
         dataset3 = load_from_disk("temp_datasets/chinese_speech_only_cosy3")
         dataset4 = load_from_disk("temp_datasets/chinese_speech_only_cosy4")
-        dataset = concatenate_datasets([dataset, dataset2,dataset3,dataset4]).shuffle()#39999
+        dataset5 = load_from_disk("temp_datasets/chinese_speech_only_cosy5")
+        dataset = concatenate_datasets([dataset, dataset2,dataset3,dataset4,dataset5]).shuffle()#49999
         
         # dataset = load_dataset("carlot/AIShell",split="train")
         # dataset2 = load_dataset("carlot/AIShell",split="validation")
