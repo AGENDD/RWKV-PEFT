@@ -485,8 +485,8 @@ if __name__ == "__main__":
             self.lora_B = nn.Parameter(torch.randn(r, out_features))
             self.linear.weight.requires_grad = False
             self.linear.bias.requires_grad = False
-            self.lora_A.requires_grad = True
-            self.lora_B.requires_grad = True
+            self.lora_A.requires_grad = False
+            self.lora_B.requires_grad = False
             self.r = r
 
         def forward(self, x):

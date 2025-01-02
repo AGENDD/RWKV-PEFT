@@ -154,6 +154,8 @@ class train_callback(pl.Callback):
                     filtered_state_dict[key] = param.data
                 elif('speech_encoder' in key):
                     filtered_state_dict[key] = param.data
+                elif('lora' in key):
+                    filtered_state_dict[key] = param.data
             
             # for key in pl_module.state_dict().keys():
             #     # Check if the key matches any of the commented weights
