@@ -20,7 +20,7 @@ class SpeechEncoder(nn.Module):
         train_mode="adapter",
         device="cuda",
     ):
-        assert train_mode in ["adapter", "full"]
+        assert train_mode in ["adapter", "full", 'none']
         super(SpeechEncoder, self).__init__()
 
         feature_extractor = Wav2Vec2FeatureExtractor(
@@ -76,11 +76,16 @@ class SpeechEncoder(nn.Module):
             #         if(n in name):
             #             param.requires_grad = True
             
-        else:
+        elif train_mode == 'full':
             for param in self.model.parameters():
                 param.requires_grad = True
             for param in self.adapter.parameters():
                 param.requires_grad = True
+        else:
+            for param in self.model.parameters():
+                param.requires_grad = False
+            for param in self.adapter.parameters():
+                param.requires_grad = False           
 
     def calculate_mask(self, input_dict):
         """

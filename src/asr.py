@@ -63,11 +63,11 @@ class SLAM_ASR(pl.LightningModule):
         downsample_K=5,
         hidden_dim=2048,
         # hidden_dim=4096,
-        train_mode="full",
+        train_mode="none",
         device="cuda",
         token = "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",
     ):
-        assert train_mode in ["adapter", "full"]
+        assert train_mode in ["adapter", "full", 'none']
         super().__init__()
         self.args = args
         self._device = device
@@ -169,7 +169,7 @@ class SLAM_ASR(pl.LightningModule):
         )
 
     def set_gradient(self, train_mode,tuning):
-        assert train_mode in ["adapter", "full"]
+        assert train_mode in ["adapter", "full",'none']
 
         # call set_gradient for speech encoder
         self.speech_encoder.set_gradient(train_mode)
