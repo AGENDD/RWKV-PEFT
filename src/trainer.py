@@ -152,8 +152,8 @@ class train_callback(pl.Callback):
                     filtered_state_dict[key] = param.data
                 elif('state' in key):
                     filtered_state_dict[key] = param.data
-                elif('speech_encoder' in key):
-                    filtered_state_dict[key] = param.data
+                # elif('speech_encoder' in key):
+                #     filtered_state_dict[key] = param.data
                 elif('lora' in key):
                     filtered_state_dict[key] = param.data
             

@@ -58,7 +58,7 @@ class SLAM_ASR(pl.LightningModule):
     def __init__(
         self,
         args,
-        speech_encoder_model_id,#facebook/hubert-base-ls960
+        speech_encoder_model_id,
         language_model,
         downsample_K=5,
         hidden_dim=2048,
@@ -71,18 +71,7 @@ class SLAM_ASR(pl.LightningModule):
         super().__init__()
         self.args = args
         self._device = device
-        """
-                       |------|
-                       |hubert|
-                       |------|
-                           |
-                           |
-                       (adapter, the only trainable part here)
-                           |
-                           v
-        LLAMA("<user>: [______], transcribe it, <assistant>") --> "The weather is good"
 
-        """
 
         self.language_tokenizer = AutoTokenizer.from_pretrained("RWKV/rwkv-6-world-1b6",trust_remote_code=True)
         # self.language_tokenizer = AutoTokenizer.from_pretrained("RWKV/rwkv-6-world-1b6",trust_remote_code=True)
