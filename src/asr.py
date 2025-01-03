@@ -522,7 +522,7 @@ class SLAM_ASR(pl.LightningModule):
             audios, transcriptions
         )
             
-
+        print(f"adapter output:{prompt_embed}")
         self.T_vector = time.time()
         outputs = self.language_model(inputs_embeds=prompt_embed)
         self.T_rwkv = time.time()
@@ -649,9 +649,9 @@ class SLAM_ASR(pl.LightningModule):
                     
                     try:
                         print(f"logits:{logits.reshape(-1, logits.size(-1))}")
-                        print(f"targets:{targets.reshape(-1)}")
+                        # print(f"targets:{targets.reshape(-1)}")
                         loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), targets.reshape(-1), reduction='none')
-                        print(f"loss{loss}")
+                        print(f"loss:{loss}")
                         loss = torch.sum(loss * mask) / sum_mask
 
                         
