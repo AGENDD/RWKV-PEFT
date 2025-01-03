@@ -450,21 +450,24 @@ class SLAM_ASR(pl.LightningModule):
         
         return prompt_embed, prompt_mask, true_labels.long()
 
-    def output_split(self, outputs, labels, masks):
+    def output_split(self, outputs, labels, masks, transcriptions):
         end_of_asr = self.language_tokenizer(
             "$",
             return_tensors="pt",
         ).to(self.device).input_ids.item()
 
         cut = []
-        for i in labels:
-            indices = torch.where(i == end_of_asr)[0]
+        for i, l in enumerate(labels):
+            indices = torch.where(l == end_of_asr)[0]
             if indices.numel() == 1:
                 cut.append(indices.item())
-            else:
+            elif indices.numel() > 1:
                 # 处理多个匹配的情况，例如只取第一个匹配的下标
-                print(indices)
                 cut.append(indices[0].item())
+            else:
+                print(indices)
+                print(transcriptions[i])
+                exit(0)
 
         output1_list = []
         label1_list = []
@@ -523,7 +526,7 @@ class SLAM_ASR(pl.LightningModule):
         outputs = self.language_model(inputs_embeds=prompt_embed)
         self.T_rwkv = time.time()
         
-        output1, label1, mask1, output2, label2, mask2 = self.output_split(outputs, true_labels, prompt_mask)
+        output1, label1, mask1, output2, label2, mask2 = self.output_split(outputs, true_labels, prompt_mask, transcriptions)
         
         return outputs, true_labels, prompt_mask, output1, label1, mask1, output2, label2, mask2
         
