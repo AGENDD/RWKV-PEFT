@@ -458,7 +458,12 @@ class SLAM_ASR(pl.LightningModule):
 
         cut = []
         for i in labels:
-            cut.append(torch.where(i == end_of_asr)[0].item())
+            indices = torch.where(i == end_of_asr)[0]
+            if indices.numel() == 1:
+                cut.append(indices.item())
+            else:
+                # 处理多个匹配的情况，例如只取第一个匹配的下标
+                cut.append(indices[0].item())
 
         output1_list = []
         label1_list = []
