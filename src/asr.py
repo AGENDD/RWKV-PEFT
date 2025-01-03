@@ -522,7 +522,7 @@ class SLAM_ASR(pl.LightningModule):
             audios, transcriptions
         )
             
-        print(f"adapter output:{prompt_embed}")
+        # print(f"adapter output:{prompt_embed}")
         self.T_vector = time.time()
         outputs = self.language_model(inputs_embeds=prompt_embed)
         self.T_rwkv = time.time()
