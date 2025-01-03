@@ -18,14 +18,14 @@ class SpeechAdapter(nn.Module):
         self.conv = nn.Conv1d(in_channels=input_dim, out_channels=3072, kernel_size=3, stride=2)
         self.transformer = nn.TransformerEncoderLayer(d_model=3072, nhead=8, dim_feedforward=4096)
         self.linear = nn.Linear(3072, output_dim)
-    def forward(self, x):
+    def forward(self, x, mask):
         # x shape: (batch_size, seq_len, input_dim)
         x = x.permute(0, 2, 1)
         # x shape: (batch_size, input_dim, seq_len)
         x = self.conv(x)
         # x shape after conv: (batch_size, input_dim, new_seq_len)
         x = x.permute(2, 0, 1)  # Transformer expects (seq_len, batch_size, input_dim)
-        x = self.transformer(x)
+        x = self.transformer(x, src_key_padding_mask=mask)
         x = x.permute(1, 0, 2)  # Back to (batch_size, seq_len, input_dim)
         x = self.linear(x)
         return x
@@ -141,17 +141,25 @@ class SpeechEncoder(nn.Module):
         mask_tensor = torch.tensor(mask_list)
         
         return padded_audio_tensor.to(self.device).to(torch.bfloat16), mask_tensor.to(self.device).to(torch.bfloat16)
-        
+    
+    def adjust_mask(self, mask, stride):
+        # 假设 mask 的形状为 (batch_size, seq_len)
+        batch_size, seq_len = mask.shape
+        new_seq_len = (seq_len - 1) // stride + 1
+        new_mask = mask[:, :new_seq_len * stride:stride]
+        return new_mask
 
     def forward(self, x):
         input_dict = self.processor(
             x, return_tensors="pt", padding=True, sampling_rate=16000
         ).to(self.device,dtype=torch.bfloat16)
+        
+        mask = self.adjust_mask(input_dict['attention_mask'], stride=2)
         # mask = self.calculate_mask(input_dict)
         x = self.model(**input_dict).last_hidden_state
-        x = self.adapter(x)#x:(B,T,hidden dim)
+        x = self.adapter(x, mask)#x:(B,T,hidden dim)
         
-        mask = torch.ones(x.shape[0],x.shape[1]).to(self.device,dtype=torch.bfloat16)
+        # mask = torch.ones(x.shape[0],x.shape[1]).to(self.device,dtype=torch.bfloat16)
         
         
         assert mask.shape == x.shape[:2], f"Shape mismatch: mask.shape = {mask.shape}, x.shape[:2] = {x.shape[:2]}"
