@@ -25,7 +25,7 @@ class SpeechAdapter(nn.Module):
         x = self.conv(x)
         # x shape after conv: (batch_size, input_dim, new_seq_len)
         x = x.permute(2, 0, 1)  # Transformer expects (seq_len, batch_size, input_dim)
-        x = self.transformer(x, src_key_padding_mask=mask)
+        x = self.transformer(x, src_key_padding_mask=mask.bool())
         x = x.permute(1, 0, 2)  # Back to (batch_size, seq_len, input_dim)
         x = self.linear(x)
         return x
