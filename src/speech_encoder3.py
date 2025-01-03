@@ -27,10 +27,7 @@ class SpeechAdapter(nn.Module):
         x = x.permute(2, 0, 1)  # Transformer expects (seq_len, batch_size, input_dim)
         mask = mask[:, : x.shape[0]]
         # x = self.transformer(x, src_key_padding_mask=mask.bool())
-        print(f"x before transformer:{x}")
-        print(f"mask:{mask}")
         x = self.transformer(x, src_key_padding_mask=~mask.bool())
-        print(f"x after transformer:{x}")
         x = x.permute(1, 0, 2)  # Back to (batch_size, seq_len, input_dim)
         x = self.linear(x)
         return x, mask
@@ -163,11 +160,9 @@ class SpeechEncoder(nn.Module):
         mask = mask[:, :: (self.time_reduction_factor)]
         x = self.model(**input_dict).last_hidden_state
         
-        print(f"wavlm output:{x}")
+
         mask = self.adjust_mask(mask, stride=2)
         x, mask = self.adapter(x, mask)#x:(B,T,hidden dim)
-        
-        print(f"adapter output:{x}")
         # mask = torch.ones(x.shape[0],x.shape[1]).to(self.device,dtype=torch.bfloat16)
         
         
