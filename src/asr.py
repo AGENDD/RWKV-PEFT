@@ -452,7 +452,7 @@ class SLAM_ASR(pl.LightningModule):
 
     def output_split(self, outputs, labels, masks, transcriptions):
         end_of_asr = self.language_tokenizer(
-            "$",
+            "~",
             return_tensors="pt",
         ).to(self.device).input_ids.item()
 
@@ -466,6 +466,7 @@ class SLAM_ASR(pl.LightningModule):
                 cut.append(indices[0].item())
             else:
                 print(indices)
+                print(l)
                 print(transcriptions[i])
                 exit(0)
 
