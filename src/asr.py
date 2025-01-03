@@ -451,35 +451,56 @@ class SLAM_ASR(pl.LightningModule):
         return prompt_embed, prompt_mask, true_labels.long()
 
     def output_split(self, outputs, labels, masks):
-        
-        print(f"outputs:{type(outputs)}")
-        print(f"labels:{type(labels)}")
-        print(f"masks:{type(masks)}")
-        
-        
         end_of_asr = self.language_tokenizer(
-                "$",
-                return_tensors="pt",
+            "$",
+            return_tensors="pt",
         ).to(self.device).input_ids.item()
 
-        print(f"tokenized end of asr: {end_of_asr}")
-        
         cut = []
-        
-        
         for i in labels:
             cut.append(torch.where(i == end_of_asr)[0].item())
-        
-        print(cut)
-        
-        exit(0)
-        
-        
-        output1, label1, mask1, output2, label2, mask2
-        
-        # for i, c in enumerate(cut):
-            
-        
+
+        output1_list = []
+        label1_list = []
+        mask1_list = []
+        output2_list = []
+        label2_list = []
+        mask2_list = []
+
+        for i, c in enumerate(cut):
+            o = outputs[i]
+            l = labels[i]
+            m = masks[i]
+
+            o1 = o[:c+1]
+            l1 = l[:c+1]
+            m1 = m[:c+1]
+
+            o2 = o[c+2:]
+            l2 = l[c+2:]
+            m2 = m[c+2:]
+
+            output1_list.append(o1)
+            label1_list.append(l1)
+            mask1_list.append(m1)
+            output2_list.append(o2)
+            label2_list.append(l2)
+            mask2_list.append(m2)
+
+        output1 = torch.cat(output1_list, dim=0)
+        label1 = torch.cat(label1_list, dim=0)
+        mask1 = torch.cat(mask1_list, dim=0)
+        output2 = torch.cat(output2_list, dim=0)
+        label2 = torch.cat(label2_list, dim=0)
+        mask2 = torch.cat(mask2_list, dim=0)
+
+        print(f"output1: {output1.shape}")
+        print(f"label1: {label1.shape}")
+        print(f"mask1: {mask1.shape}")
+        print(f"output2: {output2.shape}")
+        print(f"label2: {label2.shape}")
+        print(f"mask2: {mask2.shape}")
+
         return output1, label1, mask1, output2, label2, mask2
             
         
@@ -497,9 +518,9 @@ class SLAM_ASR(pl.LightningModule):
         self.T_rwkv = time.time()
         
         output1, label1, mask1, output2, label2, mask2 = self.output_split(outputs, true_labels, prompt_mask)
-
+        exit(0)
         
-        
+        return output1, label1, mask1, output2, label2, mask2
         
         return outputs, true_labels, prompt_mask
     
