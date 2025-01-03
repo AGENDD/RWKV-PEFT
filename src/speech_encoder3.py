@@ -145,7 +145,7 @@ class SpeechEncoder(nn.Module):
         input_dict = self.processor(
             x, return_tensors="pt", padding=True, sampling_rate=16000
         ).to(self.device,dtype=torch.bfloat16)
-        mask = self.calculate_mask(input_dict)
+        # mask = self.calculate_mask(input_dict)
         x = self.model(**input_dict).last_hidden_state
         x = self.adapter(x)#x:(B,T,hidden dim)
         
