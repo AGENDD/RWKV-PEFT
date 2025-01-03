@@ -450,8 +450,26 @@ class SLAM_ASR(pl.LightningModule):
         
         return prompt_embed, prompt_mask, true_labels.long()
 
-        
+    def output_split(self, outputs, labels):
+        end_of_asr = self.language_tokenizer(
+                "$",
+                return_tensors="pt",
+        ).to(self.device)
 
+        print(f"tokenized end of asr: {end_of_asr}")
+        
+        cut = []
+        
+        for i in labels:
+            cut.append(i.index(end_of_asr))
+        
+        print(cut)
+        
+        exit(0)
+        
+        # for i, c in enumerate(cut):
+            
+        
     def forward(self, audios: List[str], transcriptions: List[str] = None):
         # for i in range(len(audios)):
         #         print(f"{len(audios[i])/16000}:{len(transcriptions[i])}")
@@ -464,8 +482,12 @@ class SLAM_ASR(pl.LightningModule):
         self.T_vector = time.time()
         outputs = self.language_model(inputs_embeds=prompt_embed)
         self.T_rwkv = time.time()
-            
+        
+        output1, label1, mask1, output2, label2, mask2 = self.output_split(outputs, true_labels, prompt_mask)
 
+        
+        
+        
         return outputs, true_labels, prompt_mask
     
     
