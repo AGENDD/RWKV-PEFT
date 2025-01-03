@@ -23,13 +23,6 @@ class SpeechEncoder(nn.Module):
         assert train_mode in ["adapter", "full", 'none']
         super(SpeechEncoder, self).__init__()
 
-        feature_extractor = Wav2Vec2FeatureExtractor(
-            feature_size=1,
-            sampling_rate=16000,
-            padding_value=0.0,
-            do_normalize=True,
-            return_attention_mask=False,
-        )
         self.device = device
         self.processor = AutoProcessor.from_pretrained("facebook/hubert-large-ls960-ft")
         self.time_reduction_factor = int(

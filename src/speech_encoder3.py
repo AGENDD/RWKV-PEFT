@@ -43,41 +43,41 @@ class SpeechEncoder(nn.Module):
         assert train_mode in ["adapter", "full"]
         super(SpeechEncoder, self).__init__()
 
-        # feature_extractor = Wav2Vec2FeatureExtractor(
-        #     feature_size=1,
-        #     sampling_rate=16000,
-        #     padding_value=0.0,
-        #     do_normalize=True,
-        #     return_attention_mask=False,
-        # )
         self.device = device
-        # try:
-        #     self.processor = AutoProcessor.from_pretrained(model_id)
-        # except:
-        #     self.processor = AutoProcessor.from_pretrained("facebook/hubert-large-ls960-ft")
-        # self.time_reduction_factor = int(
-        #     self.processor.feature_extractor.sampling_rate / 50
-        # )
+        try:
+            self.processor = AutoProcessor.from_pretrained(model_id)
+        except:
+            self.processor = AutoProcessor.from_pretrained("facebook/hubert-large-ls960-ft")
+        self.time_reduction_factor = int(
+            self.processor.feature_extractor.sampling_rate / 50
+        )
         self.padding_length = 320
         
-        config_path = "temp_models/ST/config.json"
-        ckpt_path = "temp_models/ST/SpeechTokenizer.pt"
+        # config_path = "temp_models/ST/config.json"
+        # ckpt_path = "temp_models/ST/SpeechTokenizer.pt"
         
         
-        self.model = SpeechTokenizer.load_from_checkpoint(config_path, ckpt_path).eval()
-        self.model = self.model.to(self.device,dtype=torch.bfloat16)
+        # self.model = SpeechTokenizer.load_from_checkpoint(config_path, ckpt_path).eval()
+        # self.model = self.model.to(self.device,dtype=torch.bfloat16)
         
-        
-        # self.downsample_K = downsample_K
-        
-        # self.model_output_dim = self.model.config.hidden_size
-        self.model_output_dim = self.model.n_q
-        # self.downsample_K = downsample_K
+        self.model = AutoModel.from_pretrained(model_id).to(self.device,dtype=torch.bfloat16)
+        self.model.eval()
+        self.model_output_dim = self.model.config.hidden_size
+        self.downsample_K = downsample_K
         self.project_dim = project_dim
         if hidden_dim is None:
             self.hidden_dim = self.project_dim * 2
         else:
             self.hidden_dim = hidden_dim
+            
+            
+        # self.downsample_K = downsample_K
+        
+        # self.model_output_dim = self.model.config.hidden_size
+        # self.model_output_dim = self.model.n_q
+        # self.downsample_K = downsample_K
+        self.project_dim = project_dim
+
             
         self.adapter = SpeechAdapter(self.model_output_dim, self.project_dim).to(self.device,dtype=torch.bfloat16)
         self.set_gradient(train_mode)
