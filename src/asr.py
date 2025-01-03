@@ -450,7 +450,13 @@ class SLAM_ASR(pl.LightningModule):
         
         return prompt_embed, prompt_mask, true_labels.long()
 
-    def output_split(self, outputs, labels):
+    def output_split(self, outputs, labels, masks):
+        
+        print(f"outputs:{type(outputs)}")
+        print(f"labels:{type(labels)}")
+        print(f"masks:{type(masks)}")
+        
+        
         end_of_asr = self.language_tokenizer(
                 "$",
                 return_tensors="pt",
@@ -460,6 +466,7 @@ class SLAM_ASR(pl.LightningModule):
         
         cut = []
         
+        
         for i in labels:
             cut.append(i.index(end_of_asr))
         
@@ -467,7 +474,13 @@ class SLAM_ASR(pl.LightningModule):
         
         exit(0)
         
+        
+        output1, label1, mask1, output2, label2, mask2
+        
         # for i, c in enumerate(cut):
+        
+        
+        return output1, label1, mask1, output2, label2, mask2
             
         
     def forward(self, audios: List[str], transcriptions: List[str] = None):
