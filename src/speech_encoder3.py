@@ -160,6 +160,7 @@ class SpeechEncoder(nn.Module):
         
         
         mask = self.adjust_mask(mask, stride=2)
+        mask = mask[:, : x.shape[1]]
         x = self.adapter(x, mask)#x:(B,T,hidden dim)
         
         # mask = torch.ones(x.shape[0],x.shape[1]).to(self.device,dtype=torch.bfloat16)
