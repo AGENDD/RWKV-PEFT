@@ -15,7 +15,7 @@ from speechtokenizer import SpeechTokenizer
 class SpeechAdapter(nn.Module):
     def __init__(self, input_dim, output_dim):
         super(SpeechAdapter, self).__init__()
-        self.conv = nn.Conv1d(in_channels=input_dim, out_channels=input_dim, kernel_size=3, stride=2)
+        self.conv = nn.Conv1d(in_channels=input_dim, out_channels=3072, kernel_size=3, stride=2)
         self.transformer = nn.TransformerEncoderLayer(d_model=3072, nhead=8, dim_feedforward=4096)
         self.linear = nn.Linear(3072, output_dim)
     def forward(self, x):
