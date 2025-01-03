@@ -460,7 +460,7 @@ class SLAM_ASR(pl.LightningModule):
         end_of_asr = self.language_tokenizer(
                 "$",
                 return_tensors="pt",
-        ).to(self.device)
+        ).to(self.device).input_ids.item()
 
         print(f"tokenized end of asr: {end_of_asr}")
         
@@ -468,7 +468,7 @@ class SLAM_ASR(pl.LightningModule):
         
         
         for i in labels:
-            cut.append(i.index(end_of_asr))
+            cut.append(torch.where(i == end_of_asr)[0].item())
         
         print(cut)
         
@@ -478,7 +478,7 @@ class SLAM_ASR(pl.LightningModule):
         output1, label1, mask1, output2, label2, mask2
         
         # for i, c in enumerate(cut):
-        
+            
         
         return output1, label1, mask1, output2, label2, mask2
             
