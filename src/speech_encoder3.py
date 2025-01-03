@@ -29,7 +29,7 @@ class SpeechAdapter(nn.Module):
         # x = self.transformer(x, src_key_padding_mask=mask.bool())
         print(f"x before transformer:{x}")
         print(f"mask:{mask}")
-        x = self.transformer(x, src_key_padding_mask=mask.bool())
+        x = self.transformer(x, src_key_padding_mask=~mask.bool())
         print(f"x after transformer:{x}")
         x = x.permute(1, 0, 2)  # Back to (batch_size, seq_len, input_dim)
         x = self.linear(x)
