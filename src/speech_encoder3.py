@@ -160,11 +160,11 @@ class SpeechEncoder(nn.Module):
         mask = mask[:, :: (self.time_reduction_factor)]
         x = self.model(**input_dict).last_hidden_state
         
-        
+        print(f"wavlm output:{x}")
         mask = self.adjust_mask(mask, stride=2)
-        
         x, mask = self.adapter(x, mask)#x:(B,T,hidden dim)
         
+        print(f"adapter output:{x}")
         # mask = torch.ones(x.shape[0],x.shape[1]).to(self.device,dtype=torch.bfloat16)
         
         
