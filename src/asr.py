@@ -519,7 +519,7 @@ class SLAM_ASR(pl.LightningModule):
         
         output1, label1, mask1, output2, label2, mask2 = self.output_split(outputs, true_labels, prompt_mask)
         
-        return output1, label1, mask1, output2, label2, mask2
+        return outputs, true_labels, prompt_mask, output1, label1, mask1, output2, label2, mask2
         
         return outputs, true_labels, prompt_mask
     
@@ -609,7 +609,7 @@ class SLAM_ASR(pl.LightningModule):
                 # logits, targets, mask = self(idx, transcription)
                 #mask = mask.reshape(-1)
                 # sum_mask = torch.sum(mask).item()
-                logits1, targets1, mask1,logits2, targets2, mask2 = self(idx, transcription)
+                logits, targets, mask,logits1, targets1, mask1,logits2, targets2, mask2 = self(idx, transcription)
                 
                 sum_mask1 = torch.sum(mask1).item()
                 sum_mask2 = torch.sum(mask2).item()
