@@ -12,6 +12,24 @@ from transformers import Wav2Vec2CTCTokenizer
 from speechtokenizer import SpeechTokenizer
 
 
+class SpeechAdapter(nn.Module):
+    def __init__(self, input_dim, output_dim):
+        super(SpeechAdapter, self).__init__()
+        self.conv = nn.Conv1d(in_channels=input_dim, out_channels=input_dim, kernel_size=3, stride=2)
+        self.transformer = nn.TransformerEncoderLayer(d_model=3072, nhead=8, dim_feedforward=4096)
+        self.linear = nn.Linear(3072, output_dim)
+    def forward(self, x):
+        # x shape: (batch_size, input_dim, seq_len)
+        x = self.conv(x)
+        # x shape after conv: (batch_size, input_dim, new_seq_len)
+        x = x.permute(2, 0, 1)  # Transformer expects (seq_len, batch_size, input_dim)
+        x = self.transformer(x)
+        x = x.permute(1, 2, 0)  # Back to (batch_size, input_dim, new_seq_len)
+        x = self.linear(x)
+        return x
+
+
+
 class SpeechEncoder(nn.Module):
     def __init__(
         self,
@@ -61,11 +79,7 @@ class SpeechEncoder(nn.Module):
         else:
             self.hidden_dim = hidden_dim
             
-        self.adapter = nn.Sequential(
-            nn.Linear(self.model_output_dim, self.hidden_dim),
-            nn.ReLU(),
-            nn.Linear(self.hidden_dim, self.project_dim),
-        ).to(self.device,dtype=torch.bfloat16)
+        self.adapter = SpeechAdapter(self.model_output_dim, self.project_dim).to(self.device,dtype=torch.bfloat16)
         self.set_gradient(train_mode)
         
         # print("Parameters in speech encoder that require grad:")
@@ -128,23 +142,15 @@ class SpeechEncoder(nn.Module):
         
 
     def forward(self, x):
-        # input_dict = self.processor(
-        #     x, return_tensors="pt", padding=True, sampling_rate=16000
-        # ).to(self.device,dtype=torch.bfloat16)
-        x,mask = self.padding_mask(x)#x:(B,1,T) mask:(B,T)    
-        
-        x = self.model.encode(x)#x:(n_q,B,T*) 这里时间步被除以了320
-        x = x.permute(1,2,0)#x:(B,T,n_q)
-
-        # mask = self.downsample_mask(mask) #mask:(B,T//k)
-        
-        x = x.to(torch.bfloat16)
+        input_dict = self.processor(
+            x, return_tensors="pt", padding=True, sampling_rate=16000
+        ).to(self.device,dtype=torch.bfloat16)
+        mask = self.calculate_mask(input_dict)
+        x = self.model(**input_dict).last_hidden_state
         x = self.adapter(x)#x:(B,T,hidden dim)
         
         mask = torch.ones(x.shape[0],x.shape[1]).to(self.device,dtype=torch.bfloat16)
         
         
         assert mask.shape == x.shape[:2], f"Shape mismatch: mask.shape = {mask.shape}, x.shape[:2] = {x.shape[:2]}"
-        # mask = mask[:, : x.shape[1]]
-        # mask = torch.ones(x.shape[0],x.shape[1])
         return x, mask

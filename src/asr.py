@@ -13,12 +13,12 @@ from torch.nn.utils.rnn import pad_sequence
 
 try:
     # from .speech_encoder import SpeechEncoder
-    from .speech_encoder2 import SpeechEncoder
-    # from .speech_encoder3 import SpeechEncoder
+    # from .speech_encoder2 import SpeechEncoder
+    from .speech_encoder3 import SpeechEncoder
 except ImportError:
     # from speech_encoder import SpeechEncoder
-    from speech_encoder2 import SpeechEncoder
-    # from speech_encoder3 import SpeechEncoder
+    # from speech_encoder2 import SpeechEncoder
+    from speech_encoder3 import SpeechEncoder
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from .model import RWKV
@@ -527,11 +527,13 @@ class SLAM_ASR(pl.LightningModule):
         outputs = self.language_model(inputs_embeds=prompt_embed)
         self.T_rwkv = time.time()
         
-        output1, label1, mask1, output2, label2, mask2 = self.output_split(outputs, true_labels, prompt_mask, transcriptions)
         
-        return outputs, true_labels, prompt_mask, output1, label1, mask1, output2, label2, mask2
-        
-        return outputs, true_labels, prompt_mask
+        mode = "asr"
+        if(mode == 'qa'):
+            output1, label1, mask1, output2, label2, mask2 = self.output_split(outputs, true_labels, prompt_mask, transcriptions)
+            return outputs, true_labels, prompt_mask, output1, label1, mask1, output2, label2, mask2
+        else:
+            return outputs, true_labels, prompt_mask, None, None, None, None, None, None
     
     
     # def forward(self, tensors, transcriptions: List[str] = None):
@@ -621,25 +623,39 @@ class SLAM_ASR(pl.LightningModule):
                 # sum_mask = torch.sum(mask).item()
                 logits, targets, mask,logits1, targets1, mask1,logits2, targets2, mask2 = self(idx, transcription)
                 
-                sum_mask1 = torch.sum(mask1).item()
-                sum_mask2 = torch.sum(mask2).item()
+                if(logits1 is not None):
+                    sum_mask1 = torch.sum(mask1).item()
+                    sum_mask2 = torch.sum(mask2).item()
 
-                try:
-                    # loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), targets.reshape(-1), reduction='none')
-                    # loss_raw = loss
-                    # loss = torch.sum(loss * mask) / sum_mask
+                    try:
+                        # loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), targets.reshape(-1), reduction='none')
+                        # loss_raw = loss
+                        # loss = torch.sum(loss * mask) / sum_mask
+                        
+                        loss1 = F.cross_entropy(logits1, targets1, reduction='none')               
+                        loss2 = F.cross_entropy(logits2, targets2, reduction='none')
+                        
+                        loss1 = torch.sum(loss1 * mask1) / sum_mask1
+                        loss2 = torch.sum(loss2 * mask2) / sum_mask2
+                        
+                        loss = 0.8*loss1 + 0.2*loss2
+                        
+                    except:
+                        loss = torch.tensor([0.0], device=logits.device)  
+                        print("zero loss")
+                else:
+                    mask = mask.reshape(-1)
+                    sum_mask = torch.sum(mask).item()
                     
-                    loss1 = F.cross_entropy(logits1, targets1, reduction='none')               
-                    loss2 = F.cross_entropy(logits2, targets2, reduction='none')
+                    try:
+                        loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), targets.reshape(-1), reduction='none')
+                        loss = torch.sum(loss * mask) / sum_mask
+
+                        
+                    except:
+                        loss = torch.tensor([0.0], device=logits.device)  
+                        print("zero loss")
                     
-                    loss1 = torch.sum(loss1 * mask1) / sum_mask1
-                    loss2 = torch.sum(loss2 * mask2) / sum_mask2
-                    
-                    loss = 0.8*loss1 + 0.2*loss2
-                    
-                except:
-                    loss = torch.tensor([0.0], device=logits.device)  
-                    print("zero loss")
 
             return L2Wrap.apply(loss, logits)
     
