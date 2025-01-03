@@ -463,6 +463,7 @@ class SLAM_ASR(pl.LightningModule):
                 cut.append(indices.item())
             else:
                 # 处理多个匹配的情况，例如只取第一个匹配的下标
+                print(indices)
                 cut.append(indices[0].item())
 
         output1_list = []
