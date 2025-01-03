@@ -154,9 +154,12 @@ class SpeechEncoder(nn.Module):
             x, return_tensors="pt", padding=True, sampling_rate=16000
         ).to(self.device,dtype=torch.bfloat16)
         
-        mask = self.adjust_mask(input_dict['attention_mask'], stride=2)
-        # mask = self.calculate_mask(input_dict)
+        mask = input_dict['attention_mask']
+        mask = mask[:, :: (self.time_reduction_factor)]
         x = self.model(**input_dict).last_hidden_state
+        
+        
+        mask = self.adjust_mask(mask, stride=2)
         x = self.adapter(x, mask)#x:(B,T,hidden dim)
         
         # mask = torch.ones(x.shape[0],x.shape[1]).to(self.device,dtype=torch.bfloat16)
