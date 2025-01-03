@@ -19,12 +19,14 @@ class SpeechAdapter(nn.Module):
         self.transformer = nn.TransformerEncoderLayer(d_model=3072, nhead=8, dim_feedforward=4096)
         self.linear = nn.Linear(3072, output_dim)
     def forward(self, x):
+        # x shape: (batch_size, seq_len, input_dim)
+        x = x.permute(0, 2, 1)
         # x shape: (batch_size, input_dim, seq_len)
         x = self.conv(x)
         # x shape after conv: (batch_size, input_dim, new_seq_len)
         x = x.permute(2, 0, 1)  # Transformer expects (seq_len, batch_size, input_dim)
         x = self.transformer(x)
-        x = x.permute(1, 2, 0)  # Back to (batch_size, input_dim, new_seq_len)
+        x = x.permute(1, 0, 2)  # Back to (batch_size, input_dim, new_seq_len)
         x = self.linear(x)
         return x
 
