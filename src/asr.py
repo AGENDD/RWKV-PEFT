@@ -648,8 +648,10 @@ class SLAM_ASR(pl.LightningModule):
                     sum_mask = torch.sum(mask).item()
                     
                     try:
+                        print(f"logits:{logits.reshape(-1, logits.size(-1))}")
+                        print(f"targets:{targets.reshape(-1)}")
                         loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), targets.reshape(-1), reduction='none')
-                        print(loss)
+                        print(f"loss{loss}")
                         loss = torch.sum(loss * mask) / sum_mask
 
                         
