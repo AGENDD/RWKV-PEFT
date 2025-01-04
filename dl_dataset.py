@@ -14,6 +14,6 @@ import soundfile as sf
 ds = load_from_disk("temp_datasets/chinese_speech_only_cosy").shuffle()
 
 for i in tqdm(range(100)):
-    array = ds[i]['speech_cosy']
-    sf.write(f'temp_audios/audio{i}.wav', array, 22050)
+    array = ds[i]['speech_cosy'][0]
+    sf.write(f'temp_audios/audio{i}.wav', array, 16000)
 
