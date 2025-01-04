@@ -232,7 +232,7 @@ def suppress_stdout(*args, **kwargs):
             yield
 
 
-ds = load_from_disk("~/JRwork/RWKV-PEFT/temp_datasets/chinese_speech_only").select(range(40000,50000))
+ds = load_from_disk("~/JRwork/RWKV-PEFT/temp_datasets/chinese_speech_only").select(range(50000,60000))
 cosyvoice = CosyVoice2('pretrained_models/CosyVoice2-0.5B', load_jit=True, load_onnx=False, load_trt=False)
 
 print(ds)
@@ -262,5 +262,5 @@ ds = ds.filter(fill, num_proc=32)
 
 print(ds)
 
-ds.save_to_disk("~/JRwork/RWKV-PEFT/temp_datasets/chinese_speech_only_cosy5")
+ds.save_to_disk("~/JRwork/RWKV-PEFT/temp_datasets/chinese_speech_only_cosy6")
 

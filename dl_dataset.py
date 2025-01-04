@@ -11,9 +11,9 @@ import soundfile as sf
 
 # token = "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"
 
-ds = load_from_disk("temp_datasets/VoiceAssistant").shuffle()
+ds = load_from_disk("temp_datasets/chinese_speech_only_cosy").shuffle()
 
 for i in tqdm(range(100)):
-    array = ds[i]["question_audio"]['array']
+    array = ds[i]['speech_cosy']
     sf.write(f'temp_audios/audio{i}.wav', array, 22050)
 
