@@ -20,48 +20,44 @@ import augment, random
 
 ds = load_from_disk('temp_datasets/chinese_speech_only_cosy')
 
+def audioAug(audio):
 
-
-
-def mapp(data):
-    def audioAug(audio):
-
-        random_speed = random.uniform(0.7, 1.3)
-        audio = np.array(audio)
-        audio = librosa.effects.time_stretch(audio, rate = random_speed)
-        audio = audio.tolist()
-        x = torch.tensor(audio)
-        x = x.unsqueeze(0)
+    audio = np.array(audio)
+    sr = 16000
+    
+    ######################时域拉伸
+    random_speed = random.uniform(0.7, 1.3)
+    
+    audio = librosa.effects.time_stretch(audio, rate = random_speed)
+    # audio = audio.tolist()
         
-        sr = 16000
-        random_pitch_shift = lambda: np.random.randint(-400, +400)
-        random_room_size = lambda: np.random.randint(0, 101)
-        # random_noise = lambda: torch.zeros_like(x).uniform_()
-        random_noise = lambda: torch.zeros_like(x).uniform_() * np.random.uniform(0, 0.3)
-        random_dropout = random.uniform(0, 0.2)
-        
-        combination = augment.EffectChain() \
-            .additive_noise(random_noise, snr=15) \
-            .pitch("-q", random_pitch_shift).rate(sr) \
-            .time_dropout(max_seconds=random_dropout) \
-            .reverb(50, 50, random_room_size).channels(1) 
-            
-            
-        x = combination.apply(x, src_info={'rate': sr}, target_info={'rate': sr})
-        
-        x = list(x[0])
-        
-        torch.cuda.empty_cache()
-        return x
-    try:
-        data['speech_cosy'][0] = audioAug(data['speech_cosy'][0])
-    except:
-        data = data
-    return data
+    ######################音高变化
+    
+    n_steps = np.random.uniform(-5, 5)
+    audio = librosa.effects.pitch_shift(audio, sr, n_steps)
+    
+    ######################时域遮挡
+    
+    mask_duration = np.random.uniform(0, 0.2)
+    mask_length = int(mask_duration * sr)
+    mask_start = np.random.randint(0, len(audio) - mask_length)
+    audio[mask_start:mask_start + mask_length] = 0
+    
+    ######################加噪
+    
+    noise_factor = np.random.uniform(0, 0.01)
+    noise = noise_factor * np.random.normal(loc=0.0, scale=1.0, size=audio.shape)
+    audio = audio + noise
+    
+    audio = audio.tolist()
+    return audio
 
-ds = ds.map(mapp, cache_file_name="cache/file.arrow")
+x = ds[0]['speech_cosy'][0]
 
-ds.save_to_disk("temp_datasets/chinese_speech_only_cosy_aug")
+for i in range(50):
+    y = audioAug(x)
+    
+    sf.write(f"temp_audios/audio{i}.wav", y, 16000)
 # print(ds)
 # def mapp(example):
 #     transcript = example['trascript']
