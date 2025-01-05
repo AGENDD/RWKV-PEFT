@@ -647,7 +647,7 @@ if __name__ == "__main__":
         # dataset, transcipt = aishell() # 120098
         Total_model.train()
         dataset = MyDataset(args, dataset)
-        data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=8, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
+        data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=16, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
         print("train starting...")
         # with torch.cuda.amp.autocast():
         trainer.fit(Total_model, data_loader)
