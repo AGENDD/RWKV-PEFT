@@ -59,7 +59,7 @@ def mapp(data):
         data = data
     return data
 
-ds = ds.map(mapp, num_proc=32, cache_file_name="cache/file.arrow")
+ds = ds.map(mapp, cache_file_name="cache/file.arrow")
 
 ds.save_to_disk("temp_datasets/chinese_speech_only_cosy_aug")
 # print(ds)
