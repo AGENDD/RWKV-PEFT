@@ -61,7 +61,7 @@ class MyDataset(Dataset):
             try:
                 sample = self.hf_dataset[idx]
                 
-                if(len(sample['speech_cosy'][0])/16000 > 10.0):
+                if(len(sample['speech_cosy'][0])/16000 > 15.0):
                     print("skip data audio too long")
                     idx = idx+1
                     continue

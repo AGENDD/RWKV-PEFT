@@ -629,16 +629,16 @@ if __name__ == "__main__":
         # dataset = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()  #246866
         # dataset = load_from_disk("temp_datasets/chinese_speech").shuffle() #123433
 
-        dataset = load_from_disk("temp_datasets/chiese_speech_only_cosy_aug")
-        dataset2 = load_from_disk("temp_datasets/chinese_speech_only_cosy2")
-        dataset = concatenate_datasets([dataset, dataset2]).shuffle()#20000
-
-        # dataset = load_from_disk("temp_datasets/chinese_speech_only_cosy")
+        # dataset = load_from_disk("temp_datasets/chiese_speech_only_cosy_aug")
         # dataset2 = load_from_disk("temp_datasets/chinese_speech_only_cosy2")
-        # dataset3 = load_from_disk("temp_datasets/chinese_speech_only_cosy3")
-        # dataset4 = load_from_disk("temp_datasets/chinese_speech_only_cosy4")
-        # dataset5 = load_from_disk("temp_datasets/chinese_speech_only_cosy5")
-        # dataset = concatenate_datasets([dataset, dataset2,dataset3,dataset4,dataset5]).shuffle()#49999
+        # dataset = concatenate_datasets([dataset, dataset2]).shuffle()#20000
+
+        dataset = load_from_disk("temp_datasets/chinese_speech_only_cosy")
+        dataset2 = load_from_disk("temp_datasets/chinese_speech_only_cosy2")
+        dataset3 = load_from_disk("temp_datasets/chinese_speech_only_cosy3")
+        dataset4 = load_from_disk("temp_datasets/chinese_speech_only_cosy4")
+        dataset5 = load_from_disk("temp_datasets/chinese_speech_only_cosy5")
+        dataset = concatenate_datasets([dataset, dataset2,dataset3,dataset4,dataset5]).shuffle()#49999
         
         # dataset = load_dataset("carlot/AIShell",split="train")
         # dataset2 = load_dataset("carlot/AIShell",split="validation")

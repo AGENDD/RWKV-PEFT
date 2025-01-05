@@ -548,6 +548,9 @@ class SLAM_ASR(pl.LightningModule):
             
         
     def forward(self, audios: List[str], transcriptions: List[str] = None):
+        
+        torch.cuda.empty_cache()
+        
         # for i in range(len(audios)):
         #         print(f"{len(audios[i])/16000}:{len(transcriptions[i])}")
         # with torch.no_grad():
