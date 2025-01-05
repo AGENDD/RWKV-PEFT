@@ -21,52 +21,46 @@ import augment, random
 ds = load_from_disk('temp_datasets/chinese_speech_only_cosy')
 
 
-def audioAug(audio):
-    
-    random_speed = random. uniform(0.7, 1.3)
-    audio = np.array(audio)
-    audio = librosa.effects.time_stretch(audio, random_speed)
-    audio = audio.tolist()
-    
-    x = torch.tensor(audio)
-    x = x.unsqueeze(0)
-    
-    
 
 
-    sr = 16000
-    
-    random_pitch_shift = lambda: np.random.randint(-400, +400)
-    random_room_size = lambda: np.random.randint(0, 101)
-    # random_noise = lambda: torch.zeros_like(x).uniform_()
-    random_noise = lambda: torch.zeros_like(x).uniform_() * np.random.uniform(0, 0.3)
-    random_dropout = random.uniform(0, 0.2)
-    
-    
-    combination = augment.EffectChain() \
-        .pitch("-q", random_pitch_shift).rate(sr) \
-        .time_dropout(max_seconds=random_dropout) \
-        .reverb(50, 50, random_room_size).channels(1) \
-        .additive_noise(random_noise, snr=15) 
+def mapp(data):
+    def audioAug(self, audio):
+
+        random_speed = random.uniform(0.7, 1.3)
+        audio = np.array(audio)
+        audio = librosa.effects.time_stretch(audio, rate = random_speed)
+        audio = audio.tolist()
+        x = torch.tensor(audio)
+        x = x.unsqueeze(0)
         
+        sr = 16000
+        random_pitch_shift = lambda: np.random.randint(-400, +400)
+        random_room_size = lambda: np.random.randint(0, 101)
+        # random_noise = lambda: torch.zeros_like(x).uniform_()
+        random_noise = lambda: torch.zeros_like(x).uniform_() * np.random.uniform(0, 0.3)
+        random_dropout = random.uniform(0, 0.2)
+        
+        combination = augment.EffectChain() \
+            .additive_noise(random_noise, snr=15) \
+            .pitch("-q", random_pitch_shift).rate(sr) \
+            .time_dropout(max_seconds=random_dropout) \
+            .reverb(50, 50, random_room_size).channels(1) 
+            
+            
+        x = combination.apply(x, src_info={'rate': sr}, target_info={'rate': sr})
+        
+        x = list(x[0])
+        
+        torch.cuda.empty_cache()
+        return x
     
-    y = combination.apply(x, src_info={'rate': sr}, target_info={'rate': sr})
+    data['speech_cosy'][0] = audioAug(data['speech_cosy'][0])
     
-    y = list(y[0])
-    
+    return data
 
-    
-    return y
+ds = ds.map(mapp, num_proc=16, cache_file_name="cache/file.arrow")
 
-
-x = ds[0]['speech_cosy'][0]
-
-for i in tqdm(range(100)):
-    audio = audioAug(x)
-    sf.write(f"temp_audios/audio{i}.wav", audio, 16000)
-
-
-
+ds.save_to_disk("temp_datasets/chinese_speech_only_cosy_aug")
 # print(ds)
 # def mapp(example):
 #     transcript = example['trascript']

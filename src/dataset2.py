@@ -30,36 +30,6 @@ class MyDataset(Dataset):
 
     def __getitem__(self, idx):
         
-        
-        def audioAug(audio):
-
-            random_speed = random.uniform(0.7, 1.3)
-            audio = np.array(audio)
-            audio = librosa.effects.time_stretch(audio, rate = random_speed)
-            audio = audio.tolist()
-            x = torch.tensor(audio)
-            x = x.unsqueeze(0)
-            
-            sr = 16000
-            random_pitch_shift = lambda: np.random.randint(-400, +400)
-            random_room_size = lambda: np.random.randint(0, 101)
-            # random_noise = lambda: torch.zeros_like(x).uniform_()
-            random_noise = lambda: torch.zeros_like(x).uniform_() * np.random.uniform(0, 0.3)
-            random_dropout = random.uniform(0, 0.2)
-            
-            combination = augment.EffectChain() \
-                .pitch("-q", random_pitch_shift).rate(sr) \
-                .time_dropout(max_seconds=random_dropout) \
-                .reverb(50, 50, random_room_size).channels(1) \
-                .additive_noise(random_noise, snr=15) 
-                
-            x = combination.apply(x, src_info={'rate': sr}, target_info={'rate': sr})
-            
-            x = list(x[0])
-            
-            torch.cuda.empty_cache()
-            return x
-        
         while(True):
             try:
                 sample = self.hf_dataset[idx]
@@ -90,10 +60,6 @@ class MyDataset(Dataset):
         elif('speech' in sample.keys()):
             answer = sample['transcript']+"~"+sample['answer']
             audio = sample['speech_cosy'][0]
-            try:
-                audio = audioAug(audio)
-            except:
-                audio = audio
         # elif('split_name' in sample.keys()):
         #     #Voice assistant
         #     answer = sample['answer']
