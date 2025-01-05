@@ -53,12 +53,13 @@ def mapp(data):
         
         torch.cuda.empty_cache()
         return x
-    
-    data['speech_cosy'][0] = audioAug(data['speech_cosy'][0])
-    
+    try:
+        data['speech_cosy'][0] = audioAug(data['speech_cosy'][0])
+    except:
+        data = data
     return data
 
-ds = ds.map(mapp, num_proc=16, cache_file_name="cache/file.arrow")
+ds = ds.map(mapp, num_proc=32, cache_file_name="cache/file.arrow")
 
 ds.save_to_disk("temp_datasets/chinese_speech_only_cosy_aug")
 # print(ds)
