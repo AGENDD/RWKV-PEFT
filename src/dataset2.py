@@ -32,7 +32,7 @@ class MyDataset(Dataset):
         
         def audioAug(audio):
     
-            random_speed = random. uniform(0.7, 1.3)
+            random_speed = random.uniform(0.7, 1.3)
             audio = np.array(audio)
             audio = librosa.effects.time_stretch(audio, rate = random_speed)
             audio = audio.tolist()
@@ -109,7 +109,6 @@ class MyDataset(Dataset):
         #     answer = self.aishell_transcipt[sample]
         #     answer = answer.replace(" ","")
 
-        
-
-        return audio, answer
+        # print(type(audio))
+        return list(audio), answer
         
