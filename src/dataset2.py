@@ -87,10 +87,10 @@ class MyDataset(Dataset):
         elif('speech' in sample.keys()):
             answer = sample['transcript']+"~"+sample['answer']
             audio = sample['speech_cosy'][0]
-            try:
-                audio = audioAug(audio)
-            except:
-                audio = audio
+            # try:
+            #     audio = audioAug(audio)
+            # except:
+            #     audio = audio
         # elif('split_name' in sample.keys()):
         #     #Voice assistant
         #     answer = sample['answer']
