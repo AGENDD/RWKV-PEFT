@@ -45,11 +45,9 @@ def audioAug(audio):
     
     ######################加噪
     
-    noise_factor = np.random.uniform(0.001, 0.01)
-    noise_freq = np.random.uniform(20, 20000)
-    t = np.arange(len(audio)) / sr
-    noise = noise_factor * np.sin(2 * np.pi * noise_freq * t)
-    audio = audio + noise
+    noise_level = random_speed = random.uniform(0.0001, 0.005)
+    noise = np.random.randn(len(audio))
+    audio = audio + noise_level * noise
     
     audio = audio.tolist()
     return audio
