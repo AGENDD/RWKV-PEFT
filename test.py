@@ -38,13 +38,15 @@ def audioAug(audio):
         .pitch("-q", random_pitch_shift).rate(sr) \
         .time_dropout(max_seconds=random_dropout) \
         .reverb(50, 50, random_room_size).channels(1) \
-        .speed(random_speed) \
         .additive_noise(random_noise, snr=15) 
         
     
     y = combination.apply(x, src_info={'rate': sr}, target_info={'rate': sr})
     
     y = list(y[0])
+    
+    y = librosa.effects.time_stretch(y, random_speed)
+    
     
     return y
 
