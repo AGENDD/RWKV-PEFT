@@ -195,34 +195,6 @@ class SLAM_ASR(pl.LightningModule):
         return result
     
     
-    def audioAug(self, audio):
-    
-            random_speed = random.uniform(0.7, 1.3)
-            audio = np.array(audio)
-            audio = librosa.effects.time_stretch(audio, rate = random_speed)
-            audio = audio.tolist()
-            x = torch.tensor(audio)
-            x = x.unsqueeze(0)
-            
-            sr = 16000
-            random_pitch_shift = lambda: np.random.randint(-400, +400)
-            random_room_size = lambda: np.random.randint(0, 101)
-            # random_noise = lambda: torch.zeros_like(x).uniform_()
-            random_noise = lambda: torch.zeros_like(x).uniform_() * np.random.uniform(0, 0.3)
-            random_dropout = random.uniform(0, 0.2)
-            
-            combination = augment.EffectChain() \
-                .pitch("-q", random_pitch_shift).rate(sr) \
-                .time_dropout(max_seconds=random_dropout) \
-                .reverb(50, 50, random_room_size).channels(1) \
-                .additive_noise(random_noise, snr=15) 
-                
-            y = combination.apply(x, src_info={'rate': sr}, target_info={'rate': sr})
-            
-            y = list(y[0])
-            return y
-    
-    
     def _prepare_input_embeds(
         self, audios: List[float], transcriptions: List[str] = None
     ):
@@ -232,12 +204,6 @@ class SLAM_ASR(pl.LightningModule):
         # audios = [audio.cpu() for audio in audios]
         # print(f"audio:{len(audios)}-{[len(au) for au in audios]}")
         
-        for i in range(len(audios)):
-            assert isinstance(audios[i], list)
-            try:
-                audios[i] = self.audioAug(audios[i])
-            except:
-                audios[i] = audios[i]
         
         self.T_init = time.time()
         speech_output, mask = self.speech_encoder(audios)
