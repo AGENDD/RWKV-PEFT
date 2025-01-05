@@ -204,11 +204,13 @@ class train_callback(pl.Callback):
                 # trainer.my_loss = trainer.my_loss_all.float().mean().item()
                 # trainer.my_loss = trainer.my_loss_sum.float().mean().item()#修改
                 trainer.my_loss = outputs["loss"]
-            trainer.my_loss_sum += trainer.my_loss
-            trainer.my_loss_count += 1
-            trainer.my_epoch_loss = trainer.my_loss_sum / trainer.my_loss_count
-            
-            self.loss_queue.enqueue(trainer.my_loss)
+            # trainer.my_loss_sum += trainer.my_loss
+            # trainer.my_loss_count += 1
+            # trainer.my_epoch_loss = trainer.my_loss_sum / trainer.my_loss_count
+            try:
+                self.loss_queue.enqueue(trainer.my_loss)
+            except:
+                print(f"misbehaved loss:{trainer.my_loss}")
             self.log("lr", trainer.my_lr, prog_bar=True, on_step=True)
             # self.log("loss", trainer.my_epoch_loss, prog_bar=True, on_step=True)
             self.log("loss", self.loss_queue.average(), prog_bar=True, on_step=True)
