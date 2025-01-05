@@ -32,11 +32,13 @@ def audioAug(audio):
     # random_noise = lambda: torch.zeros_like(x).uniform_()
     random_noise = lambda: torch.randn_like(x) * np.random.uniform(0, 0.2)
     random_dropout = random.uniform(0, 0.2)
+    random_speed = random. uniform(0.7, 1.3)
     
     combination = augment.EffectChain() \
         .pitch("-q", random_pitch_shift).rate(sr) \
         .time_dropout(max_seconds=random_dropout) \
         .reverb(50, 50, random_room_size).channels(1) \
+        .speed(random_speed) \
         .additive_noise(random_noise, snr=15) 
         
     
