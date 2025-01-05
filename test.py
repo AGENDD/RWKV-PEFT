@@ -45,8 +45,9 @@ def audioAug(audio):
     
     y = list(y[0])
     
-    y = librosa.effects.time_stretch(y, random_speed)
-    
+    y_np = np.array(y)
+    y = librosa.effects.time_stretch(y_np, random_speed)
+    y = y.tolist()
     
     return y
 
