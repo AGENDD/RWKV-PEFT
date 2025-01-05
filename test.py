@@ -22,8 +22,17 @@ ds = load_from_disk('temp_datasets/chinese_speech_only_cosy')
 
 
 def audioAug(audio):
+    
+    
+    audio = np.array(audio)
+    audio = librosa.effects.time_stretch(audio, random_speed)
+    audio = audio.tolist()
+    
     x = torch.tensor(audio)
     x = x.unsqueeze(0)
+    
+    
+
 
     sr = 16000
     
@@ -45,9 +54,7 @@ def audioAug(audio):
     
     y = list(y[0])
     
-    y_np = np.array(y)
-    y = librosa.effects.time_stretch(y_np, random_speed)
-    y = y.tolist()
+
     
     return y
 
