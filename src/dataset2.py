@@ -29,39 +29,38 @@ class MyDataset(Dataset):
 
     def __getitem__(self, idx):
         
-        def audioAug(audio):
+        # def audioAug(audio):
 
-            audio = np.array(audio)
-            sr = 16000
-            ######################时域拉伸
-            random_speed = random.uniform(0.7, 1.3)
+        #     audio = np.array(audio)
+        #     sr = 16000
+        #     ######################时域拉伸
+        #     random_speed = random.uniform(0.7, 1.3)
             
-            audio = librosa.effects.time_stretch(audio, rate = random_speed)
-            # audio = audio.tolist()
+        #     audio = librosa.effects.time_stretch(audio, rate = random_speed)
+        #     # audio = audio.tolist()
                 
-            ######################音高变化
-            n_steps = np.random.uniform(-4, 4)
-            audio = librosa.effects.pitch_shift(audio, sr=sr, n_steps=n_steps)
+        #     ######################音高变化
+        #     n_steps = np.random.uniform(-4, 4)
+        #     audio = librosa.effects.pitch_shift(audio, sr=sr, n_steps=n_steps)
             
-            ######################时域遮挡
-            mask_duration = np.random.uniform(0, 0.2)
-            mask_length = int(mask_duration * sr)
-            mask_start = np.random.randint(0, len(audio) - mask_length)
-            audio[mask_start:mask_start + mask_length] = 0
+        #     ######################时域遮挡
+        #     mask_duration = np.random.uniform(0, 0.2)
+        #     mask_length = int(mask_duration * sr)
+        #     mask_start = np.random.randint(0, len(audio) - mask_length)
+        #     audio[mask_start:mask_start + mask_length] = 0
             
-            ######################加噪
-            noise_level = random_speed = random.uniform(0.0001, 0.001)
-            noise = np.random.randn(len(audio))
-            audio = audio + noise_level * noise
+        #     ######################加噪
+        #     noise_level = random_speed = random.uniform(0.0001, 0.001)
+        #     noise = np.random.randn(len(audio))
+        #     audio = audio + noise_level * noise
             
-            audio = audio.tolist()
-            return audio
+        #     audio = audio.tolist()
+        #     return audio
         
         while(True):
             try:
                 sample = self.hf_dataset[idx]
                 
-                assert type(sample["speech"]) == type(sample["speech_cosy"])
                 if(len(sample['speech_cosy'][0])/16000 > 10.0):
                     print("skip data audio too long")
                     idx = idx+1
@@ -110,8 +109,5 @@ class MyDataset(Dataset):
         #     answer = self.aishell_transcipt[sample]
         #     answer = answer.replace(" ","")
 
-        # print(audio)
-        
-        # assert type(audio) == list
         return audio, answer
         

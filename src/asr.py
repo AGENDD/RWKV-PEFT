@@ -37,7 +37,7 @@ np.set_printoptions(threshold=np.inf)
 import os
 os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 
-import random, librosa
+# import random, librosa
 
 class L2Wrap(torch.autograd.Function):
     @staticmethod
@@ -100,15 +100,6 @@ class SLAM_ASR(pl.LightningModule):
         self.T_hubert = 0
         self.T_vector = 0
         self.T_rwkv = 0
-        
-        # self.TTS = TTS(language='EN', device='auto')
-        # self.speaker_ids = self.TTS.hps.data.spk2id
-        # for name, param in self.TTS.named_parameters():
-        #     print(f"Parameter name: {name}, Storage type: {param.dtype}")
-        
-        # wave = self.TTS.tts_to_file("This is a testing", self.speaker_ids['EN-US'], None, speed=1.0)
-        # print(wave)
-        # print(wave[0])
 
         
         # for param in self.TTS.parameters():
@@ -194,37 +185,37 @@ class SLAM_ASR(pl.LightningModule):
 
         return result
     
-    def audioAug(self,audio):
+    # def audioAug(self,audio):
 
-        audio = np.array(audio)
-        sr = 16000
+    #     audio = np.array(audio)
+    #     sr = 16000
         
-        ######################时域拉伸
-        random_speed = random.uniform(0.7, 1.3)
+    #     ######################时域拉伸
+    #     random_speed = random.uniform(0.7, 1.3)
         
-        audio = librosa.effects.time_stretch(audio, rate = random_speed)
-        # audio = audio.tolist()
+    #     audio = librosa.effects.time_stretch(audio, rate = random_speed)
+    #     # audio = audio.tolist()
             
-        ######################音高变化
+    #     ######################音高变化
         
-        n_steps = np.random.uniform(-4, 4)
-        audio = librosa.effects.pitch_shift(audio, sr=sr, n_steps=n_steps)
+    #     n_steps = np.random.uniform(-4, 4)
+    #     audio = librosa.effects.pitch_shift(audio, sr=sr, n_steps=n_steps)
         
-        ######################时域遮挡
+    #     ######################时域遮挡
         
-        mask_duration = np.random.uniform(0, 0.2)
-        mask_length = int(mask_duration * sr)
-        mask_start = np.random.randint(0, len(audio) - mask_length)
-        audio[mask_start:mask_start + mask_length] = 0
+    #     mask_duration = np.random.uniform(0, 0.2)
+    #     mask_length = int(mask_duration * sr)
+    #     mask_start = np.random.randint(0, len(audio) - mask_length)
+    #     audio[mask_start:mask_start + mask_length] = 0
         
-        ######################加噪
+    #     ######################加噪
         
-        noise_level = random_speed = random.uniform(0.0001, 0.001)
-        noise = np.random.randn(len(audio))
-        audio = audio + noise_level * noise
+    #     noise_level = random_speed = random.uniform(0.0001, 0.001)
+    #     noise = np.random.randn(len(audio))
+    #     audio = audio + noise_level * noise
         
-        audio = audio.tolist()
-        return audio
+    #     audio = audio.tolist()
+    #     return audio
     
     def _prepare_input_embeds(
         self, audios: List[float], transcriptions: List[str] = None
