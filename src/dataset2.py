@@ -34,7 +34,7 @@ class MyDataset(Dataset):
     
             random_speed = random. uniform(0.7, 1.3)
             audio = np.array(audio)
-            audio = librosa.effects.time_stretch(audio, random_speed)
+            audio = librosa.effects.time_stretch(audio, rate = random_speed)
             audio = audio.tolist()
             x = torch.tensor(audio)
             x = x.unsqueeze(0)
