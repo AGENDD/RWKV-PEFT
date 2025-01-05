@@ -233,6 +233,7 @@ class SLAM_ASR(pl.LightningModule):
         # print(f"audio:{len(audios)}-{[len(au) for au in audios]}")
         
         for i in range(len(audios)):
+            assert isinstance(audios[i], list)
             try:
                 audios[i] = self.audioAug(audios[i])
             except:
