@@ -629,7 +629,7 @@ if __name__ == "__main__":
         # dataset = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()  #246866
         # dataset = load_from_disk("temp_datasets/chinese_speech").shuffle() #123433
 
-        dataset = load_from_disk("temp_datasets/chinese_speech_only_cosy_aug")
+        dataset = load_from_disk("temp_datasets/chiese_speech_only_cosy_aug")
         dataset2 = load_from_disk("temp_datasets/chinese_speech_only_cosy2")
         dataset = concatenate_datasets([dataset, dataset2]).shuffle()#20000
 
