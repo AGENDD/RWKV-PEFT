@@ -24,7 +24,7 @@ ds = load_from_disk('temp_datasets/chinese_speech_only_cosy')
 
 
 def mapp(data):
-    def audioAug(self, audio):
+    def audioAug(audio):
 
         random_speed = random.uniform(0.7, 1.3)
         audio = np.array(audio)
