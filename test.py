@@ -23,7 +23,7 @@ ds = load_from_disk('temp_datasets/chinese_speech_only_cosy')
 
 def audioAug(audio):
     
-    
+    random_speed = random. uniform(0.7, 1.3)
     audio = np.array(audio)
     audio = librosa.effects.time_stretch(audio, random_speed)
     audio = audio.tolist()
@@ -41,7 +41,7 @@ def audioAug(audio):
     # random_noise = lambda: torch.zeros_like(x).uniform_()
     random_noise = lambda: torch.zeros_like(x).uniform_() * np.random.uniform(0, 0.5)
     random_dropout = random.uniform(0, 0.2)
-    random_speed = random. uniform(0.7, 1.3)
+    
     
     combination = augment.EffectChain() \
         .pitch("-q", random_pitch_shift).rate(sr) \
