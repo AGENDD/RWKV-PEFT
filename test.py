@@ -39,7 +39,7 @@ def audioAug(audio):
     random_pitch_shift = lambda: np.random.randint(-400, +400)
     random_room_size = lambda: np.random.randint(0, 101)
     # random_noise = lambda: torch.zeros_like(x).uniform_()
-    random_noise = lambda: torch.randn_like(x) * np.random.uniform(0, 0.2)
+    random_noise = lambda: torch.zeros_like(x).uniform_() * np.random.uniform(0, 0.5)
     random_dropout = random.uniform(0, 0.2)
     random_speed = random. uniform(0.7, 1.3)
     
