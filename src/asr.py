@@ -232,11 +232,11 @@ class SLAM_ASR(pl.LightningModule):
         # audios = [audio.cpu() for audio in audios]
         # print(f"audio:{len(audios)}-{[len(au) for au in audios]}")
         
-        for i in range(len(audios)):
-            try:
-                audios[i] = self.audioAug(audios[i])
-            except:
-                continue
+        # for i in range(len(audios)):
+        #     try:
+        #         audios[i] = self.audioAug(audios[i])
+        #     except:
+        #         continue
         
         
         self.T_init = time.time()
