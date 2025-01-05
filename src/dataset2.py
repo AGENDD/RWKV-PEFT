@@ -14,6 +14,8 @@ import librosa
 import resampy
 import scipy.io.wavfile as wav
 import re
+import augment
+
 pipeline = PIPELINE('rwkv6', "rwkv_vocab_v20230424")
 
 class MyDataset(Dataset):
@@ -21,7 +23,29 @@ class MyDataset(Dataset):
         self.args = args
         self.hf_dataset = hf_dataset
         self.aishell_transcipt = aishell_transcipt
+    
+    def audioAug(audio):
+        x = torch.tensor(audio)
+        x = x.unsqueeze(0)
+
+        sr = 16000
         
+        random_pitch_shift = lambda: np.random.randint(-400, +400)
+        random_room_size = lambda: np.random.randint(0, 101)
+        random_noise = lambda: torch.zeros_like(x).uniform_()
+        random_dropout = random.uniform(0, 0.2)
+        
+        combination = augment.EffectChain() \
+            .pitch("-q", random_pitch_shift).rate(sr) \
+            .reverb(50, 50, random_room_size).channels(1) \
+            .additive_noise(random_noise, snr=15) \
+            .time_dropout(max_seconds=random_dropout)
+        
+        y = combination.apply(x, src_info={'rate': sr}, target_info={'rate': sr})
+        
+        y = list(y[0])
+        
+        return y
         
     def __len__(self):
         return len(self.hf_dataset)
@@ -58,7 +82,7 @@ class MyDataset(Dataset):
         elif('speech' in sample.keys()):
             answer = sample['transcript']+"~"+sample['answer']
             audio = sample['speech_cosy'][0]
-        
+            audio = self.audioAug(audio)
         # elif('split_name' in sample.keys()):
         #     #Voice assistant
         #     answer = sample['answer']

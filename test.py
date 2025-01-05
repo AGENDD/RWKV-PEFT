@@ -16,23 +16,40 @@ from tqdm import tqdm
 import re
 import torch
 import glob
+import augment, random
 
 ds = load_from_disk('temp_datasets/chinese_speech_only_cosy')
 
-def check_float_list(obj):
-    if isinstance(obj, list):
-        for item in obj:
-            if not isinstance(item, float):
-                print(f"元素 {item} 的类型是 {type(item)}")
-        return all(isinstance(item, float) for item in obj)
-    else:
-        print("对象不是列表")
-        return False
+
+def audioAug(audio):
+    x = torch.tensor(audio)
+    x = x.unsqueeze(0)
+
+    sr = 16000
     
-for data in ds:
-    result = check_float_list(data['speech_cosy'])
-    if(result != True):
-        print(f"find {type(data['speech_cosy'])} or elements fault")
+    random_pitch_shift = lambda: np.random.randint(-400, +400)
+    random_room_size = lambda: np.random.randint(0, 101)
+    random_noise = lambda: torch.zeros_like(x).uniform_()
+    random_dropout = random.uniform(0, 0.2)
+    
+    combination = augment.EffectChain() \
+        .pitch("-q", random_pitch_shift).rate(sr) \
+        .reverb(50, 50, random_room_size).channels(1) \
+        .additive_noise(random_noise, snr=15) \
+        .time_dropout(max_seconds=random_dropout)
+    
+    y = combination.apply(x, src_info={'rate': sr}, target_info={'rate': sr})
+    
+    y = list(y[0])
+    
+    return y
+
+
+x = ds[0]['speech_cosy'][0]
+
+for i in range(100):
+    audio = audioAug(x)
+    sf.write(f"temp_audios/audio{i}.wav", audio, 16000)
 
 
 
@@ -215,52 +232,52 @@ exit(0)
     
 #     break
 
-from contextlib import contextmanager, redirect_stdout, redirect_stderr
-from cosyvoice.cli.cosyvoice import CosyVoice, CosyVoice2
-from cosyvoice.utils.file_utils import load_wav
-import torchaudio
-import random
-from datasets import load_from_disk
-import librosa
-import os
-import numpy as np
+# from contextlib import contextmanager, redirect_stdout, redirect_stderr
+# from cosyvoice.cli.cosyvoice import CosyVoice, CosyVoice2
+# from cosyvoice.utils.file_utils import load_wav
+# import torchaudio
+# import random
+# from datasets import load_from_disk
+# import librosa
+# import os
+# import numpy as np
 
-@contextmanager
-def suppress_stdout(*args, **kwargs):
-    with open(os.devnull, 'w') as devnull:
-        with redirect_stdout(devnull), redirect_stderr(devnull):
-            yield
+# @contextmanager
+# def suppress_stdout(*args, **kwargs):
+#     with open(os.devnull, 'w') as devnull:
+#         with redirect_stdout(devnull), redirect_stderr(devnull):
+#             yield
 
 
-ds = load_from_disk("~/JRwork/RWKV-PEFT/temp_datasets/chinese_speech_only").select(range(50000,60000))
-cosyvoice = CosyVoice2('pretrained_models/CosyVoice2-0.5B', load_jit=True, load_onnx=False, load_trt=False)
+# ds = load_from_disk("~/JRwork/RWKV-PEFT/temp_datasets/chinese_speech_only").select(range(50000,60000))
+# cosyvoice = CosyVoice2('pretrained_models/CosyVoice2-0.5B', load_jit=True, load_onnx=False, load_trt=False)
 
-print(ds)
-def mapp(sample):
-    random_number = random.randint(0, 99)
-    prompt_speech_16k = load_wav(f'temp_audios/audio{random_number}.wav', 16000)
+# print(ds)
+# def mapp(sample):
+#     random_number = random.randint(0, 99)
+#     prompt_speech_16k = load_wav(f'temp_audios/audio{random_number}.wav', 16000)
 
-    try:
-        with suppress_stdout():
-            for i, j in enumerate(cosyvoice.inference_instruct2(sample['transcript'], '', prompt_speech_16k, stream=False)):
-                # torchaudio.save('instruct_{}.wav'.format(i), j['tts_speech'], cosyvoice.sample_rate)
-                cosy = librosa.resample(np.array(j['tts_speech']), orig_sr=cosyvoice.sample_rate, target_sr=16000)
-        sample['speech_cosy'] = cosy
-    except:
-        sample['speech_cosy'] = None
+#     try:
+#         with suppress_stdout():
+#             for i, j in enumerate(cosyvoice.inference_instruct2(sample['transcript'], '', prompt_speech_16k, stream=False)):
+#                 # torchaudio.save('instruct_{}.wav'.format(i), j['tts_speech'], cosyvoice.sample_rate)
+#                 cosy = librosa.resample(np.array(j['tts_speech']), orig_sr=cosyvoice.sample_rate, target_sr=16000)
+#         sample['speech_cosy'] = cosy
+#     except:
+#         sample['speech_cosy'] = None
 
-    return sample
+#     return sample
 
-ds = ds.map(mapp,cache_file_name="cache/file.arrow")
+# ds = ds.map(mapp,cache_file_name="cache/file.arrow")
 
-def fill(sample):
-    if(sample['speech_cosy'] == None):
-        return False
-    return True
+# def fill(sample):
+#     if(sample['speech_cosy'] == None):
+#         return False
+#     return True
 
-ds = ds.filter(fill, num_proc=32)
+# ds = ds.filter(fill, num_proc=32)
 
-print(ds)
+# print(ds)
 
-ds.save_to_disk("~/JRwork/RWKV-PEFT/temp_datasets/chinese_speech_only_cosy6")
+# ds.save_to_disk("~/JRwork/RWKV-PEFT/temp_datasets/chinese_speech_only_cosy6")
 
