@@ -24,35 +24,36 @@ class MyDataset(Dataset):
         self.hf_dataset = hf_dataset
         self.aishell_transcipt = aishell_transcipt
     
-    def audioAug(self, audio):
-        x = torch.tensor(audio)
-        x = x.unsqueeze(0)
-
-        sr = 16000
-        
-        random_pitch_shift = lambda: np.random.randint(-400, +400)
-        random_room_size = lambda: np.random.randint(0, 101)
-        # random_noise = lambda: torch.zeros_like(x).uniform_()
-        random_noise = lambda: torch.randn_like(x) * np.random.uniform(0, 0.2)
-        random_dropout = random.uniform(0, 0.2)
-        
-        combination = augment.EffectChain() \
-            .pitch("-q", random_pitch_shift).rate(sr) \
-            .time_dropout(max_seconds=random_dropout) \
-            .reverb(50, 50, random_room_size).channels(1) \
-            .additive_noise(random_noise, snr=15) 
-            
-        
-        y = combination.apply(x, src_info={'rate': sr}, target_info={'rate': sr})
-        
-        y = list(y[0])
-    
-        return y
         
     def __len__(self):
         return len(self.hf_dataset)
 
     def __getitem__(self, idx):
+        
+        def audioAug(audio):
+            x = torch.tensor(audio)
+            x = x.unsqueeze(0)
+
+            sr = 16000
+            
+            random_pitch_shift = lambda: np.random.randint(-400, +400)
+            random_room_size = lambda: np.random.randint(0, 101)
+            # random_noise = lambda: torch.zeros_like(x).uniform_()
+            random_noise = lambda: torch.randn_like(x) * np.random.uniform(0, 0.2)
+            random_dropout = random.uniform(0, 0.2)
+            
+            combination = augment.EffectChain() \
+                .pitch("-q", random_pitch_shift).rate(sr) \
+                .time_dropout(max_seconds=random_dropout) \
+                .reverb(50, 50, random_room_size).channels(1) \
+                .additive_noise(random_noise, snr=15) 
+                
+            
+            y = combination.apply(x, src_info={'rate': sr}, target_info={'rate': sr})
+            
+            y = list(y[0])
+        
+            return y
         
         while(True):
             try:
@@ -85,7 +86,7 @@ class MyDataset(Dataset):
             answer = sample['transcript']+"~"+sample['answer']
             audio = sample['speech_cosy'][0]
             try:
-                audio = self.audioAug(audio)
+                audio = audioAug(audio)
             except:
                 audio = audio
         # elif('split_name' in sample.keys()):
