@@ -20,44 +20,47 @@ import augment, random
 
 ds = load_from_disk('temp_datasets/chinese_speech_only_cosy')
 
-def audioAug(audio):
 
-    audio = np.array(audio)
-    sr = 16000
-    
-    ######################时域拉伸
-    random_speed = random.uniform(0.7, 1.3)
-    
-    audio = librosa.effects.time_stretch(audio, rate = random_speed)
-    # audio = audio.tolist()
+
+def mapp(data):
+    def audioAug(audio):
+        audio = np.array(audio)
+        sr = 16000
         
-    ######################音高变化
+        ######################时域拉伸
+        random_speed = random.uniform(0.7, 1.3)
+        
+        audio = librosa.effects.time_stretch(audio, rate = random_speed)
+        # audio = audio.tolist()
+            
+        ######################音高变化
+        
+        n_steps = np.random.uniform(-4, 4)
+        audio = librosa.effects.pitch_shift(audio, sr=sr, n_steps=n_steps)
+        
+        ######################时域遮挡
+        
+        mask_duration = np.random.uniform(0, 0.2)
+        mask_length = int(mask_duration * sr)
+        mask_start = np.random.randint(0, len(audio) - mask_length)
+        audio[mask_start:mask_start + mask_length] = 0
+        
+        ######################加噪
+        
+        noise_level = random_speed = random.uniform(0.0001, 0.001)
+        noise = np.random.randn(len(audio))
+        audio = audio + noise_level * noise
+        
+        audio = audio.tolist()
+        return audio
+    data['speech_cosy'][0] = audioAug(data['speech_cosy'][0])
     
-    n_steps = np.random.uniform(-4, 4)
-    audio = librosa.effects.pitch_shift(audio, sr=sr, n_steps=n_steps)
-    
-    ######################时域遮挡
-    
-    mask_duration = np.random.uniform(0, 0.2)
-    mask_length = int(mask_duration * sr)
-    mask_start = np.random.randint(0, len(audio) - mask_length)
-    audio[mask_start:mask_start + mask_length] = 0
-    
-    ######################加噪
-    
-    noise_level = random_speed = random.uniform(0.0001, 0.001)
-    noise = np.random.randn(len(audio))
-    audio = audio + noise_level * noise
-    
-    audio = audio.tolist()
-    return audio
+    return data
 
-x = ds[0]['speech_cosy'][0]
-sf.write(f"temp_audios/origin.wav", x, 16000)
-for i in tqdm(range(50)):
-    y = audioAug(x)
-    
-    sf.write(f"temp_audios/audio{i}.wav", y, 16000)
+ds = ds.map(mapp, num_proc=16, cache_file_name='cache/file.arrow')
+
+ds.save_to_disk("temp_datasets/chiese_speech_only_cosy_aug")
+
 # print(ds)
 # def mapp(example):
 #     transcript = example['trascript']
