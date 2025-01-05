@@ -45,7 +45,7 @@ def audioAug(audio):
     
     ######################加噪
     
-    noise_level = random_speed = random.uniform(0.0001, 0.005)
+    noise_level = random_speed = random.uniform(0.0001, 0.001)
     noise = np.random.randn(len(audio))
     audio = audio + noise_level * noise
     
@@ -53,7 +53,7 @@ def audioAug(audio):
     return audio
 
 x = ds[0]['speech_cosy'][0]
-
+sf.write(f"temp_audios/origin.wav", x, 16000)
 for i in tqdm(range(50)):
     y = audioAug(x)
     
