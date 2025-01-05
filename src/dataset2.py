@@ -109,7 +109,7 @@ class MyDataset(Dataset):
         #     answer = self.aishell_transcipt[sample]
         #     answer = answer.replace(" ","")
 
-        print(audio)
+        # print(audio)
         
         # assert type(audio) == list
         return list(audio), answer
