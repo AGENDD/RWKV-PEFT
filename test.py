@@ -47,7 +47,7 @@ def audioAug(audio):
 
 x = ds[0]['speech_cosy'][0]
 
-for i in range(100):
+for i in tqdm(range(100)):
     audio = audioAug(x)
     sf.write(f"temp_audios/audio{i}.wav", audio, 16000)
 
