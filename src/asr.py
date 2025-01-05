@@ -621,6 +621,9 @@ class SLAM_ASR(pl.LightningModule):
                 # logits, targets, mask = self(idx, transcription)
                 #mask = mask.reshape(-1)
                 # sum_mask = torch.sum(mask).item()
+                
+                print(type(idx[0]))
+                
                 logits, targets, mask,logits1, targets1, mask1,logits2, targets2, mask2 = self(idx, transcription)
                 
                 if(logits1 is not None):
