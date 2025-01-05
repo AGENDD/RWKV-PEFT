@@ -33,7 +33,7 @@ def audioAug(audio):
         
     ######################音高变化
     
-    n_steps = np.random.uniform(-5, 5)
+    n_steps = np.random.uniform(-4, 4)
     audio = librosa.effects.pitch_shift(audio, sr=sr, n_steps=n_steps)
     
     ######################时域遮挡
