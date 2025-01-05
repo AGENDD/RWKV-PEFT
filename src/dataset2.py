@@ -14,7 +14,6 @@ import librosa
 import resampy
 import scipy.io.wavfile as wav
 import re
-import augment
 
 pipeline = PIPELINE('rwkv6', "rwkv_vocab_v20230424")
 
@@ -114,5 +113,5 @@ class MyDataset(Dataset):
         # print(audio)
         
         # assert type(audio) == list
-        return list(audio), answer
+        return audio, answer
         
