@@ -84,7 +84,7 @@ class MyDataset(Dataset):
             answer = sample['transcription']
             answer = answer.replace(" ","")
         elif('speech' in sample.keys()):
-            answer = sample['transcript']+"~"+sample['answer']
+            answer = sample['transcript']+"~"#+sample['answer']
             audio = sample['speech_cosy'][0]
             
             # try:
