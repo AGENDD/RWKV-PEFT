@@ -563,14 +563,15 @@ class SLAM_ASR(pl.LightningModule):
         outputs = self.language_model(inputs_embeds=prompt_embed)
         self.T_rwkv = time.time()
         
-        
+        print("forward")
         mode = "asr"
         if(mode == 'qa'):
             output1, label1, mask1, output2, label2, mask2 = self.output_split(outputs, true_labels, prompt_mask, transcriptions)
             return outputs, true_labels, prompt_mask, output1, label1, mask1, output2, label2, mask2
         else:
             return outputs, true_labels, prompt_mask, None, None, None, None, None, None
-    
+
+        
     
     # def forward(self, tensors, transcriptions: List[str] = None):
         
@@ -696,7 +697,7 @@ class SLAM_ASR(pl.LightningModule):
                         loss = torch.tensor([0.0], device=logits.device)  
                         print("zero loss")
                     
-
+            print("loss")
             return L2Wrap.apply(loss, logits)
     
     def configure_optimizers(self):
