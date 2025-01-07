@@ -61,14 +61,14 @@ class MyDataset(Dataset):
             try:
                 sample = self.hf_dataset[idx]
                 
-                if(len(sample['speech_cosy'][0])/16000 > 15.0):
-                    print("skip data audio too long")
-                    idx = idx+1
-                    continue
-                elif(len(sample['answer']) > 1500):
-                    print("skip data answer too long")
-                    idx = idx+1
-                    continue
+                # if(len(sample['speech_cosy'][0])/16000 > 15.0):
+                #     print("skip data audio too long")
+                #     idx = idx+1
+                #     continue
+                # elif(len(sample['answer']) > 1500):
+                #     print("skip data answer too long")
+                #     idx = idx+1
+                #     continue
                 
                 # pattern = re.compile(r'[a-zA-Z+=-]')
                 # if(pattern.search(sample['trascript'])):
