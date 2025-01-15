@@ -64,7 +64,7 @@ class SLAM_ASR(pl.LightningModule):
         downsample_K=5,
         hidden_dim=2048,
         # hidden_dim=4096,
-        train_mode="full",
+        train_mode="adapter",
         device="cuda",
         token = "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",
     ):
@@ -697,7 +697,6 @@ class SLAM_ASR(pl.LightningModule):
                         loss = torch.tensor([0.0], device=logits.device)  
                         print("zero loss")
                     
-            print("loss")
             return L2Wrap.apply(loss, logits)
     
     def configure_optimizers(self):
