@@ -23,7 +23,7 @@ def mapp(data):
     return data
     
 dataset = dataset.remove_columns(['speech'])
-print("mapping")
+print("mapping...")
 dataset = dataset.map(mapp, num_proc = 16, cache_file_name="cache/file.arrow")
 dataset = dataset.remove_columns(['speech_cosy'])
 print("Custing...")
