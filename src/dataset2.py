@@ -56,28 +56,28 @@ class MyDataset(Dataset):
             
             audio = audio.tolist()
             return audio
-        sample = self.hf_dataset[idx]
-        # while(True):
-        #     try:
-        #         sample = self.hf_dataset[idx]
+        # sample = self.hf_dataset[idx]
+        while(True):
+            try:
+                sample = self.hf_dataset[idx]
                 
-        #         # if(len(sample['speech_cosy'][0])/16000 > 15.0):
-        #         #     print("skip data audio too long")
-        #         #     idx = idx+1
-        #         #     continue
-        #         # elif(len(sample['answer']) > 1500):
-        #         #     print("skip data answer too long")
-        #         #     idx = idx+1
-        #         #     continue
+                if(len(sample['speech_cosy'][0])/16000 > 15.0):
+                    print("skip data audio too long")
+                    idx = idx+1
+                    continue
+                # elif(len(sample['answer']) > 1500):
+                #     print("skip data answer too long")
+                #     idx = idx+1
+                #     continue
                 
-        #         # pattern = re.compile(r'[a-zA-Z+=-]')
-        #         # if(pattern.search(sample['trascript'])):
-        #         #         # 搜索字符串中是否包含这些字符
-        #         #     idx = idx+1
-        #         #     continue
-        #         break
-        #     except:
-        #         idx = idx+1
+                # pattern = re.compile(r'[a-zA-Z+=-]')
+                # if(pattern.search(sample['trascript'])):
+                #         # 搜索字符串中是否包含这些字符
+                #     idx = idx+1
+                #     continue
+                break
+            except:
+                idx = idx+1
         if('audio' in sample.keys()):
             #aishell
             audio = sample['audio']['array']

@@ -678,7 +678,7 @@ class SLAM_ASR(pl.LightningModule):
                         loss1 = torch.sum(loss1 * mask1) / sum_mask1
                         loss2 = torch.sum(loss2 * mask2) / sum_mask2
                         
-                        loss = 0.8*loss1 + 0.2*loss2
+                        loss = 0.5*loss1 + 0.5*loss2
                         
                     except:
                         loss = torch.tensor([0.0], device=logits.device)  
