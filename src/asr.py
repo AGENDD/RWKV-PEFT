@@ -13,12 +13,12 @@ from torch.nn.utils.rnn import pad_sequence
 
 try:
     # from .speech_encoder import SpeechEncoder
-    from .speech_encoder2 import SpeechEncoder
-    # from .speech_encoder3 import SpeechEncoder
+    # from .speech_encoder2 import SpeechEncoder
+    from .speech_encoder3 import SpeechEncoder
 except ImportError:
     # from speech_encoder import SpeechEncoder
-    from speech_encoder2 import SpeechEncoder
-    # from speech_encoder3 import SpeechEncoder
+    # from speech_encoder2 import SpeechEncoder
+    from speech_encoder3 import SpeechEncoder
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from .model import RWKV
@@ -563,7 +563,7 @@ class SLAM_ASR(pl.LightningModule):
         outputs = self.language_model(inputs_embeds=prompt_embed)
         self.T_rwkv = time.time()
         
-        print("forward")
+        # print("forward")
         mode = "asr"
         if(mode == 'qa'):
             output1, label1, mask1, output2, label2, mask2 = self.output_split(outputs, true_labels, prompt_mask, transcriptions)
