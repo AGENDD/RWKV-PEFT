@@ -436,7 +436,9 @@ if __name__ == "__main__":
             if hasattr(m, "quant") and callable(getattr(m, "quant")):
                     m.quant(args.quant)
 
-
+    ##################
+    args.accumulate_grad_batches = 4
+    ##################
     if pl.__version__[0]=='2':
         trainer = Trainer(accelerator=args.accelerator,strategy=args.strategy,devices=args.devices,num_nodes=args.num_nodes,precision=args.precision,
         logger=args.logger,callbacks=[train_callback(args)],max_epochs=args.max_epochs,check_val_every_n_epoch=args.check_val_every_n_epoch,num_sanity_val_steps=args.num_sanity_val_steps,
@@ -652,7 +654,7 @@ if __name__ == "__main__":
         # dataset, transcipt = aishell() # 120098
         # Total_model.train()
         dataset = MyDataset(args, dataset)
-        data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=16, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
+        data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=8, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
         print("train starting...")
         # with torch.cuda.amp.autocast():
         trainer.fit(Total_model, data_loader)
