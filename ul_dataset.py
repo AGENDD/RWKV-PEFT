@@ -19,7 +19,7 @@ from huggingface_hub import login
 login(token)
 
 def mapp(data):
-    data['audio'] = {'array': data['speech_cosy'][0], 'sample_rate':16000}
+    data['audio'] = {'array': data['speech_cosy'][0], 'sampling_rate':16000}
     return data
     
 dataset = dataset.remove_columns(['speech'])
