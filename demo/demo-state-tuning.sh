@@ -22,9 +22,8 @@ OP=1
 
 QUANT='nf4' 
 # export CUDA_VISIBLE_DEVICES=4,5,6,7
-export CUDA_VISIBLE_DEVICES=0,2,3
 export HF_ENDPOINT=https://hf-mirror.com
-python -u JR_train.py --load_model $load_model --devices 3 --OP $OP \
+python -u JR_train.py --load_model $load_model --devices 4 --OP $OP \
 --proj_dir $proj_dir --data_file $data_file \
 --data_type binidx --vocab_size 65536 \
 --ctx_len $ctx_len --epoch_steps $epoch_steps --epoch_count $epoch_count --epoch_begin 0 --epoch_save $epoch_save --micro_bsz $micro_bsz \
