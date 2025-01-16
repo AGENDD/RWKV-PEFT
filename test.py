@@ -16,7 +16,7 @@ from tqdm import tqdm
 import re
 import torch
 import glob
-import augment, random
+# import augment, random
 
 
 dataset = load_from_disk("temp_datasets/chinese_speech_only_cosy")
