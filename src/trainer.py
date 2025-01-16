@@ -334,14 +334,14 @@ class train_callback(pl.Callback):
                 # except Exception as e:
                 #     print('Error\n\n', e, '\n\n')
 
-        if trainer.is_global_zero:  # logging
-            trainer.my_log.write(f"{args.epoch_begin + trainer.current_epoch} {trainer.my_epoch_loss:.6f} {math.exp(trainer.my_epoch_loss):.4f} {trainer.my_lr:.8f} {datetime.datetime.now()} {trainer.current_epoch}\n")
-            trainer.my_log.flush()
+        # if trainer.is_global_zero:  # logging
+        #     trainer.my_log.write(f"{args.epoch_begin + trainer.current_epoch} {trainer.my_epoch_loss:.6f} {math.exp(trainer.my_epoch_loss):.4f} {trainer.my_lr:.8f} {datetime.datetime.now()} {trainer.current_epoch}\n")
+        #     trainer.my_log.flush()
 
-            trainer.my_loss_sum = 0
-            trainer.my_loss_count = 0
-            if (args.epoch_begin + trainer.current_epoch) >= args.my_exit:
-                exit(0)
+        #     trainer.my_loss_sum = 0
+        #     trainer.my_loss_count = 0
+        #     if (args.epoch_begin + trainer.current_epoch) >= args.my_exit:
+        #         exit(0)
 
 
 @rank_zero_only
