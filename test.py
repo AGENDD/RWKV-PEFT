@@ -18,7 +18,7 @@ import torch
 import glob
 # import augment, random
 
-
+from concurrent.futures import ThreadPoolExecutor
 dataset = load_from_disk("temp_datasets/chinese_speech_only_cosy")
 dataset2 = load_from_disk("temp_datasets/chinese_speech_only_cosy2")
 dataset3 = load_from_disk("temp_datasets/chinese_speech_only_cosy3")
@@ -28,15 +28,17 @@ dataset6 = load_from_disk("temp_datasets/chinese_speech_only_cosy6")
 dataset7 = load_from_disk("temp_datasets/chinese_speech_only_cosy7")
 dataset = concatenate_datasets([dataset, dataset2,dataset3,dataset4,dataset5,dataset6,dataset7]).shuffle()#77000
 
-# 计算总时间
 def calculate_total_time(data):
     audio = data['speech_cosy']
     return len(audio) / 16000
 
-t = sum(tqdm(map(calculate_total_time, dataset)))
+# 使用多线程加速计算总时间
+with ThreadPoolExecutor() as executor:
+    results = list(tqdm(executor.map(calculate_total_time, dataset), total=len(dataset)))
+
+t = sum(results)
 
 print(f"总时间:\n{t} 秒\n{t/60.0} 分钟\n{t/3600} 小时")
-
 ###############################librosa audio augment #########################
 # ds = load_from_disk('temp_datasets/chinese_speech_only_cosy')
 
