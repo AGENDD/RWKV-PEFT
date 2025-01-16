@@ -62,7 +62,7 @@ class SpeechEncoder(nn.Module):
         # self.model = SpeechTokenizer.load_from_checkpoint(config_path, ckpt_path).eval()
         # self.model = self.model.to(self.device,dtype=torch.bfloat16)
         
-        self.model = AutoModel.from_pretrained(model_id).to(self.device,dtype=torch.bfloat16)
+        self.model = AutoModel.from_pretrained(model_id,cache_dir="temp_models").to(self.device,dtype=torch.bfloat16)
         self.model.eval()
         self.model_output_dim = self.model.config.hidden_size
         self.downsample_K = downsample_K

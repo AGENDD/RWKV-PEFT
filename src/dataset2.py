@@ -60,11 +60,14 @@ class MyDataset(Dataset):
         while(True):
             try:
                 sample = self.hf_dataset[idx]
-                
-                if(len(sample['speech_cosy'][0])/16000 > 15.0):
+                if(len(sample['audio']['array'])/16000 > 15.0):
                     print("skip data audio too long")
                     idx = idx+1
                     continue
+                # if(len(sample['speech_cosy'][0])/16000 > 15.0):
+                #     print("skip data audio too long")
+                #     idx = idx+1
+                #     continue
                 # elif(len(sample['answer']) > 1500):
                 #     print("skip data answer too long")
                 #     idx = idx+1
@@ -78,11 +81,14 @@ class MyDataset(Dataset):
                 break
             except:
                 idx = idx+1
-        if('audio' in sample.keys()):
+        if('transcription' in sample.keys()):
             #aishell
             audio = sample['audio']['array']
             answer = sample['transcription']
             answer = answer.replace(" ","")
+        elif('trainscript' in sample.keys()):
+            audio = sample['audio']['array']
+            answer = sample['transcript']+"~"#+sample['answer']
         elif('speech' in sample.keys()):
             answer = sample['transcript']+"~"#+sample['answer']
             audio = sample['speech_cosy'][0]
