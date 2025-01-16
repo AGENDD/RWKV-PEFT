@@ -640,7 +640,9 @@ if __name__ == "__main__":
         dataset3 = load_from_disk("temp_datasets/chinese_speech_only_cosy3")
         dataset4 = load_from_disk("temp_datasets/chinese_speech_only_cosy4")
         dataset5 = load_from_disk("temp_datasets/chinese_speech_only_cosy5")
-        dataset = concatenate_datasets([dataset, dataset2,dataset3,dataset4,dataset5]).shuffle()#49999
+        dataset6 = load_from_disk("temp_datasets/chinese_speech_only_cosy6")
+        dataset7 = load_from_disk("temp_datasets/chinese_speech_only_cosy7")
+        dataset = concatenate_datasets([dataset, dataset2,dataset3,dataset4,dataset5,dataset6,dataset7]).shuffle()#77000
         
         # dataset = load_dataset("carlot/AIShell",split="train")
         # dataset2 = load_dataset("carlot/AIShell",split="validation")
