@@ -29,7 +29,7 @@ dataset7 = load_from_disk("temp_datasets/chinese_speech_only_cosy7")
 dataset = concatenate_datasets([dataset, dataset2,dataset3,dataset4,dataset5,dataset6,dataset7]).shuffle()#77000
 
 def calculate_total_time(data):
-    audio = data['speech_cosy']
+    audio = data['speech_cosy'][0]
     return len(audio) / 16000
 
 # 使用多线程加速计算总时间
