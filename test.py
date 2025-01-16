@@ -18,48 +18,69 @@ import torch
 import glob
 import augment, random
 
-ds = load_from_disk('temp_datasets/chinese_speech_only_cosy')
+
+dataset = load_from_disk("temp_datasets/chinese_speech_only_cosy")
+dataset2 = load_from_disk("temp_datasets/chinese_speech_only_cosy2")
+dataset3 = load_from_disk("temp_datasets/chinese_speech_only_cosy3")
+dataset4 = load_from_disk("temp_datasets/chinese_speech_only_cosy4")
+dataset5 = load_from_disk("temp_datasets/chinese_speech_only_cosy5")
+dataset6 = load_from_disk("temp_datasets/chinese_speech_only_cosy6")
+dataset7 = load_from_disk("temp_datasets/chinese_speech_only_cosy7")
+dataset = concatenate_datasets([dataset, dataset2,dataset3,dataset4,dataset5,dataset6,dataset7]).shuffle()#77000
+
+
+t = 0.0
+for data in tqdm(dataset):
+    audio = data['speech_cosy'][0]
+    t += len(audio) / 16000
+
+print(f"time:\n{t} seconds\n{t/60.0} minutes\n{t/3600} hours")
+
+###############################librosa audio augment #########################
+# ds = load_from_disk('temp_datasets/chinese_speech_only_cosy')
 
 
 
-def mapp(data):
-    def audioAug(audio):
-        audio = np.array(audio)
-        sr = 16000
+# def mapp(data):
+#     def audioAug(audio):
+#         audio = np.array(audio)
+#         sr = 16000
         
-        ######################时域拉伸
-        random_speed = random.uniform(0.7, 1.3)
+#         ######################时域拉伸
+#         random_speed = random.uniform(0.7, 1.3)
         
-        audio = librosa.effects.time_stretch(audio, rate = random_speed)
-        # audio = audio.tolist()
+#         audio = librosa.effects.time_stretch(audio, rate = random_speed)
+#         # audio = audio.tolist()
             
-        ######################音高变化
+#         ######################音高变化
         
-        n_steps = np.random.uniform(-4, 4)
-        audio = librosa.effects.pitch_shift(audio, sr=sr, n_steps=n_steps)
+#         n_steps = np.random.uniform(-4, 4)
+#         audio = librosa.effects.pitch_shift(audio, sr=sr, n_steps=n_steps)
         
-        ######################时域遮挡
+#         ######################时域遮挡
         
-        mask_duration = np.random.uniform(0, 0.2)
-        mask_length = int(mask_duration * sr)
-        mask_start = np.random.randint(0, len(audio) - mask_length)
-        audio[mask_start:mask_start + mask_length] = 0
+#         mask_duration = np.random.uniform(0, 0.2)
+#         mask_length = int(mask_duration * sr)
+#         mask_start = np.random.randint(0, len(audio) - mask_length)
+#         audio[mask_start:mask_start + mask_length] = 0
         
-        ######################加噪
+#         ######################加噪
         
-        noise_level = random_speed = random.uniform(0.0001, 0.001)
-        noise = np.random.randn(len(audio))
-        audio = audio + noise_level * noise
+#         noise_level = random_speed = random.uniform(0.0001, 0.001)
+#         noise = np.random.randn(len(audio))
+#         audio = audio + noise_level * noise
         
-        audio = audio.tolist()
-        return audio
-    data['speech_cosy'][0] = audioAug(data['speech_cosy'][0])
+#         audio = audio.tolist()
+#         return audio
+#     data['speech_cosy'][0] = audioAug(data['speech_cosy'][0])
     
-    return data
+#     return data
 
-ds = ds.map(mapp, num_proc=16, cache_file_name='cache/file.arrow')
+# ds = ds.map(mapp, num_proc=16, cache_file_name='cache/file.arrow')
 
-ds.save_to_disk("temp_datasets/chiese_speech_only_cosy_aug")
+# ds.save_to_disk("temp_datasets/chiese_speech_only_cosy_aug")
+
+#################################################################################
 
 # print(ds)
 # def mapp(example):
@@ -240,43 +261,43 @@ exit(0)
     
 #     break
 
-from contextlib import contextmanager, redirect_stdout, redirect_stderr
-from cosyvoice.cli.cosyvoice import CosyVoice, CosyVoice2
-from cosyvoice.utils.file_utils import load_wav
-import torchaudio
-import random
-from datasets import load_from_disk
-import librosa
-import os
-import numpy as np
+# from contextlib import contextmanager, redirect_stdout, redirect_stderr
+# from cosyvoice.cli.cosyvoice import CosyVoice, CosyVoice2
+# from cosyvoice.utils.file_utils import load_wav
+# import torchaudio
+# import random
+# from datasets import load_from_disk
+# import librosa
+# import os
+# import numpy as np
 
-@contextmanager
-def suppress_stdout(*args, **kwargs):
-    with open(os.devnull, 'w') as devnull:
-        with redirect_stdout(devnull), redirect_stderr(devnull):
-            yield
+# @contextmanager
+# def suppress_stdout(*args, **kwargs):
+#     with open(os.devnull, 'w') as devnull:
+#         with redirect_stdout(devnull), redirect_stderr(devnull):
+#             yield
 
 
-ds = load_from_disk("~/JRwork/RWKV-PEFT/temp_datasets/chinese_speech_only").select(range(60000,77397))
-cosyvoice = CosyVoice2('pretrained_models/CosyVoice2-0.5B', load_jit=True, load_onnx=False, load_trt=False)
+# ds = load_from_disk("~/JRwork/RWKV-PEFT/temp_datasets/chinese_speech_only").select(range(60000,77397))
+# cosyvoice = CosyVoice2('pretrained_models/CosyVoice2-0.5B', load_jit=True, load_onnx=False, load_trt=False)
 
-print(ds)
-def mapp(sample):
-    random_number = random.randint(0, 99)
-    prompt_speech_16k = load_wav(f'temp_audios/audio{random_number}.wav', 16000)
+# print(ds)
+# def mapp(sample):
+#     random_number = random.randint(0, 99)
+#     prompt_speech_16k = load_wav(f'temp_audios/audio{random_number}.wav', 16000)
 
-    try:
-        with suppress_stdout():
-            for i, j in enumerate(cosyvoice.inference_instruct2(sample['transcript'], '', prompt_speech_16k, stream=False)):
-                # torchaudio.save('instruct_{}.wav'.format(i), j['tts_speech'], cosyvoice.sample_rate)
-                cosy = librosa.resample(np.array(j['tts_speech']), orig_sr=cosyvoice.sample_rate, target_sr=16000)
-        sample['speech_cosy'] = cosy
-    except:
-        sample['speech_cosy'] = None
+#     try:
+#         with suppress_stdout():
+#             for i, j in enumerate(cosyvoice.inference_instruct2(sample['transcript'], '', prompt_speech_16k, stream=False)):
+#                 # torchaudio.save('instruct_{}.wav'.format(i), j['tts_speech'], cosyvoice.sample_rate)
+#                 cosy = librosa.resample(np.array(j['tts_speech']), orig_sr=cosyvoice.sample_rate, target_sr=16000)
+#         sample['speech_cosy'] = cosy
+#     except:
+#         sample['speech_cosy'] = None
 
-    return sample
+#     return sample
 
-ds = ds.map(mapp,cache_file_name="cache/file.arrow")
+# ds = ds.map(mapp,cache_file_name="cache/file.arrow")
 
 def fill(sample):
     if(sample['speech_cosy'] == None):
