@@ -19,12 +19,18 @@ import glob
 # import augment, random
 
 
-datasets = [load_from_disk(f"temp_datasets/chinese_speech_only_cosy{i}") for i in range(1, 8)]
-dataset = concatenate_datasets(datasets).shuffle()
+dataset = load_from_disk("temp_datasets/chinese_speech_only_cosy")
+dataset2 = load_from_disk("temp_datasets/chinese_speech_only_cosy2")
+dataset3 = load_from_disk("temp_datasets/chinese_speech_only_cosy3")
+dataset4 = load_from_disk("temp_datasets/chinese_speech_only_cosy4")
+dataset5 = load_from_disk("temp_datasets/chinese_speech_only_cosy5")
+dataset6 = load_from_disk("temp_datasets/chinese_speech_only_cosy6")
+dataset7 = load_from_disk("temp_datasets/chinese_speech_only_cosy7")
+dataset = concatenate_datasets([dataset, dataset2,dataset3,dataset4,dataset5,dataset6,dataset7]).shuffle()#77000
 
 # 计算总时间
 def calculate_total_time(data):
-    audio = data['speech_cosy'][0]
+    audio = data['speech_cosy']
     return len(audio) / 16000
 
 t = sum(tqdm(map(calculate_total_time, dataset)))
