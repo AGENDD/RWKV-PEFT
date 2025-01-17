@@ -690,7 +690,8 @@ if __name__ == "__main__":
             #     continue
 
                 #cosy
-            inputs = data['speech_cosy'][0]
+            # inputs = data['speech_cosy'][0]
+            inputs = data['audio']['array']
             answer = data['answer']
             
                 #aishell
