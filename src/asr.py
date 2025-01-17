@@ -564,7 +564,7 @@ class SLAM_ASR(pl.LightningModule):
         self.T_rwkv = time.time()
         
         # print("forward")
-        mode = "asr"
+        mode = "qa"
         if(mode == 'qa'):
             output1, label1, mask1, output2, label2, mask2 = self.output_split(outputs, true_labels, prompt_mask, transcriptions)
             return outputs, true_labels, prompt_mask, output1, label1, mask1, output2, label2, mask2
@@ -678,7 +678,7 @@ class SLAM_ASR(pl.LightningModule):
                         loss1 = torch.sum(loss1 * mask1) / sum_mask1
                         loss2 = torch.sum(loss2 * mask2) / sum_mask2
                         
-                        loss = 0.5*loss1 + 0.5*loss2
+                        loss = 0.7*loss1 + 0.3*loss2
                         
                     except:
                         loss = torch.tensor([0.0], device=logits.device)  
