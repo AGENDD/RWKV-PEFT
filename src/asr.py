@@ -485,7 +485,7 @@ class SLAM_ASR(pl.LightningModule):
 
     def output_split(self, outputs, labels, masks, transcriptions):
         end_of_asr = self.language_tokenizer(
-            "~",
+            " ~",
             return_tensors="pt",
         ).to(self.device).input_ids.item()
 
