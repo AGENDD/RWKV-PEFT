@@ -79,7 +79,7 @@ class MyDataset(Dataset):
                 break
             except:
                 idx = idx+1
-        if('message' in sample.keys()):
+        if('messages' in sample.keys()):
             audio = sample['audio']['array']
             answer = sample['messages'][1]['content']      
         elif('transcription' in sample.keys()):
