@@ -647,6 +647,11 @@ if __name__ == "__main__":
         else:
             dataset = load_dataset("JerryAGENDD/chinese_speech_cosy_audio", cache_dir="temp_datasets")['train'].shuffle()
         
+        
+        dataset = load_dataset("ocisd4/chinese_asr",'ST_CMDS', cache_dir="temp_datasets")['train']
+        dataset2 = load_dataset("ocisd4/chinese_asr",'magicdata', cache_dir="temp_datasets")['train']
+        dataset = concatenate_datasets([dataset, dataset2]).shuffle()
+        
         # dataset = load_dataset("carlot/AIShell",split="train")
         # dataset2 = load_dataset("carlot/AIShell",split="validation")
         # dataset = concatenate_datasets([dataset, dataset2])#134424
