@@ -697,14 +697,14 @@ if __name__ == "__main__":
             # pattern = re.compile(r'[a-zA-Z+=-]')
             # if(pattern.search(data['transcript'])):
             #     continue
-
+                #asr
             inputs = data['audio']['array']
             answer = data['messages'][1]['content']
 
                 #cosy
             # inputs = data['speech_cosy'][0]
-            inputs = data['audio']['array']
-            answer = data['answer']
+            # inputs = data['audio']['array']
+            # answer = data['answer']
             
                 #aishell
             # inputs = data['audio']['array']
