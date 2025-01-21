@@ -564,7 +564,7 @@ class SLAM_ASR(pl.LightningModule):
         self.T_rwkv = time.time()
         
         # print("forward")
-        mode = "qa"
+        mode = "asr"
         if(mode == 'qa'):
             output1, label1, mask1, output2, label2, mask2 = self.output_split(outputs, true_labels, prompt_mask, transcriptions)
             return outputs, true_labels, prompt_mask, output1, label1, mask1, output2, label2, mask2
