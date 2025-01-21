@@ -648,9 +648,9 @@ if __name__ == "__main__":
             dataset = load_dataset("JerryAGENDD/chinese_speech_cosy_audio", cache_dir="temp_datasets")['train'].shuffle()
         
         
-        dataset = load_dataset("ocisd4/chinese_asr",'ST_CMDS', cache_dir="temp_datasets")['train']
-        dataset2 = load_dataset("ocisd4/chinese_asr",'magicdata', cache_dir="temp_datasets")['train']
-        dataset = concatenate_datasets([dataset, dataset2]).shuffle()
+        # dataset = load_dataset("ocisd4/chinese_asr",'ST_CMDS', cache_dir="temp_datasets")['train']
+        # dataset2 = load_dataset("ocisd4/chinese_asr",'magicdata', cache_dir="temp_datasets")['train']
+        # dataset = concatenate_datasets([dataset, dataset2]).shuffle()
         
         # dataset = load_dataset("carlot/AIShell",split="train")
         # dataset2 = load_dataset("carlot/AIShell",split="validation")
@@ -677,7 +677,10 @@ if __name__ == "__main__":
         # con_dataset = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()
         #con_dataset = load_from_disk("temp_datasets/chinese_speech").shuffle()
         # con_dataset = load_from_disk("temp_datasets/chinese_speech_only_cosy").shuffle()
-        con_dataset = load_dataset("JerryAGENDD/chinese_speech_cosy_audio", cache_dir="temp_datasets")['train'].shuffle()
+        # con_dataset = load_dataset("JerryAGENDD/chinese_speech_cosy_audio", cache_dir="temp_datasets")['train'].shuffle()
+        
+        
+        con_dataset = load_dataset("ocisd4/chinese_asr",'ST_CMDS', cache_dir="temp_datasets")['train']
         # con_dataset = load_dataset("carlot/AIShell",split="test").shuffle()
         # con_dataset, transcipt = aishell('test')
         
@@ -695,6 +698,9 @@ if __name__ == "__main__":
             # if(pattern.search(data['transcript'])):
             #     continue
 
+            inputs = data['audio']['array']
+            answer = data['messages'][1]['content']
+
                 #cosy
             # inputs = data['speech_cosy'][0]
             inputs = data['audio']['array']
@@ -705,7 +711,7 @@ if __name__ == "__main__":
             # answer = data['transcription']
             # answer = answer.replace(" ","")
             
-            print(f"questions:\n{data['transcript']}")
+            # print(f"questions:\n{data['transcript']}")
             print(f"true answer:\n{answer[:100]}...")
             print()
             print("predict:")

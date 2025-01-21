@@ -1,13 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn import TransformerEncoder, TransformerEncoderLayer
 import numpy as np
 
 from transformers import AutoProcessor, AutoModel
-# from transformers import Wav2Vec2FeatureExtractor
-# from transformers import Wav2Vec2Processor
-# from transformers import Wav2Vec2CTCTokenizer
 
 
 class SpeechAdapter(nn.Module):
