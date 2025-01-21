@@ -61,20 +61,20 @@ class MyDataset(Dataset):
             try:
                 QA = True
                 sample = self.hf_dataset[idx]
-                if(QA):
-                    if(len(sample['audio']['array'])/16000 > 15.0):
-                        # print("skip data audio too long")
-                        idx = idx+1
-                        continue
-                    if(len(sample['answer']) > 1500):
-                        # print("skip data answer too long")
-                        idx = idx+1
-                        continue
+                # if(QA):
+                #     if(len(sample['audio']['array'])/16000 > 15.0):
+                #         # print("skip data audio too long")
+                #         idx = idx+1
+                #         continue
+                #     if(len(sample['answer']) > 1500):
+                #         # print("skip data answer too long")
+                #         idx = idx+1
+                #         continue
                 
-                # if(len(sample['audio']['array'])/16000 > 15.0):
-                #     # print("skip data audio too long")
-                #     idx = idx+1
-                #     continue
+                if(len(sample['audio']['array'])/16000 > 15.0):
+                    # print("skip data audio too long")
+                    idx = idx+1
+                    continue
                                 
                 # pattern = re.compile(r'[a-zA-Z+=-]')
                 # if(pattern.search(sample['trascript'])):
@@ -86,7 +86,7 @@ class MyDataset(Dataset):
                 idx = idx+1
         if('messages' in sample.keys()):
             audio = sample['audio']['array']
-            answer = sample['messages'][1]['content']      
+            answer = sample['messages'][-1]['content']      
         elif('transcription' in sample.keys()):
             #aishell
             audio = sample['audio']['array']
