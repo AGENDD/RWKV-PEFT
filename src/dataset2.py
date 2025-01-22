@@ -71,10 +71,10 @@ class MyDataset(Dataset):
                 #         idx = idx+1
                 #         continue
                 
-                if(len(sample['audio']['array'])/16000 > 15.0):
-                    # print("skip data audio too long")
-                    idx = idx+1
-                    continue
+                # if(len(sample['audio']['array'])/16000 > 15.0):
+                #     # print("skip data audio too long")
+                #     idx = idx+1
+                #     continue
                                 
                 # pattern = re.compile(r'[a-zA-Z+=-]')
                 # if(pattern.search(sample['trascript'])):
@@ -92,12 +92,13 @@ class MyDataset(Dataset):
             audio = sample['audio']['array']
             answer = sample['transcription']
             answer = answer.replace(" ","")
-        elif('transcript' in sample.keys()):
-            audio = sample['audio']['array']
-            answer = sample['transcript']+" ~ "+sample['answer']
         elif('speech' in sample.keys()):
             answer = sample['transcript']+" ~ "+sample['answer']
             audio = sample['speech_cosy'][0]
+        elif('transcript' in sample.keys()):
+            audio = sample['audio']['array']
+            answer = sample['transcript']+" ~ "+sample['answer']
+        
             
             # try:
             #     audio = audioAug(audio)
