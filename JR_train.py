@@ -437,7 +437,7 @@ if __name__ == "__main__":
                     m.quant(args.quant)
 
     ##################
-    args.accumulate_grad_batches = 4
+    # args.accumulate_grad_batches = 4
     ##################
     if pl.__version__[0]=='2':
         trainer = Trainer(accelerator=args.accelerator,strategy=args.strategy,devices=args.devices,num_nodes=args.num_nodes,precision=args.precision,
