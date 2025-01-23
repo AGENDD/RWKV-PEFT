@@ -677,10 +677,10 @@ if __name__ == "__main__":
         # con_dataset = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()
         #con_dataset = load_from_disk("temp_datasets/chinese_speech").shuffle()
         # con_dataset = load_from_disk("temp_datasets/chinese_speech_only_cosy").select(range(4))
-        con_dataset = load_dataset("JerryAGENDD/chinese_speech_cosy_audio", cache_dir="temp_datasets")['train'].shuffle()
+        # con_dataset = load_dataset("JerryAGENDD/chinese_speech_cosy_audio", cache_dir="temp_datasets")['train'].shuffle()
         
         
-        # con_dataset = load_dataset("ocisd4/chinese_asr",'ST_CMDS', cache_dir="temp_datasets")['train']
+        con_dataset = load_dataset("ocisd4/chinese_asr",'ST_CMDS', cache_dir="temp_datasets")['train']
         # con_dataset = load_dataset("carlot/AIShell",split="test").shuffle()
         # con_dataset, transcipt = aishell('test')
         
