@@ -140,7 +140,7 @@ class train_callback(pl.Callback):
         #         print(f"{name} 的梯度: {param.grad}")
         
         self.step += 1
-        if(self.step != 0 and self.step % 1 == 0 and trainer.is_global_zero):
+        if(self.step != 0 and self.step % 100 == 0 and trainer.is_global_zero):
             print("saving...")
             # to_save_dict = pl_module.state_dict()
             # names = ['layers.22', 'layers.23','layers.21','layers.20']

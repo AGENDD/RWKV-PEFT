@@ -437,7 +437,7 @@ if __name__ == "__main__":
                     m.quant(args.quant)
 
     ##################
-    # args.accumulate_grad_batches = 4
+    args.accumulate_grad_batches = 4
     ##################
     if pl.__version__[0]=='2':
         trainer = Trainer(accelerator=args.accelerator,strategy=args.strategy,devices=args.devices,num_nodes=args.num_nodes,precision=args.precision,
@@ -637,13 +637,13 @@ if __name__ == "__main__":
 
         if os.path.exists("temp_datasets/chinese_speech_only_cosy"):
             dataset = load_from_disk("temp_datasets/chinese_speech_only_cosy").select(range(4))
-            # dataset2 = load_from_disk("temp_datasets/chinese_speech_only_cosy2")
-            # dataset3 = load_from_disk("temp_datasets/chinese_speech_only_cosy3")
-            # dataset4 = load_from_disk("temp_datasets/chinese_speech_only_cosy4")
-            # dataset5 = load_from_disk("temp_datasets/chinese_speech_only_cosy5")
-            # dataset6 = load_from_disk("temp_datasets/chinese_speech_only_cosy6")
-            # dataset7 = load_from_disk("temp_datasets/chinese_speech_only_cosy7")
-            # dataset = concatenate_datasets([dataset, dataset2, dataset3, dataset4, dataset5, dataset6, dataset7]).shuffle()
+            dataset2 = load_from_disk("temp_datasets/chinese_speech_only_cosy2")
+            dataset3 = load_from_disk("temp_datasets/chinese_speech_only_cosy3")
+            dataset4 = load_from_disk("temp_datasets/chinese_speech_only_cosy4")
+            dataset5 = load_from_disk("temp_datasets/chinese_speech_only_cosy5")
+            dataset6 = load_from_disk("temp_datasets/chinese_speech_only_cosy6")
+            dataset7 = load_from_disk("temp_datasets/chinese_speech_only_cosy7")
+            dataset = concatenate_datasets([dataset, dataset2, dataset3, dataset4, dataset5, dataset6, dataset7]).shuffle()
         else:
             dataset = load_dataset("JerryAGENDD/chinese_speech_cosy_audio", cache_dir="temp_datasets")['train'].shuffle()
         
@@ -665,7 +665,7 @@ if __name__ == "__main__":
         # Total_model.train()
         print(dataset)
         dataset = MyDataset(args, dataset)
-        data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=1, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
+        data_loader = DataLoader(dataset, shuffle=True, pin_memory=True, batch_size=args.micro_bsz, num_workers=8, persistent_workers=False, drop_last=True, collate_fn=lambda x: x)
         print("train starting...")
         # with torch.cuda.amp.autocast():
         trainer.fit(Total_model, data_loader)
@@ -676,8 +676,8 @@ if __name__ == "__main__":
         
         # con_dataset = load_from_disk("temp_datasets/ZHEN_mixed_filtered").shuffle()
         #con_dataset = load_from_disk("temp_datasets/chinese_speech").shuffle()
-        con_dataset = load_from_disk("temp_datasets/chinese_speech_only_cosy").select(range(4))
-        # con_dataset = load_dataset("JerryAGENDD/chinese_speech_cosy_audio", cache_dir="temp_datasets")['train'].shuffle()
+        # con_dataset = load_from_disk("temp_datasets/chinese_speech_only_cosy").select(range(4))
+        con_dataset = load_dataset("JerryAGENDD/chinese_speech_cosy_audio", cache_dir="temp_datasets")['train'].shuffle()
         
         
         # con_dataset = load_dataset("ocisd4/chinese_asr",'ST_CMDS', cache_dir="temp_datasets")['train']
@@ -698,20 +698,20 @@ if __name__ == "__main__":
             # if(pattern.search(data['transcript'])):
             #     continue
                 #asr
-            # inputs = data['audio']['array']
-            # answer = data['messages'][1]['content']
+            inputs = data['audio']['array']
+            answer = data['messages'][-1]['content']
 
                 #cosy
-            inputs = data['speech_cosy'][0]
+            # inputs = data['speech_cosy'][0]
             # inputs = data['audio']['array']
-            answer = data['answer']
+            # answer = data['answer']
             
                 #aishell
             # inputs = data['audio']['array']
             # answer = data['transcription']
             # answer = answer.replace(" ","")
             
-            print(f"questions:\n{data['transcript']}")
+            # print(f"questions:\n{data['transcript']}")
             print(f"true answer:\n{answer[:100]}")
             print()
             print("predict:")
