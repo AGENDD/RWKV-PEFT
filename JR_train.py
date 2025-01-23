@@ -645,7 +645,7 @@ if __name__ == "__main__":
             dataset7 = load_from_disk("temp_datasets/chinese_speech_only_cosy7")
             dataset = concatenate_datasets([dataset, dataset2, dataset3, dataset4, dataset5, dataset6, dataset7]).shuffle()
         else:
-            dataset = load_dataset("JerryAGENDD/chinese_speech_cosy_audio", cache_dir="temp_datasets")['train'].shuffle()
+            dataset = load_dataset("JerryAGENDD/chinese_speech_cosy_audio", cache_dir="temp_datasets")['train'].shuffle()#77396
         
         
         # dataset = load_dataset("ocisd4/chinese_asr",'ST_CMDS', cache_dir="temp_datasets")['train']
