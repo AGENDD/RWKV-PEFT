@@ -16,6 +16,7 @@ epoch_save=1
 epoch_steps=9674
 ctx_len=8000
 epoch_count=1
+wandb='speech_qa'
 
 OP=1
 
@@ -28,9 +29,9 @@ python -u JR_train.py --load_model $load_model --devices 4 --OP $OP \
 --data_type binidx --vocab_size 65536 \
 --ctx_len $ctx_len --epoch_steps $epoch_steps --epoch_count $epoch_count --epoch_begin 0 --epoch_save $epoch_save --micro_bsz $micro_bsz \
 --n_layer $n_layer --n_embd $n_embd \
---pre_ffn 0 --head_qk 0 --lr_init 1e-4 --lr_final 5e-3 --warmup_steps 500 --beta1 0.9 --beta2 0.99 --adam_eps 1e-8 \
+--pre_ffn 0 --head_qk 0 --lr_init 1e-4 --lr_final 1e-4 --warmup_steps 500 --beta1 0.9 --beta2 0.99 --adam_eps 1e-8 \
 --accelerator gpu --strategy deepspeed_stage_1 --grad_cp 1 \
 --precision bf16 \
 --my_testing "x060" \
---train_type "state"  --dataload pad
+--train_type "state"  --dataload pad --wandb $wandb
 # --quant $QUANT

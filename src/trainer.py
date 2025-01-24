@@ -218,7 +218,7 @@ class train_callback(pl.Callback):
             
 
             if len(args.wandb) > 0:
-                lll = {"loss": trainer.my_loss, "lr": trainer.my_lr, "wd": trainer.my_wd, "Gtokens": real_step * token_per_step / 1e9}
+                lll = {"loss": trainer.my_loss, "lr": trainer.my_lr}
                 if kt_s > 0:
                     lll["kt/s"] = kt_s
                 trainer.my_wandb.log(lll, step=int(real_step))
